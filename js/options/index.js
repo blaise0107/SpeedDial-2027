@@ -199,15 +199,7 @@ class SettingModule {
         (_g = document.getElementById("buttonBigSdFontColors")) === null || _g === void 0 ? void 0 : _g.addEventListener("click", function () {
             Options.setType('fonts');
         }, false);
-        (_h = document.getElementById("buttonBigSdSync")) === null || _h === void 0 ? void 0 : _h.addEventListener("click", function () {
-            Options.syncOptionsOpen();
-        }, false);
-        (_j = document.getElementById("buttonBigSdGetSatisfaction")) === null || _j === void 0 ? void 0 : _j.addEventListener("click", function () {
-            Options.openGetSatisfactionSuggestions();
-        }, false);
-        (_k = document.getElementById("buttonBigSdDonate")) === null || _k === void 0 ? void 0 : _k.addEventListener("click", function (event) {
-            Options.openDonateMessage(event);
-        }, false);
+        // кнопки Sync/EverSync, GetSatisfaction и Donate выпилены вместе с HTML-блоками
         try {
             if (document.getElementById("buttonBigSdWidgets"))
                 (_m = document.getElementById("buttonBigSdWidgets")) === null || _m === void 0 ? void 0 : _m.addEventListener("click", function (event) {
@@ -345,9 +337,7 @@ class SettingModule {
         (_17 = document.getElementById("sdPreviewSettings_setAutoUpdate")) === null || _17 === void 0 ? void 0 : _17.addEventListener("click", function (event) {
             Options.setAutoUpdateGlobally();
         }, false);
-        (_18 = document.querySelector(".backupViaEversyncSuggestion button")) === null || _18 === void 0 ? void 0 : _18.addEventListener("click", function () {
-            Options.syncOptionsOpen(false, 'backups');
-        }, false);
+        // обработчик предложения бэкапа через EverSync удалён (сервис закрыт, блок скрыт в CSS)
         $("[data-only-in-standard]").qtip({
             content: { text: _("options_available_in_standard_theme_only") },
             position: {
