@@ -172,8 +172,12 @@ class Worker {
                 message.action === 'finishLocalStorageRestore') {
             }
             else if (message.action === 'pref:changed') {
-                // Защита на случай, если сообщение придёт до инициализации контекстного меню
-                if (fvdSpeedDial.ContextMenu && fvdSpeedDial.ContextMenu.rebuild) {
+                // Перестраивать меню нужно только при изменении конкретной настройки.
+                // Раньше rebuild() вызывался на ЛЮБОЙ pref:changed, из-за чего
+                // каждое изменение темы/цвета запускало removeAll()+create() и
+                // рождало гонку с ошибкой «Cannot create item with duplicate id».
+                if (message.name === 'sd.show_in_context_menu'
+                        && fvdSpeedDial.ContextMenu && fvdSpeedDial.ContextMenu.rebuild) {
                     fvdSpeedDial.ContextMenu.rebuild();
                 }
             }

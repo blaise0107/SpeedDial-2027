@@ -2,6 +2,11 @@ import { _b } from '../utils.js';
 import { _ } from '../localizer.js';
 import Sync from '../sync/tab.js';
 
+// Флаг «меню уже инициализировано в этом воркере». Chrome MV3 может повторно
+// выполнять код воркера, а contextMenus.removeAll() не гарантирует мгновенной
+// очистки — из-за этого возникали ошибки «Cannot create item with duplicate id».
+let menuInitialized = false;
+
 const ContextMenu = function (fvdSpeedDial) {
 	this.fvdSpeedDial = fvdSpeedDial;
 	fvdSpeedDial.ContextMenu = this;
@@ -17,12 +22,25 @@ ContextMenu.prototype = {
 	init: function () {
 		const that = this;
 
+		// Повторная инициализация (перезапуск service worker) — только ставим
+		// флаг перестройки, иначе слушатель и меню создавались дважды.
+		if (menuInitialized) {
+			this.needRebuild = true;
+			return;
+		}
+		menuInitialized = true;
+
+		// Раньше здесь был интервал на 200 мс ради «премиум-проверки» сервера
+		// прошлого владельца. Сервис закрыт, поэтому цикл заменён на редкий
+		// таймер (15 с): он перестраивает меню только когда выставлен флаг
+		// needRebuild (изменились группы/диалы). Простой в init не сработает —
+		// хранилище (IndexedDB) к этому моменту ещё не подключено.
 		setInterval(function () {
 			if (that.needRebuild) {
 				that.rebuild();
 				that.needRebuild = false;
 			}
-		}, 200);
+		}, 15000);
 
 		this.addListener();
 	},
