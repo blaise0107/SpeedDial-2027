@@ -61,7 +61,7 @@ export function restoreSessionInWindow(windowId) {
 					});
 				} //for
 
-				//Remove old tabs
+				//Удалить старые вкладки
 				const rmTabArr = [];
 
 				for (const rmTab of tabsForRemove) {

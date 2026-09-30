@@ -2,11 +2,11 @@ import Broadcaster from '../_external/broadcaster.js';
 import { onHiddenCaptureFinishedTab } from './tab.js';
 
 const ThumbManagerBgModule = function (fvdSpeedDial) {
-	// lister to capture finished
+	// список для захвата завершен
 	function onHiddenCaptureFinished(params, resultData) {
 		onHiddenCaptureFinishedTab(fvdSpeedDial, params, resultData);
 
-		// update info in db
+		// обновить информацию в БД
 		if (resultData && params.id && params.type) {
 			const dataUrl = resultData.dataUrl;
 			const title = resultData.title;
@@ -27,7 +27,7 @@ const ThumbManagerBgModule = function (fvdSpeedDial) {
 
 						if (oldDial) {
 							if (!oldDial.title && oldDial.auto_title != title) {
-								// need to sync dials where changed auto title
+								// нужно синхронизировать циферблаты, где изменилось автоматическое название
 								fvdSpeedDial.Sync.addDataToSync({
 									category: 'dials',
 									data: params.id,
@@ -207,6 +207,6 @@ const ThumbManagerBgModule = function (fvdSpeedDial) {
 	});
 };
 
-// fvdSpeedDial.SpeedDial.ThumbManager = new ThumbManager();
+// fvdSpeedDial.SpeedDial.ThumbManager = новый ThumbManager();
 
 export default ThumbManagerBgModule;

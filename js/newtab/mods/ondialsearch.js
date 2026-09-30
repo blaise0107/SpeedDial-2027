@@ -84,8 +84,8 @@ function OnDialSearchModule(fvdspeeddial) {
 			const search = window.OnDialSearch.getSearchForUrl(url);
 
 			if (search && search.site === 'booking') {
-				// disable search on booking in favor of booking popup widget
-				//search = null;
+				// отключить поиск при бронировании в пользу всплывающего виджета бронирования
+				//поиск = ноль;
 			}
 
 			if (search) {

@@ -36,7 +36,7 @@
 	window.addEventListener(
 		'load',
 		function () {
-			// disabled for now
+			// отключен на данный момент
 			/*
 			fvdSpeedDial.Utils.Opener.addModificator(function (url) {
 				try {

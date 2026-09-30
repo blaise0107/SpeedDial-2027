@@ -1,4 +1,4 @@
-// import StorageSD from "../storage.js";
+// импортировать StorageSD из «../storage.js»;
 
 const StorageApps = function (fvdSpeedDial) {
 	this.fvdSpeedDial = fvdSpeedDial;
@@ -13,7 +13,7 @@ StorageApps.prototype = {
 		const { fvdSpeedDial: {StorageSD} } = this;
 
 		chrome.management.getAll(function (extensions) {
-			// need to add webstore app
+			// нужно добавить приложение интернет-магазина
 			chrome.management.get("ahfgeienlihckogmohjhadlkjgocpleb", function (webstoreApp) {
 
 				if (webstoreApp) {

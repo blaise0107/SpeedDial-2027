@@ -102,8 +102,8 @@ const RedundancyStorage = {
 
 export const FileSystemSD = function () {
 	const self = this;
-	// can be "restoring" or "normal"
-	// "restoring" means restore previous corruptions
+	// может быть «восстанавливающим» или «нормальным»
+	// «восстановление» означает восстановление предыдущих повреждений
 	let _state = 'normal';
 	let _fs = null;
 
@@ -194,9 +194,9 @@ export const FileSystemSD = function () {
 			webkitResolveLocalFileSystemURL(
 				url,
 				function (entry) {
-					// remove from redundancy storage
+					// удалить из резервного хранилища
 					RedundancyStorage.delete(entry.fullPath);
-					// remove from fs
+					// удалить из фс
 					entry.remove(cb, cb);
 				},
 				cb
@@ -262,7 +262,7 @@ export const FileSystemSD = function () {
 		const path = url.split('/persistent').pop();
 
 		RedundancyStorage.get(path, function (err, contents) {
-			// const blob = Utils.dataURIToBlob(contents);
+			// const blob = Utils.dataURIToBlob(содержание);
 
 			if (err) {
 				console.warn(err);
@@ -367,7 +367,7 @@ export const FileSystemSD = function () {
 			params.redundancy = true;
 		}
 
-		// first create dir
+		// сначала создайте каталог
 		console.log('Write File', name);
 		const dir = _parseDir(name);
 
@@ -395,7 +395,7 @@ export const FileSystemSD = function () {
 
 									cbCalled = true;
 									console.log('Write end for', name, f.length);
-									// store content to redundancy storage
+									// хранить контент в резервном хранилище
 									const fURL = fileEntry.toURL();
 
 									Utils.Async.chain([
@@ -462,13 +462,13 @@ export const FileSystemSD = function () {
 						return console.error('FS Integity check: fail get paths from redundancy storage');
 					}
 
-					// check all paths should be exists
+					// проверьте, что все пути должны существовать
 					Utils.Async.arrayProcess(
 						paths,
 						function (path, apNext) {
 							self.getEntry(path, function (err, entry) {
 								if (err) {
-									// think that file not found
+									// думаю, что файл не найден
 									notExistsFiles.push(path);
 								}
 
@@ -486,7 +486,7 @@ export const FileSystemSD = function () {
 					return next();
 				}
 
-				// restore files
+				// восстановить файлы
 				self.state = 'restoring';
 				Utils.Async.arrayProcess(
 					notExistsFiles,

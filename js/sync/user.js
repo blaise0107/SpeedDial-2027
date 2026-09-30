@@ -12,9 +12,9 @@ class UserInfoSync {
 	isSearchEnable = true;
 	fvdSynchronizerName = 'EverSync';
 	fvdSynchronizerIds = [
-		// Chrome Webstore EverSync ID
+		// Идентификатор EverSync в интернет-магазине Chrome
 		'iohcojnlgnfbmjfjfkbhahhmppcggdog',
-		// Opera addons EverSync ID
+		// Дополнения Opera EverSync ID
 		'ffhogmjbkahkkpjpjmeppoegnjhpopmc',
 	];
 
@@ -34,11 +34,11 @@ class UserInfoSync {
 					extension.enabled
 					&& (extension.name.includes(that.fvdSynchronizerName) || that.fvdSynchronizerIds.indexOf(extension.id) >= 0)
 				) {
-					// userInfo init from storage
+					// userInfo инициализируется из хранилища
 					const storageUserInfo = localStorage.getItem(userStorageKey);
 					that.setUserInfo(storageUserInfo || null);
 
-					// userConfig init from storage
+					// userConfig инициализируется из хранилища
 					that.updateUserConfigs(storageUserInfo);
 				}
 			});

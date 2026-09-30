@@ -1,61 +1,61 @@
-// /* Manage widgets listing */
+// /* Управление списком виджетов */
 //
-// export default new function () {
+// экспортировать новую функцию по умолчанию () {
 //
-// 	const widgets = {};
-// 	const self = this;
+// 	константные виджеты = {};
+// 	константная личность = это;
 //
-// 	/* external interface */
-// 	this.getAll = function (){
+// 	/* внешний интерфейс */
+// 	this.getAll = функция (){
 //
-// 		const result = [];
+// 		константный результат = [];
 //
-// 		for( const id in widgets ){
-// 			const widget = self.getById( id );
+// 		for(const id в виджетах){
+// 			const виджет = self.getById(id);
 //
-// 			result.push( widget );
+// 			результат.push(виджет);
 // 		}
 //
-// 		return result;
+// 		вернуть результат;
 // 	};
 //
-// 	this.getById = function ( id ){
-// 		if( !widgets[id] ){
-// 			return null;
+// 	this.getById = функция (идентификатор) {
+// 		если( !виджеты[id] ){
+// 			вернуть ноль;
 // 		}
 //
-// 		const widget =  fvdSpeedDial.Utils.clone( widgets[id] );
+// 		const виджет = fvdSpeedDial.Utils.clone(виджеты[id]);
 //
-// 		widget.id = id;
+// 		виджет.id = идентификатор;
 //
-// 		return widget;
+// 		вернуть виджет;
 // 	};
 //
-// 	this.remove = function ( id ){
-// 		//_removeWidgetFromList( id );
-// 		//chrome.management.uninstall( id );
+// 	this.remove = функция (id){
+// 		//_removeWidgetFromList(id);
+// 		//chrome.management.uninstall(id);
 //
-// 		chrome.management.setEnabled( id, false );
+// 		chrome.management.setEnabled(id, false);
 // 	};
 //
-// 	function _setupListeners(){
+// 	функция _setupListeners(){
 //
-// 		chrome.runtime.onMessageExternal.addListener( function ( message, sender ){
+// 		chrome.runtime.onMessageExternal.addListener(функция (сообщение, отправитель) {
 //
-// 			if( message && message.action ){
+// 			если(сообщение && сообщение.действие){
 //
-// 				switch( message.action ){
+// 				переключатель(сообщение.действие){
 //
-// 					case "fvdSpeedDial:Widgets:Widget:setWidgetInfo":
+// 					случай «fvdSpeedDial:Widgets:Widget:setWidgetInfo»:
 //
 // 						if( !widgets[ sender.id ] ){
 // 							_addWidgetToList(sender.id, message.body);
 // 						}
-// 						else {
+// 						еще {
 // 							_updateWidgetInList(sender.id, message.body);
 // 						}
 //
-// 						break;
+// 						перерыв;
 //
 // 				}
 //
@@ -63,227 +63,227 @@
 //
 // 		} );
 //
-// 		chrome.management.onUninstalled.addListener( function ( addonId ){
-// 			if( widgets[ addonId ] ){
-// 				_removeWidgetFromList( addonId );
+// 		chrome.management.onUninstalled.addListener(функция (addonId){
+// 			если(виджеты[addonId]){
+// 				_removeWidgetFromList(addonId);
 // 			}
 // 		} );
-// 		chrome.management.onDisabled.addListener( function ( addon ){
-// 			if( widgets[ addon.id ] ){
-// 				_removeWidgetFromList( addon.id );
+// 		chrome.management.onDisabled.addListener(функция (дополнение){
+// 			если(виджеты[addon.id]){
+// 				_removeWidgetFromList(addon.id);
 // 			}
 // 		} );
 //
-// 		Broadcaster.onMessage.addListener(function (msg, sender, sendResponse) {
-// 			switch(msg.action) {
-// 				case "widgets:setallpositions":
+// 		Broadcaster.onMessage.addListener(функция (msg, отправитель, sendResponse) {
+// 			переключатель (msg.action) {
+// 				случай «виджеты:setallpositions»:
 // 					fvdSpeedDial.WidgetServer.WidgetPositions.setAllWidgetPositions( msg.positions );
-// 					break;
-// 				case "widgets:getposition":
-// 					var pos = fvdSpeedDial.WidgetServer.WidgetPositions.getWidgetPosition(msg.id);
+// 					перерыв;
+// 				случай «виджеты:getposition»:
+// 					вар pos = fvdSpeedDial.WidgetServer.WidgetPositions.getWidgetPosition(msg.id);
 //
-// 					sendResponse(pos);
-// 					return true;
-// 					break;
-// 				case "widgets:remove":
+// 					sendResponse (поз.);
+// 					вернуть истину;
+// 					перерыв;
+// 				случай «виджеты: удалить»:
 // 					fvdSpeedDial.WidgetServer.remove(msg.id);
-// 					break;
-// 				case "widgets:getall":
-// 					var widgets = fvdSpeedDial.WidgetServer.getAll();
+// 					перерыв;
+// 				случай "виджеты: getall":
+// 					вар виджеты = fvdSpeedDial.WidgetServer.getAll();
 //
-// 					widgets.forEach(function (w) {
-// 						w.position = fvdSpeedDial.WidgetServer.WidgetPositions.getWidgetPosition( w.id );
+// 					widgets.forEach(функция (w) {
+// 						w.position = fvdSpeedDial.WidgetServer.WidgetPositions.getWidgetPosition(w.id);
 // 					});
-// 					sendResponse(widgets);
-// 					return true;
-// 					break;
+// 					sendResponse (виджеты);
+// 					вернуть истину;
+// 					перерыв;
 // 			}
 // 		});
 //
 // 	}
 //
-// 	function _addWidgetToList( id, info ){
-// 		if(info.apiv != 2) {
-// 			// only version 2 widgets supported
-// 			return;
+// 	функция _addWidgetToList (идентификатор, информация) {
+// 		если(info.apiv != 2) {
+// 			// поддерживаются только виджеты версии 2
+// 			возврат;
 // 		}
 //
-// 		widgets[ id ] = info;
-// 		fvdSpeedDial.WidgetServer.WidgetPositions.setWidgetPosition( id, 0 );
-// 		fvdSpeedDial.WidgetServer.WidgetPositions.fixPositions( id );
+// 		виджеты [id] = информация;
+// 		fvdSpeedDial.WidgetServer.WidgetPositions.setWidgetPosition(id, 0);
+// 		fvdSpeedDial.WidgetServer.WidgetPositions.fixPositions(id);
 // 		Broadcaster.sendMessage({
-// 			action: "widgets:added",
-// 			id: id,
+// 			действие: «виджеты:добавлено»,
+// 			идентификатор: идентификатор,
 // 		});
 // 	}
 //
-// 	function _updateWidgetInList( id, info ){
-// 		if(info.apiv != 2) {
-// 			// only version 2 widgets supported
-// 			return;
+// 	функция _updateWidgetInList (идентификатор, информация) {
+// 		если(info.apiv != 2) {
+// 			// поддерживаются только виджеты версии 2
+// 			возврат;
 // 		}
 //
-// 		widgets[ id ] = info;
+// 		виджеты [id] = информация;
 // 		Broadcaster.sendMessage({
-// 			action: "widgets:updated",
-// 			id: id,
+// 			действие: «виджеты:обновлено»,
+// 			идентификатор: идентификатор,
 // 		});
 // 	}
 //
-// 	function _removeWidgetFromList( id ){
-// 		if( widgets[ id ] ){
-// 			delete widgets[ id ];
-// 			fvdSpeedDial.WidgetServer.WidgetPositions.removePosition( id );
+// 	функция _removeWidgetFromList (идентификатор) {
+// 		если(виджеты[id]){
+// 			удалить виджеты[id];
+// 			fvdSpeedDial.WidgetServer.WidgetPositions.removePosition(id);
 // 			Broadcaster.sendMessage({
-// 				action: "widgets:removed",
-// 				id: id,
+// 				действие: «Виджеты: удалены»,
+// 				идентификатор: идентификатор,
 // 			});
 // 		}
 // 	}
 //
-// 	function _sendIsWidgetRequest( addonId ){
-// 		chrome.runtime.sendMessage( addonId, {
-// 			action: "fvdSpeedDial:Widgets:Server:isWidget",
+// 	функция _sendIsWidgetRequest(addonId){
+// 		chrome.runtime.sendMessage(addonId, {
+// 			действие: "fvdSpeedDial:Widgets:Server:isWidget",
 // 		} );
 //
 // 	}
 //
-// 	function _scanAllAddons(){
+// 	функция _scanAllAddons(){
 //
-// 		chrome.management.getAll( function ( addons ){
+// 		chrome.management.getAll(функция (дополнения){
 //
-// 			addons.forEach( function ( addon ){
-// 				_sendIsWidgetRequest( addon.id );
+// 			addons.forEach(функция (дополнение){
+// 				_sendIsWidgetRequest(addon.id);
 // 			} );
 //
 // 		} );
 //
 // 	}
 //
-// 	function init(){
+// 	функция инициализации(){
 //
 // 		_setupListeners();
 // 		_scanAllAddons();
 //
 // 	}
 //
-// 	window.addEventListener( "load", function (){
+// 	window.addEventListener("загрузка", функция (){
 //
-// 		init();
+// 		инициализация();
 //
-// 	}, false );
+// 	}, ложь);
 //
 // }();
 //
-// fvdSpeedDial.WidgetServer.WidgetPositions = new function () {
+// fvdSpeedDial.WidgetServer.WidgetPositions = новая функция () {
 //
-// 	function _getWidgetPositionsList(){
+// 	функция _getWidgetPositionsList(){
 //
-// 		let list = {};
+// 		пусть список = {};
 //
-// 		try{
-// 			list = JSON.parse( localStorage[ "widget_positions" ] );
+// 		попробуй {
+// 			list = JSON.parse(localStorage["widget_positions"]);
 // 		}
-// 		catch( ex ){
+// 		поймать( бывший ){
 //
 // 		}
 //
-// 		return list;
+// 		список возврата;
 //
 // 	}
 //
-// 	function _setWidgetPositionsList( list ){
-// 		localStorage[ "widget_positions" ] = JSON.stringify( list );
+// 	функция _setWidgetPositionsList (список) {
+// 		localStorage[ "widget_positions"] = JSON.stringify(список);
 // 	}
 //
-// 	function _removeWidgetsPosition( widgetId ){
+// 	функция _removeWidgetsPosition(виджетId){
 //
-// 		const list = _getWidgetPositionsList();
+// 		константный список = _getWidgetPositionsList();
 //
-// 		delete list[ widgetId ];
+// 		удалить список [идентификатор виджета];
 //
-// 		_setWidgetPositionsList( list );
+// 		_setWidgetPositionsList(список);
 //
 // 		_fixWidgetPositionsList();
 //
 // 	}
 //
-// 	function _fixWidgetPositionsList(){
+// 	функция _fixWidgetPositionsList(){
 //
-// 		const list = _getWidgetPositionsList();
-// 		const items = [];
+// 		константный список = _getWidgetPositionsList();
+// 		константные элементы = [];
 //
-// 		for( const id in list ){
+// 		for(const id в списке){
 // 			items.push({
-// 				id: id,
-// 				position: list[id],
+// 				идентификатор: идентификатор,
+// 				позиция: список[id],
 // 			});
 // 		}
 //
-// 		items.sort( function ( a, b ){
-// 			return a.position - b.position;
+// 		items.sort(функция (a, b){
+// 			вернуть a.position - b.position;
 // 		} );
 //
 // 		const newList = {};
 //
-// 		for( let i = 0; i != items.length; i++ ){
-// 			newList[ items[i].id ] = i + 1;
+// 		for( пусть я = 0; я != items.length; i++){
+// 			newList[ items[i].id] = я + 1;
 // 		}
 //
-// 		_setWidgetPositionsList( newList );
+// 		_setWidgetPositionsList (новый список);
 //
 // 	}
 //
-// 	function _nextWidgetPosition(){
+// 	функция _nextWidgetPosition(){
 //
-// 		let max = 0;
-// 		const list = _getWidgetPositionsList();
+// 		пусть макс = 0;
+// 		константный список = _getWidgetPositionsList();
 //
-// 		for( const k in list ){
-// 			if( list[k] > max ){
-// 				max = list[k];
+// 		for(const k в списке){
+// 			если (список [к] > макс) {
+// 				Макс = список [к];
 // 			}
 // 		}
 //
-// 		return max + 1;
+// 		вернуть максимум + 1;
 //
 // 	}
 //
-// 	this.getWidgetPosition = function ( widgetId ){
+// 	this.getWidgetPosition = функция (виджетId) {
 //
-// 		const list = _getWidgetPositionsList();
+// 		константный список = _getWidgetPositionsList();
 //
-// 		if( !list[widgetId] ){
-// 			list[widgetId] = _nextWidgetPosition();
-// 			_setWidgetPositionsList( list );
+// 		если( !list[idgetId] ){
+// 			список[widgetId] = _nextWidgetPosition();
+// 			_setWidgetPositionsList(список);
 // 		}
 //
-// 		return list[widgetId];
+// 		список возврата [widgetId];
 //
 // 	};
 //
-// 	this.setWidgetPosition = function ( widgetId, position ){
-// 		const list = _getWidgetPositionsList();
+// 	this.setWidgetPosition = функция (виджетId, позиция) {
+// 		константный список = _getWidgetPositionsList();
 //
-// 		list[ widgetId ] = position;
-// 		_setWidgetPositionsList( list );
+// 		список [виджетId] = позиция;
+// 		_setWidgetPositionsList(список);
 // 	};
 //
-// 	this.setAllWidgetPositions = function ( data ){
-// 		_setWidgetPositionsList( data );
+// 	this.setAllWidgetPositions = функция (данные) {
+// 		_setWidgetPositionsList(данные);
 // 		_fixWidgetPositionsList();
 // 	};
 //
-// 	this.fixPositions = function (){
+// 	this.fixPositions = функция (){
 // 		_fixWidgetPositionsList();
 // 	};
 //
-// 	this.resetPositionList = function (){
-// 		_setWidgetPositionsList( {} );
+// 	this.resetPositionList = функция (){
+// 		_setWidgetPositionsList({});
 // 	};
 //
-// 	this.removePosition = function ( widgetId ){
-// 		_removeWidgetsPosition( widgetId );
+// 	this.removePosition = функция (виджетId) {
+// 		_removeWidgetsPosition(идентификатор виджета);
 // 	};
 //
 // }();

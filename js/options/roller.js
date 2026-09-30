@@ -9,7 +9,7 @@ const _Roller = function (elem, elemWidth) {
 _Roller.prototype = {
 	_elem: null,
 
-	rollTo: function (itemNumber) { /* from zero */
+	rollTo: function (itemNumber) { /* отсчёт с нуля */
 		const that = this;
 
 		const firstNode = this._elem.querySelector("div:first-child");

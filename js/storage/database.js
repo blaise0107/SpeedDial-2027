@@ -34,7 +34,7 @@
 	function applyOrder(source, order) {
 		const field = order[0];
 		const direction = order[1];
-		// make clone of array
+		// сделать клон массива
 		const arr = source.slice();
 		arr.sort(function (a, b) {
 			let res = 0;
@@ -53,7 +53,7 @@
 		});
 		return arr;
 	}
-	// we don't want to allow Database API user to change data stored internally
+	// мы не хотим позволять пользователю API базы данных изменять данные, хранящиеся внутри
 	function sclone(data) {
 		return JSON.parse(JSON.stringify(data));
 	}

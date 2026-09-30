@@ -1,12 +1,12 @@
-/* Utility functions */
+/* Вспомогательные функции */
 import { Utils } from '../../utils.js';
 
 function bindEventHandler(element, eventName, handler) {
 	if (element.addEventListener) {
-		// The standard way
+		// Стандартный способ
 		element.addEventListener(eventName, handler, false);
 	} else if (element.attachEvent) {
-		// The Microsoft way
+		// Путь Microsoft
 		element.attachEvent('on' + eventName, handler);
 	}
 }
@@ -27,11 +27,11 @@ function Dialog(options) {
 		leftButtons: {},
 		className: '',
 	};
-	// Overwrite the default options
+	// Перезаписать параметры по умолчанию
 	for (const option in options) {
 		this.options[option] = options[option];
 	}
-	// Create dialog dom
+	// Создать диалоговый дом
 	this._makeNodes();
 
 	if (this.options.openOnCreate) {
@@ -40,7 +40,7 @@ function Dialog(options) {
 }
 
 Dialog.prototype = {
-	/* handles to the dom nodes */
+	/* ссылки на DOM-узлы */
 	container: null,
 	header: null,
 	body: null,
@@ -153,7 +153,7 @@ Dialog.prototype = {
 			return; // Avoid duplicate invocation
 		}
 
-		// Make overlay
+		// Сделать наложение
 		this._overlay = document.createElement('div');
 		this._overlay.className = 'dialog-overlay';
 		document.body.appendChild(this._overlay);
@@ -172,14 +172,14 @@ Dialog.prototype = {
 			this.header = header;
 		}
 
-		// {begin dialog body
+		// {начать тело диалога
 		const content = document.createElement('div');
 
 		content.className = 'dialog-content';
 		content.innerHTML = this.options.content;
 		this.content = content;
 
-		//   {begin actions panel
+		//   {начать панель действий
 		const actions = document.createElement('div');
 
 		actions.className = 'dialog-actions';
@@ -203,7 +203,7 @@ Dialog.prototype = {
 		actions.insertBefore(actionBox, first);
 
 		this.actions = actions;
-		//   }end actions panel
+		//   }завершить панель действий
 
 		const body = document.createElement('div');
 
@@ -211,7 +211,7 @@ Dialog.prototype = {
 		body.appendChild(content);
 		body.appendChild(actions);
 		this.body = body;
-		// }end dialog body
+		// }завершить тело диалога
 
 		const container = document.createElement('div');
 
@@ -235,7 +235,7 @@ Dialog.prototype = {
 		ws.outline = 'none';
 		wrapper.appendChild(container);
 
-		// register keydown event
+		// зарегистрировать событие нажатия клавиши
 		if (this.options.escHandler || this.options.enterOnButton) {
 			wrapper.tabIndex = -1;
 			this._onKeydown = this._makeHandler(function (e) {

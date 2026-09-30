@@ -57,7 +57,7 @@ const Sync = {
 
 				if (lastError) {
 					console.log(lastError.message);
-					// 'Could not establish connection. Receiving end does not exist.'
+					// 'Не удалось установить соединение. Принимающей стороны не существует».
 					cb(null);
 				}
 

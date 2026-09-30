@@ -37,7 +37,7 @@ ThumbMakerModule.prototype = {
 		Utils.Async.chain([
 			function (next) {
 				if (srcLower.indexOf('.svg') === srcLower.length - 4) {
-					// draw svg on canvas
+					// нарисовать SVG на холсте
 					const cc = document.createElement('canvas');
 
 					cc.width = img.width;
@@ -67,7 +67,7 @@ ThumbMakerModule.prototype = {
 				}
 			},
 			function () {
-				// simple resize
+				// простое изменение размера
 				const canvas = document.createElement('canvas');
 				const sy = (sx * img.height) / img.width;
 

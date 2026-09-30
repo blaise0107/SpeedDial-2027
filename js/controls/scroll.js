@@ -8,7 +8,7 @@ const ControlsScroll = new function () {
 
 		params.wheelScrollSpeed = params.wheelScrollSpeed || 9;
 
-		// styling elem
+		// элемент стиля
 		elem.style.overflow = "hidden";
 		elem.style.position = "relative";
 
@@ -26,7 +26,7 @@ const ControlsScroll = new function () {
 
 			this.setSpeed = function (_speed) {
 				speed = _speed;
-				//  restartInterval();
+				//  перезапускИнтервал();
 			};
 
 			this.start = function () {
@@ -82,7 +82,7 @@ const ControlsScroll = new function () {
 
 			function restartInterval() {
 				const time = 50;
-				//console.log( "ISS",time,speed );
+				//console.log("МКС",время,скорость);
 
 				stopInterval();
 				interval = setInterval(doScroll, time);
@@ -180,7 +180,7 @@ const ControlsScroll = new function () {
 				const width = _getScrollWidth();
 
 				scrollElem.style.width = width + "px";
-				//scrollElem.style.left = params.margins.horiz + elem.scrollLeft + "px";
+				//ScrollElem.style.left = params.margins.horiz + elem.scrollLeft + «px»;
 			}
 		}
 
@@ -188,13 +188,13 @@ const ControlsScroll = new function () {
 			if (elem.offsetWidth >= elem.scrollWidth) {
 				scrollElem.style.display = "none";
 			} else {
-				// hide scroll, because it should not affect scrollWidth of element
+				// скрыть прокрутку, поскольку она не должна влиять на ширину прокрутки элемента
 				scrollElem.style.display = "none";
 				refreshScrollZone();
 				refreshThumbPosition();
 				refreshThumbSize();
 				scrollElem.style.display = "block";
-				// refresh thumb again
+				// обновите большой палец еще раз
 				refreshThumbPosition();
 				refreshThumbSize();
 			}
@@ -241,7 +241,7 @@ const ControlsScroll = new function () {
 				document.addEventListener("mousemove", _docMouseMoveListener, false);
 				document.addEventListener("mouseup", _docMouseUpListener, false);
 
-				// create helper overlay
+				// создать вспомогательное наложение
 
 				_helperOverlay = document.createElement("div");
 				_helperOverlay.className = "controlScrollHelperOverlay";
@@ -265,7 +265,7 @@ const ControlsScroll = new function () {
 
 			const thumb = scrollElem.querySelector(".scrollThumb");
 
-			// events
+			// события
 			setThumbEventListeners(thumb);
 
 			document.addEventListener("mousewheel", function (event) {
@@ -302,7 +302,7 @@ const ControlsScroll = new function () {
 
       var thumb = scrollElem.querySelector( ".scrollThumb" );
 
-      // events
+      // события
       setThumbEventListeners( thumb );
 
       document.addEventListener( "mousewheel", function( event ){

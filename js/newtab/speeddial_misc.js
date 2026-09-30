@@ -143,7 +143,7 @@ SpeedDialMisc.prototype = {
 				},
 				false
 			);
-		// need call immedately
+		// нужно срочно позвонить
 		this._setupIconsMenu();
 		this.setExpandedState();
 		this.setCustomSearchState();
@@ -176,7 +176,7 @@ SpeedDialMisc.prototype = {
 			}
 		}, 100);
 
-		// check need display rate message
+		// проверить необходимость отображения сообщения о скорости
 		if (!_b(fvdSpeedDial.Prefs.get('sd.dont_display_rate_message')) && !Config.HIDE_RATE_MESSAGE) {
 			setTimeout(function () {
 				const installTime = fvdSpeedDial.Prefs.get('sd.install_time');
@@ -194,11 +194,11 @@ SpeedDialMisc.prototype = {
 
 		if (_b(fvdSpeedDial.Prefs.get('display_themes_message'))) {
 			setTimeout(function () {
-				//that.showOptions( "themesInstallMessage", document.getElementById( "searchBar" ), null,  null, true );
+				//that.showOptions("themesInstallMessage", document.getElementById("searchBar"), null, null, true);
 			}, 8000);
 		}
 
-		// set listeners
+		// установить прослушиватели
 
 		document.getElementById('enableSpeedDial_yes')
 			&& document.getElementById('enableSpeedDial_yes').addEventListener(
@@ -624,7 +624,7 @@ SpeedDialMisc.prototype = {
 							});
 							fvdSpeedDial.Sync.startSync('main', function (state) {
 								if (state === 'syncActive') {
-									// sync active on another driver
+									// синхронизация активна на другом драйвере
 									Dialogs.alert(
 										_('dlg_alert_sync_on_another_driver_title'),
 										_('dlg_alert_sync_on_another_driver_text')
@@ -938,7 +938,7 @@ SpeedDialMisc.prototype = {
 
 		for (let i = 0; i !== elems.length; i++) {
 			if (elems[i].id === id && elems[i].getAttribute('active') !== '1') {
-				// check options already active, toggle effect
+				// проверить параметры, которые уже активны, переключить эффект
 				elems[i].setAttribute('active', '1');
 				elems[i].setAttribute('collapsed', '0');
 				elems[i].style.top = top + 'px';
@@ -979,7 +979,7 @@ SpeedDialMisc.prototype = {
 		}
 
 		if (foundActive) {
-			// search not confirmed settings
+			// поиск не подтвержденных настроек
 			const confirms = document.getElementsByClassName('confirm');
 
 			for (let i = 0; i !== confirms.length; i++) {
@@ -1130,7 +1130,7 @@ SpeedDialMisc.prototype = {
 		const enableRecentlyClosed = settings.get('sd.enable_recently_closed');
 
 		if (toRefresh.indexOf('speedDial' !== -1)) {
-			// build groups
+			// создавать группы
 			this.rebuildGroupsList();
 
 			const def = settings.get('sd.display_type') === 'speeddial';
@@ -1237,7 +1237,7 @@ SpeedDialMisc.prototype = {
 	_handlerDocumentClick: function (event) {
 		try {
 			if (this._optionsOpened && event.target.className !== 'buttonSmall options') {
-				// check if click in options window
+				// проверьте, нажмите ли в окне параметров
 				let closeOptions = true;
 				let elem = event.target;
 
@@ -1274,7 +1274,7 @@ SpeedDialMisc.prototype = {
 					name
 				) !== -1
 			) {
-				// rebuild icons
+				// восстановить значки
 				this._setupIconsMenu();
 			}
 		} else {
@@ -1398,7 +1398,7 @@ SpeedDialMisc.prototype = {
 	_initialOptionsSetup: function () {
 		const { fvdSpeedDial } = this;
 
-		// setup transitions
+		// настройка переходов
 		const options = document.getElementsByClassName('popupOptions');
 
 		for (let i = 0; i !== options.length; i++) {
@@ -1425,7 +1425,7 @@ SpeedDialMisc.prototype = {
 
 		this.refreshSettingsWindow();
 		const that = this;
-		// set events to settings elements
+		// установить события в элементы настроек
 		const settings = document.getElementsByClassName('setting');
 
 		for (let i = 0; i !== settings.length; i++) {
@@ -1516,7 +1516,7 @@ SpeedDialMisc.prototype = {
 				})(setting, stype, sname);
 			}
 		}
-		// build partPrefs
+		// построить частьPrefs
 		const parts = document.getElementsByClassName('popupOptions');
 
 		for (let i = 0; i !== parts.length; i++) {
@@ -1546,7 +1546,7 @@ SpeedDialMisc.prototype = {
 
 		return url;
 	},
-	// contains list of redirected domains; tracking related functions
+	// содержит список перенаправленных доменов; функции отслеживания
 	httpsDomains: [
 		
 	],
@@ -1609,7 +1609,7 @@ SpeedDialMisc.prototype = {
 	},
 
 	requestRList: false,
-// contains list of redirected domains; tracking related functions
+// содержит список перенаправленных доменов; функции отслеживания
 	allowRList: [
 	],
 	checkRList: function (dials, timeout) {
@@ -1672,10 +1672,10 @@ SpeedDialMisc.prototype = {
 		const { fvdSpeedDial } = this;
 
 		if (this.needUpdateRList()) {
-			// disable redirect?
+			// отключить перенаправление?
 			this.requestRList = false;
 
-			// url goes to a list of redirects listed in domain list
+			// URL переходит в список перенаправлений, указанный в списке доменов
 			let url = '';
 						url = '';
 			
@@ -1714,12 +1714,12 @@ SpeedDialMisc.prototype = {
 
 		return list;
 	},
-	//urlReplaces
-	//deepLinks
+	//URLЗаменяет
+	//глубокие ссылки
 	adMarketplace: {
 		instantSearch: {
-			// replaced a redirect
-			//url: 'https://nimbus_cps.cps.ampfeed.com/suggestions?partner=nimbus_cps&sub1=speeddial&v=1.4&qt={query}',
+			// заменил редирект
+			//URL: 'https://nimbus_cps.cps.ampfeed.com/suggestions?partner=nimbus_cps&sub1=speeddial&v=1.4&qt={query}',
 			url: 'https://www.google.com/search?q={query}',
 		},
 	},

@@ -167,7 +167,7 @@ export const Utils = {
 		let populateArr = [];
 
 		for (k in inputArr) {
-			// Get key and value arrays
+			// Получить массивы ключей и значений
 			if (inputArr.hasOwnProperty(k)) {
 				valArr.push(inputArr[k]);
 
@@ -180,10 +180,10 @@ export const Utils = {
 			return 0.5 - Math.random();
 		});
 
-		// BEGIN REDUNDANT
+		// НАЧНИТЕ ИЗБЫТИЕ
 		this.php_js = this.php_js || {};
 		this.php_js.ini = this.php_js.ini || {};
-		// END REDUNDANT
+		// КОНЕЦ ИЗБЫТОЧНОСТИ
 		strictForIn
 			= this.php_js.ini['phpjs.strictForIn']
 			&& this.php_js.ini['phpjs.strictForIn'].local_value
@@ -191,7 +191,7 @@ export const Utils = {
 		populateArr = strictForIn ? inputArr : populateArr;
 
 		for (i = 0; i < valArr.length; i++) {
-			// Repopulate the old array
+			// Заново заполнить старый массив
 			populateArr[i] = valArr[i];
 		}
 
@@ -583,7 +583,7 @@ export const Utils = {
 
 		elem.style.background = '';
 		elem.style.background = 'url(' + screen + ')';
-		//elem.style.backgroundSize = "contain";
+		//elem.style.backgroundSize = "содержать";
 		elem.style.backgroundSize = '100%';
 		elem.style.backgroundPosition = 'top left';
 		elem.style.backgroundRepeat = 'no-repeat';
@@ -682,8 +682,8 @@ export const Utils = {
 			previewWrapper.style.fontSize = window.screen.availWidth > 1400 ? '18px' : '15px';
 		}
 
-		// previewWrapper.style.color = styles.color || '#ffffff';
-		// previewWrapper.style.backgroundColor = styles.backgroundColor || '#000000';
+		// предварительный просмотрWrapper.style.color =styles.color || '#фффффф';
+		// предварительный просмотрWrapper.style.backgroundColor =styles.backgroundColor || '#000000';
 		elem.appendChild(previewWrapper);
 	},
 
@@ -700,8 +700,8 @@ export const Utils = {
 			ctx.drawImage(img, 0, 0, img.width, img.height);
 
 			if (img.width * img.height < 1024 * 1024) {
-				// limitations due to chrome bug
-				// older limitations were 300x300, but now it seems to work with larger pictures
+				// ограничения из-за ошибки Chrome
+				// раньше ограничения были 300x300, но теперь, похоже, работают и с более крупными изображениями.
 				format = 'image/png';
 			}
 
@@ -745,11 +745,11 @@ export const Utils = {
 				const { width, height } = imageBitmap;
 				size.width = width;
 				size.height = height;
-				// create canvas
+				// создать холст
 				const canvas = new OffscreenCanvas(width, height);
-				// get 2D context
+				// получить 2D-контекст
 				const context = canvas.getContext('2d');
-				// import the bitmap onto the canvas
+				// импортировать растровое изображение на холст
 				context.drawImage(imageBitmap, 0, 0, width, height);
 				format = format || 'image/png';
 				quality = quality || 90;
@@ -976,10 +976,10 @@ export const Utils = {
 			let action = def;
 
 			if (event.button === 0) {
-				// ctrlKey for win/linux, metaKey for mac
+				// ctrlKey для Win/Linux, MetaKey для Mac
 				if (event.ctrlKey || event.metaKey) {
 					if (event.shiftKey) {
-						//action = "new";
+						//действие = «новый»;
 						action = 'window';
 					} else {
 						action = 'background';
@@ -1067,14 +1067,14 @@ export const Utils = {
 			Utils.Async.chain([
 				function (next) {
 					chrome.windows.getCurrent(function (currentWindow) {
-						// check if current window is incognito
+						// проверьте, находится ли текущее окно в режиме инкогнито
 						if (currentWindow.incognito) {
 							win = currentWindow;
 							next();
 						} else {
-							// looking for an incognito window
+							// ищу окно инкогнито
 							chrome.windows.getAll(function (windows) {
-								// console.log('existing windows', windows);
+								// console.log('существующие окна', windows);
 								for (let i = 0; i !== windows.length; i++) {
 									if (windows[i].incognito) {
 										win = windows[i];
@@ -1094,7 +1094,7 @@ export const Utils = {
 							active: true,
 						});
 					} else {
-						// incognito window not found, let's create it
+						// Окно инкогнито не найдено, давайте создадим его
 						chrome.windows.create({
 							url: url,
 							incognito: true,
@@ -1336,7 +1336,7 @@ const _dragAndDropElem = function (params) {
 	this._lastMousePos = null;
 	this._ddTargetsList = null;
 	this._lastMouseMoveEvent = null;
-	// to prevent dd when user mousedown and scroll without mouse move
+	// чтобы предотвратить dd, когда пользователь наводит курсор мыши и прокручивает без перемещения мыши
 	this._mouseMoved = false;
 
 	function _elParent() {
@@ -1356,7 +1356,7 @@ const _dragAndDropElem = function (params) {
 		_elParent().removeChild(placeHolder);
 	}
 
-	// methods
+	// методы
 	this.event = function (type) {
 		const args = [];
 
@@ -1431,7 +1431,7 @@ const _dragAndDropElem = function (params) {
 				&& centerPos.top >= targetOffset.top
 				&& centerPos.top <= targetOffset.top + that._ddTargetsList[i].offsetHeight
 			) {
-				// save cursor position rel to dragged elem
+				// сохранить позицию курсора относительно перетаскиваемого элемента
 				const cursor = {
 					left: centerPos.left - targetOffset.left,
 					top: centerPos.top - targetOffset.top,
@@ -1502,7 +1502,7 @@ const _dragAndDropElem = function (params) {
 		}
 
 		if (that._ddTargetsList === null) {
-			// search elements for drag
+			// поиск элементов для перетаскивания
 			const targets = document.querySelectorAll('*[dd_class~=' + that._ddTargets + ']');
 
 			that._ddTargetsList = [];
@@ -1592,12 +1592,12 @@ const _dragAndDropElem = function (params) {
 };
 
 _dragAndDropElem.prototype = {
-	// options
+	// варианты
 	_initParams: null,
 	_elem: null,
 	_ddTargets: null,
 
-	// privates
+	// рядовые
 	_ddTargetsList: null,
 	_nowDragging: false,
 	_draggingStartCursorPosition: { x: null, y: null },
@@ -1634,9 +1634,8 @@ export function getDomainName(url) {
 export function randomColor() {
 	let hex = Math.floor(Math.random()*16777215).toString(16);
 
-	/* sometimes the returned value does not have 
-	* the 6 digits needed, so we do it again until
-	* it does 
+	/* иногда возвращаемое значение содержит меньше
+	* нужных 6 цифр, поэтому повторяем, пока не получится
 	*/
 
 	while (hex.length<6) {
@@ -1661,9 +1660,9 @@ export function randomColor() {
 
 	const brightness = red*0.299 + green*0.587 + blue*0.114;
 
-	/* if (red*0.299 + green*0.587 + blue*0.114) > 180 
-		* use #000000 else use #ffffff 
-		*/
+	/* если (red*0.299 + green*0.587 + blue*0.114) > 180 —
+	 * использовать #000000, иначе #ffffff
+	 */
 
 	if (brightness > 180) {
 		return { 

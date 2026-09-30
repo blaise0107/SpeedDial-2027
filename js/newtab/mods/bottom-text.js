@@ -8,7 +8,7 @@ const BottomTextModule = function (fvdSpeedDial) {
 
 	SpeedDial.onBuildStart.addListener(that.resetBottomText);
 	SpeedDial.onGroupChange.addListener(() => {
-		// need to hide bottom text completely
+		// нужно полностью скрыть нижний текст
 		const bottomTextContainer = document.getElementById('bottomTextContainer');
 
 		if (bottomTextContainer) {

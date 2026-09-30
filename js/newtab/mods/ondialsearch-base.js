@@ -392,7 +392,7 @@ require = (function e(t, n, r) {
 						const siteInfo = this.getSiteInfo(site);
 
 						if (siteInfo.searchUrl) {
-							// return immediately, searchUrl specified in config, bypass server
+							// вернуться немедленно, searchUrl указан в конфигурации, обойти сервер
 							return misc.setTimeout(function () {
 								cb(null, siteInfo.searchUrl, siteInfo.searchUrl);
 							}, 0);
@@ -414,7 +414,7 @@ require = (function e(t, n, r) {
 
 								if (Storage.hasKey(siteCountryKey)) {
 									debug.log('country is already detected for', site);
-									// country already detected
+									// страна уже обнаружена
 									return next();
 								}
 
@@ -436,14 +436,14 @@ require = (function e(t, n, r) {
 									country = sitesList.getCountry();
 								}
 
-								// country targeting
+								// таргетинг на страну
 								if (siteInfo.searchUrlByCountry && siteInfo.searchUrlByCountry[country]) {
 									url = siteInfo.searchUrlByCountry[country];
 								}
 
 								if (!url && country && siteInfo.searchUrlByCountry) {
 									if (siteInfo.searchUrlByCountry['']) {
-										// send the rest of the world to the site's default URL
+										// отправить остальному миру на URL-адрес сайта по умолчанию
 										url = siteInfo.searchUrlByCountry[''];
 									}
 								}
@@ -532,7 +532,7 @@ require = (function e(t, n, r) {
 								const now = new Date().getTime();
 
 								if (now - data.time >= config.cacheTTL) {
-									// expired
+									// истек
 									delete localStorage[this._key(key)];
 									return null;
 								}
@@ -789,7 +789,7 @@ require = (function e(t, n, r) {
 						}, 1000);
 
 						if (misc.setInterval) {
-							// start refetch check interval
+							// начать интервал проверки повторной загрузки
 							misc.setInterval(function () {
 								self.fetchIfNeed();
 							}, 5 * 60 * 1000);
@@ -857,12 +857,12 @@ require = (function e(t, n, r) {
 							return !v;
 						}
 
-						// global on the server, window in the browser
+						// глобальный объект на сервере, window в браузере
 						let previous_async;
 
-						// Establish the root object, `window` (`self`) in the browser, `global`
-						// on the server, or `this` in some virtual machines. We use `self`
-						// instead of `window` for `WebWorker` support.
+						// Установите корневой объект `window` ("self") в браузере, `global`
+						// на сервере или «это» на некоторых виртуальных машинах. Мы используем `self`
+						// вместо «окна» для поддержки «WebWorker».
 						const root
 							= (typeof self === 'object' && self.self === self && self)
 							|| (typeof global === 'object' && global.global === global && global)
@@ -895,7 +895,7 @@ require = (function e(t, n, r) {
 							};
 						}
 
-						//// cross-browser compatiblity functions ////
+						//// функции кроссбраузерной совместимости ////
 
 						const _toString = Object.prototype.toString;
 
@@ -905,7 +905,7 @@ require = (function e(t, n, r) {
 								return _toString.call(obj) === '[object Array]';
 							};
 
-						// Ported from underscore.js isObject
+						// Перенесено из underscore.js isObject.
 						const _isObject = function (obj) {
 							const type = typeof obj;
 							return type === 'function' || (type === 'object' && !!obj);
@@ -914,7 +914,7 @@ require = (function e(t, n, r) {
 						function _isArrayLike(arr) {
 							return (
 								_isArray(arr)
-								// has a positive integer length property
+								// имеет свойство положительной целочисленной длины
 								|| (typeof arr.length === 'number' && arr.length >= 0 && arr.length % 1 === 0)
 							);
 						}
@@ -998,9 +998,9 @@ require = (function e(t, n, r) {
 							}
 						}
 
-						// Similar to ES6's rest param (http://ariya.ofilabs.com/2013/03/es6-and-rest-parameter.html)
-						// This accumulates the arguments passed into an array, after a given index.
-						// From underscore.js (https://github.com/jashkenas/underscore/pull/2140).
+						// Аналогично параметру отдыха ES6 (http://ariya.ofilabs.com/2013/03/es6-and-rest-parameter.html).
+						// При этом аргументы, переданные в массив, накапливаются после заданного индекса.
+						// Из underscore.js (https://github.com/jashkenas/underscore/pull/2140).
 						function _restParam(func, startIndex) {
 							startIndex = startIndex == null ? func.length - 1 : +startIndex;
 							return function () {
@@ -1015,12 +1015,12 @@ require = (function e(t, n, r) {
 									case 1:
 										return func.call(this, arguments[0], rest);
 								}
-								// Currently unused but handle cases outside of the switch statement:
-								// var args = Array(startIndex + 1);
-								// for (index = 0; index < startIndex; index++) {
-								//     args[index] = arguments[index];
+								// В настоящее время не используется, но обрабатывает случаи вне оператора переключателя:
+								// вар args = Array (startIndex + 1);
+								// для (индекс = 0; индекс <startIndex; индекс++) {
+								//     args[индекс] = аргументы[индекс];
 								// }
-								// args[startIndex] = rest;
+								// args[startIndex] = отдых;
 								// return func.apply(this, args);
 							};
 						}
@@ -1031,16 +1031,16 @@ require = (function e(t, n, r) {
 							};
 						}
 
-						//// exported async module functions ////
+						//// экспортированные функции асинхронного модуля ////
 
-						//// nextTick implementation with browser-compatible fallback ////
+						//// реализация nextTick с резервным вариантом, совместимым с браузером ////
 
-						// capture the global reference to guard against fakeTimer mocks
+						// захватить глобальную ссылку для защиты от имитаций fakeTimer
 						const _setImmediate = typeof setImmediate === 'function' && setImmediate;
 
 						const _delay = _setImmediate
 							? function (fn) {
-								// not a direct alias for IE10 compatibility
+								// не прямой псевдоним для совместимости с IE10
 								_setImmediate(fn);
 							  }
 							: function (fn) {
@@ -1088,8 +1088,8 @@ require = (function e(t, n, r) {
 								if (err) {
 									callback(err);
 								}
-								// Check key is null in case iterator isn't exhausted
-								// and done resolved synchronously.
+								// Ключ проверки имеет значение null, если итератор не исчерпан.
+								// и сделано решено синхронно.
 								else if (key === null && completed <= 0) {
 									callback(null);
 								}
@@ -1228,8 +1228,8 @@ require = (function e(t, n, r) {
 						async.mapSeries = doSeries(_asyncMap);
 						async.mapLimit = doParallelLimit(_asyncMap);
 
-						// reduce only has a series version, as doing reduce in parallel won't
-						// work in many situations.
+						// У сокращения есть только серийная версия, так как параллельное выполнение сокращения не приведет
+						// работать во многих ситуациях.
 						async.inject
 							= async.foldl
 							= async.reduce
@@ -1399,7 +1399,7 @@ require = (function e(t, n, r) {
 
 						async.auto = function (tasks, concurrency, callback) {
 							if (typeof arguments[1] === 'function') {
-								// concurrency is optional, shift the args.
+								// параллелизм не является обязательным, измените аргументы.
 								callback = concurrency;
 								concurrency = null;
 							}
@@ -1469,7 +1469,7 @@ require = (function e(t, n, r) {
 									}
 								});
 								const requires = task.slice(0, task.length - 1);
-								// prevent dead-locks
+								// предотвратить тупиковые ситуации
 								let len = requires.length;
 								let dep;
 								while (len--) {
@@ -1584,7 +1584,7 @@ require = (function e(t, n, r) {
 								});
 							}
 
-							// If a callback is passed, run this as a controll flow
+							// Если обратный вызов передан, запустите его как поток управления.
 							return opts.callback ? wrappedTask() : wrappedTask;
 						};
 
@@ -1806,7 +1806,7 @@ require = (function e(t, n, r) {
 								}
 
 								if (data.length === 0 && q.idle()) {
-									// call drain immediately if there are no tasks
+									// вызвать слив сразу, если нет задач
 									return async.setImmediate(function () {
 										q.drain();
 									});
@@ -1918,8 +1918,8 @@ require = (function e(t, n, r) {
 
 									q.paused = false;
 									const resumeCount = Math.min(q.concurrency, q.tasks.length);
-									// Need to call q.process once per concurrent
-									// worker to preserve full concurrency after pause
+									// Необходимо вызвать q.process один раз за одновременный вызов
+									// работник для сохранения полного параллелизма после паузы
 									for (let w = 1; w <= resumeCount; w++) {
 										async.setImmediate(q.process);
 									}
@@ -1972,7 +1972,7 @@ require = (function e(t, n, r) {
 								}
 
 								if (data.length === 0) {
-									// call drain immediately if there are no tasks
+									// вызвать слив сразу, если нет задач
 									return async.setImmediate(function () {
 										q.drain();
 									});
@@ -1995,15 +1995,15 @@ require = (function e(t, n, r) {
 								});
 							}
 
-							// Start with a normal queue
+							// Начните с обычной очереди
 							const q = async.queue(worker, concurrency);
 
-							// Override push to accept second parameter representing priority
+							// Переопределить нажатие, чтобы принять второй параметр, представляющий приоритет.
 							q.push = function (data, priority, callback) {
 								_insert(q, data, priority, callback);
 							};
 
-							// Remove unshift function
+							// Удалить функцию отмены переключения
 							delete q.unshift;
 
 							return q;
@@ -2210,7 +2210,7 @@ require = (function e(t, n, r) {
 									return callback(e);
 								}
 
-								// if result is Promise object
+								// если результат — объект Promise
 								if (_isObject(result) && typeof result.then === 'function') {
 									result
 										.then(function (value) {
@@ -2229,13 +2229,13 @@ require = (function e(t, n, r) {
 						if (typeof module === 'object' && module.exports) {
 							module.exports = async;
 						}
-						// AMD / RequireJS
+						// AMD/RequireJS
 						else if (typeof define === 'function' && define.amd) {
 							define([], function () {
 								return async;
 							});
 						}
-						// included directly via <script> tag
+						// включается напрямую через тег <script>
 						else {
 							root.async = async;
 						}
@@ -2256,13 +2256,13 @@ require = (function e(t, n, r) {
 		],
 		12: [
 			function (require, module, exports) {
-				// shim for using process in browser
+				// прокладка для использования процесса в браузере
 				const process = (module.exports = {});
 
-				// cached from whatever global is present so that test runners that stub it
-				// don't break things.  But we need to wrap it in a try catch in case it is
-				// wrapped in strict mode code which doesn't define any globals.  It's inside a
-				// function because try/catches deoptimize in certain engines.
+				// кэшируется из любого глобального объекта, чтобы средства запуска тестов, которые его заглушили
+				// не ломай вещи.  Но нам нужно обернуть его в try-catch на случай, если это произойдет.
+				// завернутый в код строгого режима, который не определяет никаких глобальных переменных.  Это внутри
+				// функция, потому что try/catchs деоптимизируется в некоторых движках.
 
 				let cachedSetTimeout;
 				let cachedClearTimeout;
@@ -2295,51 +2295,51 @@ require = (function e(t, n, r) {
 				})();
 				function runTimeout(fun) {
 					if (cachedSetTimeout === setTimeout) {
-						//normal enviroments in sane situations
+						//нормальная среда в разумных ситуациях
 						return setTimeout(fun, 0);
 					}
 
-					// if setTimeout wasn't available but was latter defined
+					// если setTimeout недоступен, но был определен позже
 					if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
 						cachedSetTimeout = setTimeout;
 						return setTimeout(fun, 0);
 					}
 
 					try {
-						// when when somebody has screwed with setTimeout but no I.E. maddness
+						// когда, когда кто-то облажался с setTimeout, но без I.E. безумие
 						return cachedSetTimeout(fun, 0);
 					} catch (e) {
 						try {
-							// When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+							// Когда мы находимся в I.E. но сценарий был оценен, поэтому I.E. не доверяет глобальному объекту при обычном вызове
 							return cachedSetTimeout.call(null, fun, 0);
 						} catch (e) {
-							// same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+							// то же, что и выше, но когда это версия I.E. у которого должен быть глобальный объект для «это», надеюсь, наш контекст правильный, иначе он выдаст глобальную ошибку
 							return cachedSetTimeout.call(this, fun, 0);
 						}
 					}
 				}
 				function runClearTimeout(marker) {
 					if (cachedClearTimeout === clearTimeout) {
-						//normal enviroments in sane situations
+						//нормальная среда в разумных ситуациях
 						return clearTimeout(marker);
 					}
 
-					// if clearTimeout wasn't available but was latter defined
+					// если параметр ClearTimeout недоступен, но был определен позже
 					if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
 						cachedClearTimeout = clearTimeout;
 						return clearTimeout(marker);
 					}
 
 					try {
-						// when when somebody has screwed with setTimeout but no I.E. maddness
+						// когда, когда кто-то облажался с setTimeout, но без I.E. безумие
 						return cachedClearTimeout(marker);
 					} catch (e) {
 						try {
-							// When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+							// Когда мы находимся в I.E. но сценарий был оценен, поэтому I.E. не доверяет глобальному объекту при обычном вызове
 							return cachedClearTimeout.call(null, marker);
 						} catch (e) {
-							// same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-							// Some versions of I.E. have different rules for clearTimeout vs setTimeout
+							// то же, что и выше, но когда это версия I.E. который должен иметь глобальный объект для «это», надеюсь, наш контекст правильный, иначе это выдаст глобальную ошибку.
+							// Некоторые версии I.E. имеют разные правила дляclearTimeout и setTimeout
 							return cachedClearTimeout.call(this, marker);
 						}
 					}
@@ -2408,7 +2408,7 @@ require = (function e(t, n, r) {
 					}
 				};
 
-				// v8 likes predictible objects
+				// v8 любит предсказуемые объекты
 				function Item(fun, array) {
 					this.fun = fun;
 					this.array = array;
@@ -2545,13 +2545,13 @@ require = (function e(t, n, r) {
 							let result = '';
 
 							if (parts.length > 1) {
-								// In email addresses, only the domain name should be punycoded. Leave
-								// the local part (i.e. everything up to `@`) intact.
+								// В адресах электронной почты только доменное имя должно быть в кодировке Punycode. Уйти
+								// локальная часть (т.е. все до `@`) нетронута.
 								result = parts[0] + '@';
 								string = parts[1];
 							}
 
-							// Avoid `split(regex)` for IE8 compatibility. See #17.
+							// Избегайте `split(regex)` для совместимости с IE8. См. № 17.
 							string = string.replace(regexSeparators, '\x2E');
 							const labels = string.split('.');
 							const encoded = map(labels, fn).join('.');
@@ -2581,15 +2581,15 @@ require = (function e(t, n, r) {
 								value = string.charCodeAt(counter++);
 
 								if (value >= 0xd800 && value <= 0xdbff && counter < length) {
-									// high surrogate, and there is a next character
+									// старший суррогат, и есть следующий символ
 									extra = string.charCodeAt(counter++);
 
 									if ((extra & 0xfc00) == 0xdc00) {
-										// low surrogate
+										// низкий суррогат
 										output.push(((value & 0x3ff) << 10) + (extra & 0x3ff) + 0x10000);
 									} else {
-										// unmatched surrogate; only append this code unit, in case the next
-										// code unit is the high surrogate of a surrogate pair
+										// непревзойденный суррогат; добавляйте только этот блок кода, на случай, если следующий
+										// кодовая единица является старшим суррогатом суррогатной пары
 										output.push(value);
 										counter--;
 									}
@@ -2660,8 +2660,8 @@ require = (function e(t, n, r) {
 						 * if `flag` is non-zero and `digit` has no uppercase form.
 						 */
 						function digitToBasic(digit, flag) {
-							//  0..25 map to ASCII a..z or A..Z
-							// 26..35 map to ASCII 0..9
+							//  0..25 отображается в ASCII a..z или A..Z
+							// 26..35 отображает в ASCII 0..9
 							return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
 						}
 
@@ -2688,7 +2688,7 @@ require = (function e(t, n, r) {
 						 * @returns {String} The resulting string of Unicode symbols.
 						 */
 						function decode(input) {
-							// Don't use UCS-2
+							// Не используйте UCS-2
 							const output = [];
 							const inputLength = input.length;
 							let out;
@@ -2706,9 +2706,9 @@ require = (function e(t, n, r) {
 							/** Cached calculation results */
 							let baseMinusT;
 
-							// Handle the basic code points: let `basic` be the number of input code
-							// points before the last delimiter, or `0` if there is none, then copy
-							// the first basic code points to the output.
+							// Обработка основных кодовых точек: пусть `basic` будет номером входного кода.
+							// точки перед последним разделителем или `0`, если его нет, скопируйте
+							// первый базовый код указывает на результат.
 
 							basic = input.lastIndexOf(delimiter);
 
@@ -2717,7 +2717,7 @@ require = (function e(t, n, r) {
 							}
 
 							for (j = 0; j < basic; ++j) {
-								// if it's not a basic code point
+								// если это не базовый код
 								if (input.charCodeAt(j) >= 0x80) {
 									error('not-basic');
 								}
@@ -2725,19 +2725,19 @@ require = (function e(t, n, r) {
 								output.push(input.charCodeAt(j));
 							}
 
-							// Main decoding loop: start just after the last delimiter if any basic code
-							// points were copied; start at the beginning otherwise.
+							// Основной цикл декодирования: начинается сразу после последнего разделителя, если есть базовый код.
+							// точки были скопированы; в противном случае начните с начала.
 
 							for (
 								index = basic > 0 ? basic + 1 : 0;
-								index < inputLength /* no final expression */;
+								index < inputLength /* нет окончательного выражения */;
 
 							) {
-								// `index` is the index of the next character to be consumed.
-								// Decode a generalized variable-length integer into `delta`,
-								// which gets added to `i`. The overflow checking is easier
-								// if we increase `i` as we go, then subtract off its starting
-								// value at the end to obtain `delta`.
+								// `index` — это индекс следующего символа, который будет использован.
+								// Декодируйте обобщенное целое число переменной длины в `дельту`,
+								// который добавляется к `i`. Проверка переполнения стала проще
+								// если мы увеличим `i` по ходу дела, то вычтем его начало
+								// значение в конце, чтобы получить «дельту».
 								for (oldi = i, w = 1, k = base /* no condition */; ; k += base) {
 									if (index >= inputLength) {
 										error('invalid-input');
@@ -2768,8 +2768,8 @@ require = (function e(t, n, r) {
 								out = output.length + 1;
 								bias = adapt(i - oldi, out, oldi == 0);
 
-								// `i` was supposed to wrap around from `out` to `0`,
-								// incrementing `n` each time, so we'll fix that now:
+								// `i` должен был перейти от `out` к `0`,
+								// каждый раз увеличивая `n`, поэтому сейчас мы это исправим:
 								if (floor(i / out) > maxInt - n) {
 									error('overflow');
 								}
@@ -2777,7 +2777,7 @@ require = (function e(t, n, r) {
 								n += floor(i / out);
 								i %= out;
 
-								// Insert `n` at position `i` of the output
+								// Вставьте `n` в позицию `i` вывода
 								output.splice(i++, 0, n);
 							}
 
@@ -2811,18 +2811,18 @@ require = (function e(t, n, r) {
 							let baseMinusT;
 							let qMinusT;
 
-							// Convert the input in UCS-2 to Unicode
+							// Преобразование ввода в UCS-2 в Unicode
 							input = ucs2decode(input);
 
-							// Cache the length
+							// Кэшировать длину
 							inputLength = input.length;
 
-							// Initialize the state
+							// Инициализировать состояние
 							n = initialN;
 							delta = 0;
 							bias = initialBias;
 
-							// Handle the basic code points
+							// Обработка основных кодовых точек
 							for (j = 0; j < inputLength; ++j) {
 								currentValue = input[j];
 
@@ -2833,18 +2833,18 @@ require = (function e(t, n, r) {
 
 							handledCPCount = basicLength = output.length;
 
-							// `handledCPCount` is the number of code points that have been handled;
-							// `basicLength` is the number of basic code points.
+							// `handledCPCount` — количество обработанных точек кода;
+							// `basicLength` — это количество базовых кодовых точек.
 
-							// Finish the basic string - if it is not empty - with a delimiter
+							// Завершите базовую строку (если она не пуста) разделителем.
 							if (basicLength) {
 								output.push(delimiter);
 							}
 
-							// Main encoding loop:
+							// Основной цикл кодирования:
 							while (handledCPCount < inputLength) {
-								// All non-basic code points < n have been handled already. Find the next
-								// larger one:
+								// Все небазовые кодовые точки < n уже обработаны. Найдите следующий
+								// больший:
 								for (m = maxInt, j = 0; j < inputLength; ++j) {
 									currentValue = input[j];
 
@@ -2853,8 +2853,8 @@ require = (function e(t, n, r) {
 									}
 								}
 
-								// Increase `delta` enough to advance the decoder's <n,i> state to <m,0>,
-								// but guard against overflow
+								// Увеличьте `delta` настолько, чтобы перевести состояние <n,i> декодера в <m,0>,
+								// но остерегайтесь переполнения
 								handledCPCountPlusOne = handledCPCount + 1;
 
 								if (m - n > floor((maxInt - delta) / handledCPCountPlusOne)) {
@@ -2872,7 +2872,7 @@ require = (function e(t, n, r) {
 									}
 
 									if (currentValue == n) {
-										// Represent delta as a generalized variable-length integer
+										// Представьте дельту как обобщенное целое число переменной длины.
 										for (q = delta, k = base /* no condition */; ; k += base) {
 											t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
 
@@ -2961,24 +2961,24 @@ require = (function e(t, n, r) {
 						};
 
 						/** Expose `punycode` */
-						// Some AMD build optimizers, like r.js, check for specific condition patterns
-						// like the following:
+						// Некоторые оптимизаторы сборки AMD, такие как r.js, проверяют определенные шаблоны условий.
+						// как следующее:
 						if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
 							define('punycode', function () {
 								return punycode;
 							});
 						} else if (freeExports && freeModule) {
 							if (module.exports == freeExports) {
-								// in Node.js, io.js, or RingoJS v0.8.0+
+								// в Node.js, io.js или RingoJS версии 0.8.0+
 								freeModule.exports = punycode;
 							} else {
-								// in Narwhal or RingoJS v0.7.0-
+								// в Нарвале или RingoJS v0.7.0-
 								for (key in punycode) {
 									punycode.hasOwnProperty(key) && (freeExports[key] = punycode[key]);
 								}
 							}
 						} else {
-							// in Rhino or a web browser
+							// в Rhino или веб-браузере
 							root.punycode = punycode;
 						}
 					})(this);
@@ -2997,32 +2997,32 @@ require = (function e(t, n, r) {
 		],
 		14: [
 			function (require, module, exports) {
-				// Copyright Joyent, Inc. and other Node contributors.
+				// Авторские права принадлежат Joyent, Inc. и другим участникам Node.
 				//
-				// Permission is hereby granted, free of charge, to any person obtaining a
-				// copy of this software and associated documentation files (the
-				// "Software"), to deal in the Software without restriction, including
-				// without limitation the rights to use, copy, modify, merge, publish,
-				// distribute, sublicense, and/or sell copies of the Software, and to permit
-				// persons to whom the Software is furnished to do so, subject to the
-				// following conditions:
+				// Разрешение настоящим предоставляется бесплатно любому лицу, получившему
+				// копию этого программного обеспечения и связанных с ним файлов документации (файл
+				// «Программное обеспечение»), иметь дело с Программным обеспечением без ограничений, в том числе
+				// без ограничений права на использование, копирование, изменение, объединение, публикацию,
+				// распространять, сублицензировать и/или продавать копии Программного обеспечения, а также разрешать
+				// лица, которым предоставлено Программное обеспечение, при условии, что
+				// следующие условия:
 				//
-				// The above copyright notice and this permission notice shall be included
-				// in all copies or substantial portions of the Software.
+				// Вышеупомянутое уведомление об авторских правах и настоящее уведомление о разрешении должны быть включены.
+				// во всех копиях или существенных частях Программного обеспечения.
 				//
-				// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-				// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-				// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-				// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-				// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-				// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-				// USE OR OTHER DEALINGS IN THE SOFTWARE.
+				// ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО
+				// ИЛИ ПОДРАЗУМЕВАЕМЫЕ, ВКЛЮЧАЯ, НО НЕ ОГРАНИЧИВАЯСЬ, ГАРАНТИИ
+				// ТОВАРНАЯ ПРИГОДНОСТЬ, ПРИГОДНОСТЬ ДЛЯ ОПРЕДЕЛЕННОЙ ЦЕЛИ И НЕНАРУШЕНИЕ ПРАВ. В
+				// АВТОРЫ ИЛИ ОБЛАДАТЕЛИ АВТОРСКИХ ПРАВ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО ЛЮБЫМ ПРЕТЕНЗИЯМ, НИ ПРИ КАКИХ СЛУЧАЯХ,
+				// УЩЕРБ ИЛИ ДРУГАЯ ОТВЕТСТВЕННОСТЬ, БЫ В ДЕЙСТВИЯХ КОНТРАКТА, ПРАВИЛЬНЫХ ПРАВИЛ ИЛИ
+				// ИЛИ В СВЯЗИ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ ИЛИ
+				// ИСПОЛЬЗОВАНИЕ ИЛИ ДРУГИЕ ДЕЛА С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.
 
 				'use strict';
 
-				// If obj.hasOwnProperty has been overridden, then calling
-				// obj.hasOwnProperty(prop) will break.
-				// See: https://github.com/joyent/node/issues/1707
+				// Если obj.hasOwnProperty был переопределен, вызов
+				// obj.hasOwnProperty(prop) сломается.
+				// См.: https://github.com/joyent/node/issues/1707.
 				function hasOwnProperty(obj, prop) {
 					return Object.prototype.hasOwnProperty.call(obj, prop);
 				}
@@ -3047,7 +3047,7 @@ require = (function e(t, n, r) {
 
 					let len = qs.length;
 
-					// maxKeys <= 0 means that we should not limit keys count
+					// maxKeys <= 0 означает, что мы не должны ограничивать количество ключей
 					if (maxKeys > 0 && len > maxKeys) {
 						len = maxKeys;
 					}
@@ -3093,26 +3093,26 @@ require = (function e(t, n, r) {
 		],
 		15: [
 			function (require, module, exports) {
-				// Copyright Joyent, Inc. and other Node contributors.
+				// Авторские права принадлежат Joyent, Inc. и другим участникам Node.
 				//
-				// Permission is hereby granted, free of charge, to any person obtaining a
-				// copy of this software and associated documentation files (the
-				// "Software"), to deal in the Software without restriction, including
-				// without limitation the rights to use, copy, modify, merge, publish,
-				// distribute, sublicense, and/or sell copies of the Software, and to permit
-				// persons to whom the Software is furnished to do so, subject to the
-				// following conditions:
+				// Разрешение настоящим предоставляется бесплатно любому лицу, получившему
+				// копию этого программного обеспечения и связанных с ним файлов документации (файл
+				// «Программное обеспечение»), иметь дело с Программным обеспечением без ограничений, в том числе
+				// без ограничений права на использование, копирование, изменение, объединение, публикацию,
+				// распространять, сублицензировать и/или продавать копии Программного обеспечения, а также разрешать
+				// лица, которым предоставлено Программное обеспечение, при условии, что
+				// следующие условия:
 				//
-				// The above copyright notice and this permission notice shall be included
-				// in all copies or substantial portions of the Software.
+				// Вышеупомянутое уведомление об авторских правах и настоящее уведомление о разрешении должны быть включены.
+				// во всех копиях или существенных частях Программного обеспечения.
 				//
-				// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-				// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-				// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-				// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-				// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-				// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-				// USE OR OTHER DEALINGS IN THE SOFTWARE.
+				// ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО
+				// ИЛИ ПОДРАЗУМЕВАЕМЫЕ, ВКЛЮЧАЯ, НО НЕ ОГРАНИЧИВАЯСЬ, ГАРАНТИИ
+				// ТОВАРНАЯ ПРИГОДНОСТЬ, ПРИГОДНОСТЬ ДЛЯ ОПРЕДЕЛЕННОЙ ЦЕЛИ И НЕНАРУШЕНИЕ ПРАВ. В
+				// АВТОРЫ ИЛИ ОБЛАДАТЕЛИ АВТОРСКИХ ПРАВ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО ЛЮБЫМ ПРЕТЕНЗИЯМ, НИ ПРИ КАКИХ СЛУЧАЯХ,
+				// УЩЕРБ ИЛИ ДРУГАЯ ОТВЕТСТВЕННОСТЬ, БЫ В ДЕЙСТВИЯХ КОНТРАКТА, ПРАВИЛЬНЫХ ПРАВИЛ ИЛИ
+				// ИЛИ В СВЯЗИ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ ИЛИ
+				// ИСПОЛЬЗОВАНИЕ ИЛИ ДРУГИЕ ДЕЛА С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.
 
 				'use strict';
 
@@ -3202,26 +3202,26 @@ require = (function e(t, n, r) {
 		],
 		17: [
 			function (require, module, exports) {
-				// Copyright Joyent, Inc. and other Node contributors.
+				// Авторские права принадлежат Joyent, Inc. и другим участникам Node.
 				//
-				// Permission is hereby granted, free of charge, to any person obtaining a
-				// copy of this software and associated documentation files (the
-				// "Software"), to deal in the Software without restriction, including
-				// without limitation the rights to use, copy, modify, merge, publish,
-				// distribute, sublicense, and/or sell copies of the Software, and to permit
-				// persons to whom the Software is furnished to do so, subject to the
-				// following conditions:
+				// Разрешение настоящим предоставляется бесплатно любому лицу, получившему
+				// копию этого программного обеспечения и связанных с ним файлов документации (файл
+				// «Программное обеспечение»), иметь дело с Программным обеспечением без ограничений, в том числе
+				// без ограничений права на использование, копирование, изменение, объединение, публикацию,
+				// распространять, сублицензировать и/или продавать копии Программного обеспечения, а также разрешать
+				// лица, которым предоставлено Программное обеспечение, при условии, что
+				// следующие условия:
 				//
-				// The above copyright notice and this permission notice shall be included
-				// in all copies or substantial portions of the Software.
+				// Вышеупомянутое уведомление об авторских правах и настоящее уведомление о разрешении должны быть включены.
+				// во всех копиях или существенных частях Программного обеспечения.
 				//
-				// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-				// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-				// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-				// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-				// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-				// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-				// USE OR OTHER DEALINGS IN THE SOFTWARE.
+				// ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНО
+				// ИЛИ ПОДРАЗУМЕВАЕМЫЕ, ВКЛЮЧАЯ, НО НЕ ОГРАНИЧИВАЯСЬ, ГАРАНТИИ
+				// ТОВАРНАЯ ПРИГОДНОСТЬ, ПРИГОДНОСТЬ ДЛЯ ОПРЕДЕЛЕННОЙ ЦЕЛИ И НЕНАРУШЕНИЕ ПРАВ. В
+				// АВТОРЫ ИЛИ ОБЛАДАТЕЛИ АВТОРСКИХ ПРАВ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО ЛЮБЫМ ПРЕТЕНЗИЯМ, НИ ПРИ КАКИХ СЛУЧАЯХ,
+				// УЩЕРБ ИЛИ ДРУГАЯ ОТВЕТСТВЕННОСТЬ, БЫ В ДЕЙСТВИЯХ КОНТРАКТА, ПРАВИЛЬНЫХ ПРАВИЛ ИЛИ
+				// ИЛИ В СВЯЗИ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ ИЛИ
+				// ИСПОЛЬЗОВАНИЕ ИЛИ ДРУГИЕ ДЕЛА С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.
 
 				'use strict';
 
@@ -3250,41 +3250,41 @@ require = (function e(t, n, r) {
 					this.href = null;
 				}
 
-				// Reference: RFC 3986, RFC 1808, RFC 2396
+				// Ссылка: RFC 3986, RFC 1808, RFC 2396.
 
-				// define these here so at least they only have to be
-				// compiled once on the first module load.
+				// определите их здесь, чтобы, по крайней мере, они были только
+				// компилируется один раз при первой загрузке модуля.
 				const protocolPattern = /^([a-z0-9.+-]+:)/i;
 				const portPattern = /:[0-9]*$/;
-				// Special case for a simple path URL
+				// Особый случай для URL-адреса простого пути
 				const simplePathPattern = /^(\/\/?(?!\/)[^\?\s]*)(\?[^\s]*)?$/;
-				// RFC 2396: characters reserved for delimiting URLs.
-				// We actually just auto-escape these.
+				// RFC 2396: символы, зарезервированные для разделения URL-адресов.
+				// На самом деле мы просто автоматически избегаем этого.
 				const delims = ['<', '>', '"', '`', ' ', '\r', '\n', '\t'];
-				// RFC 2396: characters not allowed for various reasons.
+				// RFC 2396: символы не допускаются по разным причинам.
 				const unwise = ['{', '}', '|', '\\', '^', '`'].concat(delims);
-				// Allowed by RFCs, but cause of XSS attacks.  Always escape these.
+				// Разрешено RFC, но является причиной XSS-атак.  Всегда избегайте этого.
 				const autoEscape = ["'"].concat(unwise);
-				// Characters that are never ever allowed in a hostname.
-				// Note that any invalid chars are also handled, but these
-				// are the ones that are *expected* to be seen, so we fast-path
-				// them.
+				// Символы, которые никогда не допускаются в имени хоста.
+				// Обратите внимание, что любые недопустимые символы также обрабатываются, но они
+				// это те, кого *ожидают* увидеть, поэтому мы ускоряем путь
+				// их.
 				const nonHostChars = ['%', '/', '?', ';', '#'].concat(autoEscape);
 				const hostEndingChars = ['/', '?', '#'];
 				const hostnameMaxLen = 255;
 				const hostnamePartPattern = /^[+a-z0-9A-Z_-]{0,63}$/;
 				const hostnamePartStart = /^([+a-z0-9A-Z_-]{0,63})(.*)$/;
-				// protocols that can allow "unsafe" and "unwise" chars.
+				// протоколы, которые могут допускать «небезопасные» и «неразумные» символы.
 				const unsafeProtocol = {
 					'javascript': true,
 					'javascript:': true,
 				};
-					// protocols that never have a hostname.
+					// протоколы, которые никогда не имеют имени хоста.
 				const hostlessProtocol = {
 					'javascript': true,
 					'javascript:': true,
 				};
-					// protocols that always contain a // bit.
+					// протоколы, которые всегда содержат бит //.
 				const slashedProtocol = {
 					'http': true,
 					'https': true,
@@ -3312,9 +3312,9 @@ require = (function e(t, n, r) {
 						throw new TypeError("Parameter 'url' must be a string, not " + typeof url);
 					}
 
-					// Copy chrome, IE, opera backslash-handling behavior.
-					// Back slashes before the query string get converted to forward slashes
-					// See: https://code.google.com/p/chromium/issues/detail?id=25916
+					// Скопируйте поведение обработки обратной косой черты в chrome, IE, Opera.
+					// Обратные косые черты перед преобразованием строки запроса в прямые косые черты.
+					// См.: https://code.google.com/p/chromium/issues/detail?id=25916.
 					const queryIndex = url.indexOf('?');
 					const splitter = queryIndex !== -1 && queryIndex < url.indexOf('#') ? '?' : '#';
 					const uSplit = url.split(splitter);
@@ -3324,12 +3324,12 @@ require = (function e(t, n, r) {
 
 					let rest = url;
 
-					// trim before proceeding.
-					// This is to support parse stuff like "  http://foo.com  \n"
+					// перед тем, как продолжить, обрежьте.
+					// Это сделано для поддержки таких вещей, как " http://foo.com \n"
 					rest = rest.trim();
 
 					if (!slashesDenoteHost && url.split('#').length === 1) {
-						// Try fast path regexp
+						// Попробуйте регулярное выражение быстрого пути
 						const simplePath = simplePathPattern.exec(rest);
 
 						if (simplePath) {
@@ -3363,10 +3363,10 @@ require = (function e(t, n, r) {
 						rest = rest.substr(proto.length);
 					}
 
-					// figure out if it's got a host
-					// user@server is *always* interpreted as a hostname, and url
-					// resolution will treat //foo/bar as host=foo,path=bar because that's
-					// how the browser resolves relative URLs.
+					// выяснить, есть ли у него хост
+					// user@server *всегда* интерпретируется как имя хоста и URL-адрес
+					// разрешение будет рассматривать //foo/bar как хост=foo,path=bar, потому что это
+					// как браузер разрешает относительные URL-адреса.
 					if (slashesDenoteHost || proto || rest.match(/^\/\/[^@\/]+@[^@\/]+/)) {
 						var slashes = rest.substr(0, 2) === '//';
 
@@ -3377,22 +3377,22 @@ require = (function e(t, n, r) {
 					}
 
 					if (!hostlessProtocol[proto] && (slashes || (proto && !slashedProtocol[proto]))) {
-						// there's a hostname.
-						// the first instance of /, ?, ;, or # ends the host.
+						// есть имя хоста.
+						// первый экземпляр /, ?, ; или # завершает хост.
 						//
-						// If there is an @ in the hostname, then non-host chars *are* allowed
-						// to the left of the last @ sign, unless some host-ending character
-						// comes *before* the @-sign.
-						// URLs are obnoxious.
+						// Если в имени хоста есть @, то *допускаются* символы, не относящиеся к хосту.
+						// слева от последнего знака @, если только не какой-либо завершающий символ хоста
+						// идет *перед* знаком @.
+						// URL-адреса неприятны.
 						//
-						// ex:
-						// http://a@b@c/ => user:a@b host:c
-						// http://a@b?@c => user:a host:c path:/?@c
+						// пример:
+						// http://a@b@c/ => пользователь:a@b хост:c
+						// http://a@b?@c => пользователь:a хост:c путь:/?@c
 
-						// v0.12 TODO(isaacs): This is not quite how Chrome does things.
-						// Review our test case against browsers more comprehensively.
+						// v0.12 TODO(isaacs): Chrome работает не совсем так.
+						// Ознакомьтесь с нашим тестовым примером для браузеров более подробно.
 
-						// find the first instance of any hostEndingChars
+						// найти первый экземпляр любого hostEndingChars
 						let hostEnd = -1;
 						for (var i = 0; i < hostEndingChars.length; i++) {
 							var hec = rest.indexOf(hostEndingChars[i]);
@@ -3400,28 +3400,28 @@ require = (function e(t, n, r) {
 							if (hec !== -1 && (hostEnd === -1 || hec < hostEnd)) hostEnd = hec;
 						}
 
-						// at this point, either we have an explicit point where the
-						// auth portion cannot go past, or the last @ char is the decider.
+						// на данный момент либо у нас есть явная точка, где
+						// часть аутентификации не может пройти мимо, или последний символ @ является решающим.
 						let auth; let atSign;
 
 						if (hostEnd === -1) {
-							// atSign can be anywhere.
+							// atSign может быть где угодно.
 							atSign = rest.lastIndexOf('@');
 						} else {
-							// atSign must be in auth portion.
-							// http://a@b/c@d => host:b auth:a path:/c@d
+							// atSign должен быть в части аутентификации.
+							// http://a@b/c@d => хост:b авторизация: путь:/c@d
 							atSign = rest.lastIndexOf('@', hostEnd);
 						}
 
-						// Now we have a portion which is definitely the auth.
-						// Pull that off.
+						// Теперь у нас есть часть, которая определенно является авторизацией.
+						// Снимите это.
 						if (atSign !== -1) {
 							auth = rest.slice(0, atSign);
 							rest = rest.slice(atSign + 1);
 							this.auth = decodeURIComponent(auth);
 						}
 
-						// the host is the remaining to the left of the first non-host char
+						// хост — это оставшийся слева от первого символа, не являющегося хостом
 						hostEnd = -1;
 						for (var i = 0; i < nonHostChars.length; i++) {
 							var hec = rest.indexOf(nonHostChars[i]);
@@ -3429,25 +3429,25 @@ require = (function e(t, n, r) {
 							if (hec !== -1 && (hostEnd === -1 || hec < hostEnd)) hostEnd = hec;
 						}
 
-						// if we still have not hit it, then the entire thing is a host.
+						// если мы до сих пор не попали в него, то все дело в хосте.
 						if (hostEnd === -1) hostEnd = rest.length;
 
 						this.host = rest.slice(0, hostEnd);
 						rest = rest.slice(hostEnd);
 
-						// pull out port.
+						// вытащить порт.
 						this.parseHost();
 
-						// we've indicated that there is a hostname,
-						// so even if it's empty, it has to be present.
+						// мы указали, что есть имя хоста,
+						// поэтому даже если он пуст, он должен присутствовать.
 						this.hostname = this.hostname || '';
 
-						// if hostname begins with [ and ends with ]
-						// assume that it's an IPv6 address.
+						// если имя хоста начинается с [ и заканчивается на ]
+						// предположим, что это адрес IPv6.
 						const ipv6Hostname
 							= this.hostname[0] === '[' && this.hostname[this.hostname.length - 1] === ']';
 
-						// validate a little.
+						// немного подтвердите.
 						if (!ipv6Hostname) {
 							const hostparts = this.hostname.split(/\./);
 							for (var i = 0, l = hostparts.length; i < l; i++) {
@@ -3459,16 +3459,16 @@ require = (function e(t, n, r) {
 									let newpart = '';
 									for (let j = 0, k = part.length; j < k; j++) {
 										if (part.charCodeAt(j) > 127) {
-											// we replace non-ASCII char with a temporary placeholder
-											// we need this to make sure size of hostname is not
-											// broken by replacing non-ASCII by nothing
+											// мы заменяем символ, отличный от ASCII, временным заполнителем
+											// нам нужно это, чтобы убедиться, что размер имени хоста не равен
+											// сломано заменой не-ASCII ничем
 											newpart += 'x';
 										} else {
 											newpart += part[j];
 										}
 									}
 
-									// we test again with ASCII char only
+									// мы снова тестируем только с символами ASCII
 									if (!newpart.match(hostnamePartPattern)) {
 										const validParts = hostparts.slice(0, i);
 										const notHost = hostparts.slice(i + 1);
@@ -3493,15 +3493,15 @@ require = (function e(t, n, r) {
 						if (this.hostname.length > hostnameMaxLen) {
 							this.hostname = '';
 						} else {
-							// hostnames are always lower case.
+							// имена хостов всегда пишутся строчными буквами.
 							this.hostname = this.hostname.toLowerCase();
 						}
 
 						if (!ipv6Hostname) {
-							// IDNA Support: Returns a punycoded representation of "domain".
-							// It only converts parts of the domain name that
-							// have non-ASCII characters, i.e. it doesn't matter if
-							// you call it with a domain that already is ASCII-only.
+							// Поддержка IDNA: Возвращает представление «домена» в кодировке Punycode.
+							// Он преобразует только те части доменного имени, которые
+							// имеют символы, отличные от ASCII, т. е. не имеет значения,
+							// вы вызываете его с помощью домена, который уже поддерживает только ASCII.
 							this.hostname = punycode.toASCII(this.hostname);
 						}
 
@@ -3510,8 +3510,8 @@ require = (function e(t, n, r) {
 						this.host = h + p;
 						this.href += this.host;
 
-						// strip [ and ] from the hostname
-						// the host field still retains them, though
+						// убрать [ и ] из имени хоста
+						// поле хоста по-прежнему сохраняет их, хотя
 						if (ipv6Hostname) {
 							this.hostname = this.hostname.substr(1, this.hostname.length - 2);
 
@@ -3521,12 +3521,12 @@ require = (function e(t, n, r) {
 						}
 					}
 
-					// now rest is set to the post-host stuff.
-					// chop off any delim chars.
+					// теперь остальное настроено на пост-хост.
+					// отрубите все символы-разделители.
 					if (!unsafeProtocol[lowerProto]) {
-						// First, make 100% sure that any "autoEscape" chars get
-						// escaped, even if encodeURIComponent doesn't think they
-						// need to be.
+						// Во-первых, убедитесь на 100%, что все символы «autoEscape» будут
+						// экранированы, даже если encodeURIComponent не считает, что они
+						// должно быть.
 						for (var i = 0, l = autoEscape.length; i < l; i++) {
 							const ae = autoEscape[i];
 
@@ -3542,11 +3542,11 @@ require = (function e(t, n, r) {
 						}
 					}
 
-					// chop off from the tail first.
+					// сначала отрубите хвост.
 					const hash = rest.indexOf('#');
 
 					if (hash !== -1) {
-						// got a fragment string.
+						// получил фрагмент строки.
 						this.hash = rest.substr(hash);
 						rest = rest.slice(0, hash);
 					}
@@ -3563,7 +3563,7 @@ require = (function e(t, n, r) {
 
 						rest = rest.slice(0, qm);
 					} else if (parseQueryString) {
-						// no query string, but parseQueryString still requested
+						// нет строки запроса, но parseQueryString все еще запрошен
 						this.search = '';
 						this.query = {};
 					}
@@ -3574,24 +3574,24 @@ require = (function e(t, n, r) {
 						this.pathname = '/';
 					}
 
-					//to support http.request
+					//для поддержки http.request
 					if (this.pathname || this.search) {
 						var p = this.pathname || '';
 						const s = this.search || '';
 						this.path = p + s;
 					}
 
-					// finally, reconstruct the href based on what has been validated.
+					// наконец, реконструируйте href на основе проверенных данных.
 					this.href = this.format();
 					return this;
 				};
 
-				// format a parsed object into a url string
+				// форматировать разобранный объект в строку URL
 				function urlFormat(obj) {
-					// ensure it's an object, and not a string url.
-					// If it's an obj, this is a no-op.
-					// this way, you can call url_format() on strings
-					// to clean up potentially wonky urls.
+					// убедитесь, что это объект, а не строковый URL-адрес.
+					// Если это объект, то это не операция.
+					// таким образом вы можете вызвать url_format() для строк
+					// для очистки потенциально шатких URL-адресов.
 					if (util.isString(obj)) obj = urlParse(obj);
 
 					if (!(obj instanceof Url)) return Url.prototype.format.call(obj);
@@ -3634,8 +3634,8 @@ require = (function e(t, n, r) {
 
 					if (protocol && protocol.substr(-1) !== ':') protocol += ':';
 
-					// only the slashedProtocols get the //.  Not mailto:, xmpp:, etc.
-					// unless they had them to begin with.
+					// только косые протоколы получают //.  Не mailto:, xmpp: и т. д.
+					// если они у них не были с самого начала.
 					if (this.slashes || ((!protocol || slashedProtocol[protocol]) && host !== false)) {
 						host = '//' + (host || '');
 
@@ -3684,19 +3684,19 @@ require = (function e(t, n, r) {
 						result[tkey] = this[tkey];
 					}
 
-					// hash is always overridden, no matter what.
-					// even href="" will remove it.
+					// хэш всегда переопределяется, несмотря ни на что.
+					// даже href="" удалит его.
 					result.hash = relative.hash;
 
-					// if the relative url is empty, then there's nothing left to do here.
+					// если относительный URL-адрес пуст, то здесь делать больше нечего.
 					if (relative.href === '') {
 						result.href = result.format();
 						return result;
 					}
 
-					// hrefs like //foo/bar always cut to the protocol.
+					// hrefs, такие как //foo/bar, всегда соответствуют протоколу.
 					if (relative.slashes && !relative.protocol) {
-						// take everything except the protocol from relative
+						// возьмите все, кроме протокола, у родственника
 						const rkeys = Object.keys(relative);
 						for (let rk = 0; rk < rkeys.length; rk++) {
 							const rkey = rkeys[rk];
@@ -3704,7 +3704,7 @@ require = (function e(t, n, r) {
 							if (rkey !== 'protocol') result[rkey] = relative[rkey];
 						}
 
-						//urlParse appends trailing / to urls like http://www.example.com
+						//urlParse добавляет завершающий / к URL-адресам, например http://www.example.com
 						if (slashedProtocol[result.protocol] && result.hostname && !result.pathname) {
 							result.path = result.pathname = '/';
 						}
@@ -3714,14 +3714,14 @@ require = (function e(t, n, r) {
 					}
 
 					if (relative.protocol && relative.protocol !== result.protocol) {
-						// if it's a known url protocol, then changing
-						// the protocol does weird things
-						// first, if it's not file:, then we MUST have a host,
-						// and if there was a path
-						// to begin with, then we MUST have a path.
-						// if it is file:, then the host is dropped,
-						// because that's known to be hostless.
-						// anything else is assumed to be absolute.
+						// если это известный протокол URL, то его следует изменить
+						// протокол делает странные вещи
+						// во-первых, если это не файл:, то у нас ДОЛЖЕН быть хост,
+						// и если бы был путь
+						// для начала у нас ДОЛЖЕН быть путь.
+						// если это файл:, то хост удаляется,
+						// потому что это, как известно, безхозяинное.
+						// все остальное считается абсолютным.
 						if (!slashedProtocol[relative.protocol]) {
 							const keys = Object.keys(relative);
 							for (let v = 0; v < keys.length; v++) {
@@ -3758,7 +3758,7 @@ require = (function e(t, n, r) {
 						result.hostname = relative.hostname || relative.host;
 						result.port = relative.port;
 
-						// to support http.request
+						// для поддержки http.request
 						if (result.pathname || result.search) {
 							const p = result.pathname || '';
 							const s = result.search || '';
@@ -3778,11 +3778,11 @@ require = (function e(t, n, r) {
 					var relPath = (relative.pathname && relative.pathname.split('/')) || [];
 					const psychotic = result.protocol && !slashedProtocol[result.protocol];
 
-					// if the url is a non-slashed url, then relative
-					// links like ../.. should be able
-					// to crawl up to the hostname, as well.  This is strange.
-					// result.protocol has already been set by now.
-					// Later on, put the first path part into the host field.
+					// если URL-адрес не перечеркнут, то относительный
+					// ссылки типа ../.. должны иметь возможность
+					// также доползти до имени хоста.  Это странно.
+					// result.protocol уже установлен.
+					// Позже поместите первую часть пути в поле хоста.
 					if (psychotic) {
 						result.hostname = '';
 						result.port = null;
@@ -3810,17 +3810,17 @@ require = (function e(t, n, r) {
 					}
 
 					if (isRelAbs) {
-						// it's absolute.
+						// это абсолютно.
 						result.host = relative.host || relative.host === '' ? relative.host : result.host;
 						result.hostname
 							= relative.hostname || relative.hostname === '' ? relative.hostname : result.hostname;
 						result.search = relative.search;
 						result.query = relative.query;
 						srcPath = relPath;
-						// fall through to the dot-handling below.
+						// перейдите к обработке точек ниже.
 					} else if (relPath.length) {
-						// it's relative
-						// throw away the existing file, and take the new path instead.
+						// это относительно
+						// выбросьте существующий файл и вместо этого выберите новый путь.
 						if (!srcPath) srcPath = [];
 
 						srcPath.pop();
@@ -3828,13 +3828,13 @@ require = (function e(t, n, r) {
 						result.search = relative.search;
 						result.query = relative.query;
 					} else if (!util.isNullOrUndefined(relative.search)) {
-						// just pull out the search.
-						// like href='?foo'.
-						// Put this after the other two cases because it simplifies the booleans
+						// просто отключите поиск.
+						// например href='?foo'.
+						// Поместите это после двух других случаев, потому что это упрощает логические значения.
 						if (psychotic) {
 							result.hostname = result.host = srcPath.shift();
-							//occationaly the auth can get stuck only in host
-							//this especially happens in cases like
+							//иногда аутентификация может зависать только на хосте
+							//особенно это происходит в таких случаях, как
 							//url.resolveObject('mailto:local1@domain1', 'local2@domain2')
 							var authInHost
 								= result.host && result.host.indexOf('@') > 0 ? result.host.split('@') : false;
@@ -3848,7 +3848,7 @@ require = (function e(t, n, r) {
 						result.search = relative.search;
 						result.query = relative.query;
 
-						//to support http.request
+						//для поддержки http.request
 						if (!util.isNull(result.pathname) || !util.isNull(result.search)) {
 							result.path
 								= (result.pathname ? result.pathname : '') + (result.search ? result.search : '');
@@ -3859,11 +3859,11 @@ require = (function e(t, n, r) {
 					}
 
 					if (!srcPath.length) {
-						// no path at all.  easy.
-						// we've already handled the other stuff above.
+						// вообще нет пути.  легкий.
+						// мы уже разобрались с остальными вещами выше.
 						result.pathname = null;
 
-						//to support http.request
+						//для поддержки http.request
 						if (result.search) {
 							result.path = '/' + result.search;
 						} else {
@@ -3874,17 +3874,17 @@ require = (function e(t, n, r) {
 						return result;
 					}
 
-					// if a url ENDs in . or .., then it must get a trailing slash.
-					// however, if it ends in anything else non-slashy,
-					// then it must NOT get a trailing slash.
+					// если URL-адрес ЗАКАНЧИВАЕТСЯ на . или .., тогда должна быть косая черта.
+					// однако, если это заканчивается чем-то еще, не косой чертой,
+					// тогда НЕ должно быть косой черты в конце.
 					let last = srcPath.slice(-1)[0];
 					const hasTrailingSlash
 						= ((result.host || relative.host || srcPath.length > 1)
 							&& (last === '.' || last === '..'))
 						|| last === '';
 
-					// strip single dots, resolve double dots to parent dir
-					// if the path tries to go above the root, `up` ends up > 0
+					// удалить одиночные точки, разрешить двойные точки в родительском каталоге
+					// если путь пытается пройти выше корня, `up` оказывается > 0
 					let up = 0;
 					for (let i = srcPath.length; i >= 0; i--) {
 						last = srcPath[i];
@@ -3900,7 +3900,7 @@ require = (function e(t, n, r) {
 						}
 					}
 
-					// if the path is allowed to go above the root, restore leading ..s
+					// если пути разрешено идти выше корня, восстановите ведущие ..s
 					if (!mustEndAbs && !removeAllDots) {
 						for (; up--; up) {
 							srcPath.unshift('..');
@@ -3917,11 +3917,11 @@ require = (function e(t, n, r) {
 
 					const isAbsolute = srcPath[0] === '' || (srcPath[0] && srcPath[0].charAt(0) === '/');
 
-					// put the host back
+					// вернуть хост обратно
 					if (psychotic) {
 						result.hostname = result.host = isAbsolute ? '' : srcPath.length ? srcPath.shift() : '';
-						//occationaly the auth can get stuck only in host
-						//this especially happens in cases like
+						//иногда аутентификация может зависать только на хосте
+						//особенно это происходит в таких случаях, как
 						//url.resolveObject('mailto:local1@domain1', 'local2@domain2')
 						var authInHost
 							= result.host && result.host.indexOf('@') > 0 ? result.host.split('@') : false;
@@ -3945,7 +3945,7 @@ require = (function e(t, n, r) {
 						result.pathname = srcPath.join('/');
 					}
 
-					//to support request.http
+					//для поддержки запроса.http
 					if (!util.isNull(result.pathname) || !util.isNull(result.search)) {
 						result.path
 							= (result.pathname ? result.pathname : '') + (result.search ? result.search : '');
@@ -4004,8 +4004,8 @@ require = (function e(t, n, r) {
 					refetchSitesInterval: 2 * 24 * 3600 * 1000,
 					cacheTTL: 24 * 3600 * 1000,
 					fetchSitesInterval: null,
-						// disabling temporarily while searching for ad dial source
-						// page is password protected
+						// временное отключение при поиске источника набора рекламы
+						// страница защищена паролем
 						//httpPath: 'https://fvdspeeddial.com/fst',
 						httpPath: '',
 															debug: false,

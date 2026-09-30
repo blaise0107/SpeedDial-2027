@@ -166,7 +166,7 @@ MostVisitedModule.prototype = {
 	},
 
 	invalidateCache: function (full) {
-		// short cache invalidated completely
+		// короткий кеш полностью недействителен
 		this._shortCache = {};
 
 		if (full) {
@@ -206,7 +206,7 @@ MostVisitedModule.prototype = {
 		);
 	},
 
-	// params: interval, type, count, cond
+	// параметры: интервал, тип, количество, условие
 	getData: function (params, callback) {
 		const { fvdSpeedDial } = this;
 		const { Prefs, StorageSD } = fvdSpeedDial;
@@ -217,11 +217,11 @@ MostVisitedModule.prototype = {
 		const cond = params.cond;
 
 		type = type || 'host';
-		// check short cache
+		// проверить короткий кеш
 		const shortCacheResult = this._getFromShortCache([interval, type, count, cond]);
 
 		if (shortCacheResult) {
-			// found in short cache
+			// найдено в коротком кеше
 			callback(shortCacheResult);
 			return;
 		}
@@ -378,7 +378,7 @@ MostVisitedModule.prototype = {
 					}
 
 					if (typeof resultByHost[item.host] === 'undefined') {
-						// add to hosts results
+						// добавить в результаты хостов
 						resultByHost[item.host] = item;
 						resultByHost[item.host].inGroup = 1;
 						resultByHost[item.host].totalVisits = item.visitCount;
@@ -407,9 +407,9 @@ MostVisitedModule.prototype = {
 
 		const record = this._shortCache[key];
 
-		// check timeouting
+		// проверить тайм-аут
 		if (new Date().getTime() - record.time > Prefs.get('sd.most_visited_cache_life_time')) {
-			// timeouted
+			// тайм-аут истек
 			delete this._shortCache[key];
 			return null;
 		}
@@ -427,7 +427,7 @@ MostVisitedModule.prototype = {
 	},
 
 	_orderHistoryResults: function (items) {
-		// order by visits count desc
+		// сортировать по количеству посещений по описанию
 		for (let i = 0; i < items.length - 1; i++) {
 			for (let j = i; j !== items.length; j++) {
 				if (items[i].visitCount < items[j].visitCount) {

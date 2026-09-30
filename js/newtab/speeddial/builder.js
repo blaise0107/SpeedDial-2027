@@ -116,7 +116,7 @@ SpeedDialBuilderModule.prototype = {
 
 		cell.style.height = size.height + 'px';
 
-		// for list view type selection
+		// для выбора типа представления списка
 
 		if (!data.displayTitle) {
 			if (displayType !== 'recentlyclosed') {
@@ -200,7 +200,7 @@ SpeedDialBuilderModule.prototype = {
 
 		this.setDialSkew(cell, dialPos, countInRow, size, countRowsTotal);
 
-		// events
+		// события
 
 		cell.onclick = function (event) {
 			if (event.button === 0) {
@@ -258,7 +258,7 @@ SpeedDialBuilderModule.prototype = {
 		}
 	},
 
-	// if have position changes of dials, this function reorder dials list and change visually their positions
+	// если есть изменения положения циферблатов, эта функция изменяет порядок списка циферблатов и визуально меняет их положение.
 	refreshDialsByPositions: function (countInRow, displayMode, size) {
 		const {
 			fvdSpeedDial: { Prefs, Scrolling },
@@ -276,13 +276,13 @@ SpeedDialBuilderModule.prototype = {
 				countInRow = countInRow.cols;
 			}
 
-			// to array
+			// в массив
 			dials = [];
 			for (i = 0; i !== _dials.length; i++) {
 				dials.push(_dials[i]);
 			}
 
-			// order list
+			// список заказов
 			dials.sort(function (a, b) {
 				return a.getAttribute('position') - b.getAttribute('position');
 			});
@@ -293,7 +293,7 @@ SpeedDialBuilderModule.prototype = {
 		} else {
 			_dials = document.querySelectorAll('.newtabCell[type=speeddial]');
 
-			// need to recalc in horizontal mode
+			// нужно пересчитать в горизонтальном режиме
 			if (Scrolling.activeScrollingType() === 'horizontal') {
 				countInRow = SpeedDial.cellsInRowMax(null, null, {
 					objects: _dials.length,
@@ -312,7 +312,7 @@ SpeedDialBuilderModule.prototype = {
 				}
 			}
 
-			// to array
+			// в массив
 			dials = [];
 			for (i = 0; i !== _dials.length; i++) {
 				if (_dials[i].hasAttribute('type') && _dials[i].getAttribute('type') === 'plus') {
@@ -322,7 +322,7 @@ SpeedDialBuilderModule.prototype = {
 				dials.push(_dials[i]);
 			}
 
-			// order list
+			// список заказов
 			dials.sort(function (a, b) {
 				return a.getAttribute('position') - b.getAttribute('position');
 			});
@@ -424,7 +424,7 @@ SpeedDialBuilderModule.prototype = {
 	},
 
 	dialZ: function (col, row, middle, countRowsTotal, inRow, size) {
-		// get z pos
+		// получить Z позицию
 		let z = 0;
 
 		if (col !== middle) {
@@ -545,7 +545,7 @@ SpeedDialBuilderModule.prototype = {
 
 		const dialPos = this._getDialXY(num, countInRow, size);
 
-		// postitioning things
+		// размещение вещей
 		this.setDialPosition(cell, dialPos, countInRow);
 		this.setDialSkew(cell, dialPos, countInRow, size, countRowsTotal);
 		cell.setAttribute('position', data.position);
@@ -643,7 +643,7 @@ SpeedDialBuilderModule.prototype = {
 			clicksText.appendChild(document.createTextNode(_('newtab_dial_clicks') + ': '));
 			clicksText.appendChild(spanClicksCount);
 		} else if (displayType === 'mostvisited') {
-			// set views and in group
+			// установить просмотры и в группе
 			const viewsText = cell.getElementsByClassName('views')[0];
 			const inGroup = cell.getElementsByClassName('ingroup')[0];
 
@@ -662,10 +662,10 @@ SpeedDialBuilderModule.prototype = {
 			inGroup.textContent = ingroup + ': ' + data.inGroup;
 		}
 
-		// context menu
+		// контекстное меню
 		ContextMenus.assignToElem(cell, displayType);
 
-		// assign events
+		// назначать события
 		this._assignEvents(cell, data, displayType, displayMode);
 
 		return cell;
@@ -706,7 +706,7 @@ SpeedDialBuilderModule.prototype = {
 		item.appendChild(spanName);
 		item.appendChild(spanCount);
 
-		// prevents dbl click
+		// предотвращает двойной щелчок
 		item.addEventListener(
 			'dblclick',
 			function (event) {
@@ -738,8 +738,8 @@ SpeedDialBuilderModule.prototype = {
 							Analytics.fireGroupVisitEvent(metricParams);
 						}
 
-						// after group clicking, fires tab update listener, that fires GA page_view event
-						// by bellow logic preventing fake page view event;
+						// после нажатия группы запускает прослушиватель обновления вкладок, который запускает событие GA page_view
+						// с помощью приведенной ниже логики предотвращается событие фальшивого просмотра страницы;
 						fvdSpeedDial.localStorage.setItem('preventPageViewEvent', true);
 						setTimeout(() => {
 							fvdSpeedDial.localStorage.setItem('preventPageViewEvent', false);
@@ -752,7 +752,7 @@ SpeedDialBuilderModule.prototype = {
 				false
 			);
 
-			// special for right click event. if mouse up - activate group, it uses because context menu prevent propagation of "click" event for right button
+			// специально для события щелчка правой кнопкой мыши. если мышь поднята - активировать группу, она используется, поскольку контекстное меню предотвращает распространение события «щелчок» для правой кнопки
 			item.addEventListener(
 				'mouseup',
 				function (event) {
@@ -835,7 +835,7 @@ SpeedDialBuilderModule.prototype = {
 				const groupElem = that.groupsItem(group.name, group.id, group.count_dials);
 
 				ContextMenus.assignToElem(groupElem, 'speeddialGroup');
-				//container.appendChild( groupElem );
+				//контейнер.appendChild(groupElem);
 				list.appendChild(groupElem);
 			})(group);
 		}
@@ -903,14 +903,14 @@ SpeedDialBuilderModule.prototype = {
 
 		let clickEventAssigned = false;
 
-		// prevent scrolling by middel button on dial
+		// запретить прокрутку с помощью средней кнопки на циферблате
 		cell.addEventListener('mousedown', function (event) {
 			event.preventDefault();
 		});
 
 		if (displayMode !== 'list') {
 			const favicon = cell.getElementsByClassName('head')[0].getElementsByTagName('img')[0];
-			// prevent dragging on favicon iamge
+			// запретить перетаскивание значка iamge
 
 			favicon.addEventListener(
 				'mousedown',
@@ -923,7 +923,7 @@ SpeedDialBuilderModule.prototype = {
 			if (data.thumb_source_type === 'screen' && data.get_screen_method === 'manual') {
 				if (data.screen_maked === 0) {
 					clickEventAssigned = true;
-					// onclick make screen
+					// onclick сделать экран
 					cell.addEventListener(
 						'click',
 						function (event) {
@@ -947,7 +947,7 @@ SpeedDialBuilderModule.prototype = {
 		if (!clickEventAssigned) {
 			if (!data.displayTitle && data.get_screen_method === 'manual') {
 				clickEventAssigned = true;
-				// onclick make screen
+				// onclick сделать экран
 				cell.addEventListener(
 					'click',
 					function (event) {
@@ -966,9 +966,9 @@ SpeedDialBuilderModule.prototype = {
 				);
 			}
 		}
-		// events for all types
+		// мероприятия для всех типов
 
-		// add dbl click listener (empty)
+		// добавить прослушиватель двойного клика (пусто)
 		cell.addEventListener(
 			'dblclick',
 			function (event) {
@@ -1176,7 +1176,7 @@ SpeedDialBuilderModule.prototype = {
 			);
 		}
 
-		// mostvisited related events
+		// самые посещаемые связанные мероприятия
 		if (displayType === 'mostvisited') {
 			const inGroup = cell.getElementsByClassName('ingroup')[0];
 
@@ -1190,7 +1190,7 @@ SpeedDialBuilderModule.prototype = {
 			);
 		} else if (displayType === 'recentlyclosed') {
 		} else if (displayType === 'speeddial') {
-			// speeddial related
+			// связанные с быстрым набором
 			cell.addEventListener(
 				'mousedown',
 				function (event) {
@@ -1235,11 +1235,11 @@ SpeedDialBuilderModule.prototype = {
 
 								StorageSD.getDial(dialId, console.log);
 
-								//removeSpecialMirror();
+								//удалитьСпециальноеЗеркало();
 								cell.removeAttribute('transformBeforeDrag');
 								cell.removeAttribute('transformOriginBeforeDrag');
 								const insertType = draggedOn.getAttribute('insert_type');
-								// animate
+								// оживлять
 								let dials = [];
 
 								if (displayMode === 'list') {
@@ -1249,7 +1249,7 @@ SpeedDialBuilderModule.prototype = {
 								}
 
 								let maxDialPosition = 0;
-								// get max dial position
+								// получить максимальное положение шкалы
 
 								for (let i = 0; i !== dials.length; i++) {
 									const dialPos = parseInt(dials[i].getAttribute('position'));
@@ -1299,7 +1299,7 @@ SpeedDialBuilderModule.prototype = {
 								}
 
 								if (newDialPosition === dial.position) {
-									// no position changes
+									// никаких изменений позиции
 									SpeedDial.Builder.refreshDialsByPositions(
 										SpeedDial.cellsInRowMax(null, null, {
 											objects: function () {
@@ -1336,7 +1336,7 @@ SpeedDialBuilderModule.prototype = {
 									SpeedDial._currentCellSize()
 								);
 
-								// update storage 
+								// обновить хранилище
 								StorageSD.insertDialUpdateStorage(
 									dialId,
 									sign === -1 ? '-' : '+',

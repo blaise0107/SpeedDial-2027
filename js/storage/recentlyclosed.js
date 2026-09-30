@@ -8,7 +8,7 @@ const RecentlyClosedModule = function (fvdSpeedDial) {
 
 	chrome.tabs.onUpdated.addListener(function (tabId) {
 		chrome.tabs.get(tabId, function (tab) {
-			// console.info('tabs.get', tab);
+			// console.info('tabs.get', вкладка);
 			that._tabsData[tabId] = tab;
 		});
 	});
@@ -19,14 +19,14 @@ const RecentlyClosedModule = function (fvdSpeedDial) {
 				const tab = that._tabsData[tabId];
 
 				if (!that.hasUrl(tab.url)) {
-					// check for deny
+					// проверить на отказ
 
 					fvdSpeedDial.StorageSD.isDenyUrl(tab.url, function (deny) {
 						tab.displayTitle = tab.title;
 						tab.deny = deny;
 						that._tabs.unshift(tab);
 						that._tabs.slice(0, Prefs.get('sd.max_recently_closed_records'));
-						// send message that found new closed tab
+						// отправить сообщение о том, что найдена новая закрытая вкладка
 						Broadcaster.sendMessage({
 							action: 'foundRecentlyClosed',
 							needActiveTab: true,

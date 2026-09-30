@@ -64,8 +64,8 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 		}
 
 		if (!params.saveImage) {
-			// special case, capture only title, do not create separate tab due to #1298
-			// only make xmlhttprequest to parse a title
+			// особый случай, захватывайте только заголовок, не создавайте отдельную вкладку из-за #1298
+			// делайте xmlhttprequest только для анализа заголовка
 			Utils.getTitleForUrl(params.url, function (title) {
 				callback({
 					title: title || '',
@@ -98,13 +98,13 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 		const winCreateParams = {
 			url: createUrl,
 			state: 'minimized',
-			// type: 'popup',
-			// focused: false,
+			// тип: «всплывающее окно»,
+			// сфокусированный: ложный,
 		};
 
 		function onWindowCreate(w) {
 			if (!w.tabs || !w.tabs.length) {
-				// close window
+				// закрыть окно
 				chrome.windows.remove(w.id);
 				return;
 			}
@@ -122,7 +122,7 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 
 			Utils.Async.chain([
 				function (next) {
-					// can't hide window on Mac OS, by setting large positions
+					// невозможно скрыть окно в Mac OS, установив большие позиции
 					if (isMac) {
 						return next();
 					}
@@ -143,7 +143,7 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 								monitor++;
 
 								if (monitor === DISPLAY_HIDDEN_WINDOW_MONITOR) {
-									// restore size
+									// восстановить размер
 									chrome.windows.update(
 										w.id,
 										{
@@ -177,7 +177,7 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 				return returnFailedImage();
 			}
 
-			// mute tab
+			// вкладка отключения звука
 			chrome.tabs.update(tab.id, {
 				muted: true,
 			});
@@ -196,7 +196,7 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 				ctimeout = setTimeout(function () {
 					chrome.tabs.get(tab.id, function (tabInfo) {
 						if (!tabInfo) {
-							// tab closed
+							// вкладка закрыта
 							clearTimeout(timeout);
 							return callback(null);
 						}
@@ -206,7 +206,7 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 						}
 
 						if (!params.saveImage && tabInfo.title) {
-							// capture only title
+							// захватывать только заголовок
 							chrome.windows.remove(w.id);
 							return callback({
 								title: tabInfo.title,
@@ -255,7 +255,7 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 			function capture(tab) {
 				Utils.Async.chain([
 					function (chainCallback) {
-						// replace alerts before capture, because onbeforeunload alert can block page closing
+						// замените оповещения перед захватом, поскольку оповещение onbeforeunload может заблокировать закрытие страницы
 						chrome.scripting.executeScript(
 							{
 								target: { tabId: tab.id },

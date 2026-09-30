@@ -1,4 +1,4 @@
-// cleaned after addon/browser restart
+// очищается после перезагрузки аддона/браузера
 import Broadcaster from './_external/broadcaster.js';
 
 const RuntimeStore = function (fvdSpeedDial) {

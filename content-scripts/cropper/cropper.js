@@ -151,11 +151,11 @@ if (
 		let delayBoxResizeWindowListener = null;
 
 		const listener = function (port) {
-			// immedately remove listener, accept only one connection
+			// немедленно удалить прослушиватель, принять только одно соединение
 			chrome.runtime.onConnect.removeListener(listener);
 
 			if (document.getElementsByTagName('frame').length !== 0) {
-				// if has frame set do not screen by marquee, screen full page
+				// если установлена рамка, не выводить на экран выделением, отображать всю страницу
 				let framesCounter = 0;
 
 				function getFrames(doc) {

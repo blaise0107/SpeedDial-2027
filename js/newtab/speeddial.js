@@ -47,10 +47,10 @@ const GroupsModule = function (fvdSpeedDial) {
 
 		l.profile.start('total');
 		l.profile.start('preparations');
-		// for speed dial we build groups list with add button
-		// for most visited we build three options: all time, last month, last week
-		// for recently closed build nothing
-		// const that = new SpeedDial();
+		// для быстрого набора мы создаем список групп с помощью кнопки добавления
+		// для наиболее посещаемых строим три варианта: за все время, за последний месяц, за последнюю неделю
+		// для недавно закрытой сборки ничего нет
+		// const that = новый SpeedDial();
 		let isAdditionalListOpened = false;
 
 		const elements = document.getElementsByClassName('additionalGroupsList');
@@ -67,7 +67,7 @@ const GroupsModule = function (fvdSpeedDial) {
 
 		let groupsBox = document.getElementById('groupsBox');
 		const tmpContainer = groupsBox.cloneNode(true);
-		// remove childs
+		// удалить дочерние элементы
 
 		while (tmpContainer.firstChild) {
 			tmpContainer.removeChild(tmpContainer.firstChild);
@@ -102,7 +102,7 @@ const GroupsModule = function (fvdSpeedDial) {
 				function () {
 					l.profile.start('fetch groups list');
 					StorageSD.groupsList(function (groups) {
-						// check if current group found
+						// проверить, найдена ли текущая группа
 						const currentGroupId = fvdSpeedDial.SpeedDial.currentGroupId();
 
 						let groupFound = false;
@@ -115,19 +115,19 @@ const GroupsModule = function (fvdSpeedDial) {
 						}
 
 						if (currentGroupId === 0) {
-							// popular group always exists
+							// популярная группа всегда существует
 							groupFound = true;
 						}
 
 						if (!groupFound) {
-							// group not found, try to set first group in list to current
+							// группа не найдена, попробуйте установить первую группу в списке как текущую
 							if (!groups.length) {
-								// do nothing
+								// ничего не делать
 								return;
 							}
 
 							fvdSpeedDial.SpeedDial.setCurrentGroupId(groups[0].id);
-							// and rebuild dial with new group
+							// и перестроить циферблат с новой группой
 							fvdSpeedDial.SpeedDial.sheduleFullRebuild();
 							return;
 						}
@@ -135,23 +135,23 @@ const GroupsModule = function (fvdSpeedDial) {
 						l.profile.start('building groups html');
 
 						const sdMenu = document.querySelector('#searchBar .activeContent');
-						// 100 is a space that should remain between groups and the right window border
+						// 100 — это пробел, который должен оставаться между группами и правой границей окна.
 						let groupsBoxMaxWidth
 							= SpeedDial._viewportWidth()
-							// groups container left margin
+							// левое поле контейнера группы
 							- 20
 							- document.getElementById('fastMenuToggleButton').offsetWidth
-							// offset between fast menu and right browser's border
+							// смещение между быстрым меню и правой границей браузера
 							- 15
-							// additional groups button width
+							// ширина кнопки дополнительных групп
 							- 20
-							// add group button width
+							// добавить ширину кнопки группы
 							- 18
-							// left margin between add group button and other groups
+							// левое поле между кнопкой добавления группы и другими группами
 							- 12
-							// right margin of the add group button
+							// правое поле кнопки добавления группы
 							- SpeedDial._groupElemMargin
-							// correction parameter
+							// параметр коррекции
 							//-10
 							- 10;
 
@@ -185,14 +185,14 @@ const GroupsModule = function (fvdSpeedDial) {
 						if (SpeedDial.sessionRestore) {
 							const item = fvdSpeedDial.SpeedDial.Builder.groupsItem(restoreSessionText, 'restore');
 
-							// add context menu
-							//fvdSpeedDial.fvdSpeedDial.ContextMenus.assignToElem( item, "speeddialGroup" );
+							// добавить контекстное меню
+							//fvdSpeedDial.fvdSpeedDial.ContextMenus.assignToElem(item, "speeddialGroup");
 							tmpContainer.appendChild(item);
 
 							incActiveWidth(item.textContent);
 						}
 
-						// first add popular group if need
+						// сначала добавьте популярную группу, если нужно
 						if (_b(fvdSpeedDial.Prefs.get('sd.display_popular_group'))) {
 							let defGroupName = _('newtab_popular_group_title');
 
@@ -202,7 +202,7 @@ const GroupsModule = function (fvdSpeedDial) {
 
 							const item = fvdSpeedDial.SpeedDial.Builder.groupsItem(defGroupName, 0);
 
-							// add context menu
+							// добавить контекстное меню
 							fvdSpeedDial.ContextMenus.assignToElem(item, 'speeddialGroup');
 							tmpContainer.appendChild(item);
 
@@ -243,7 +243,7 @@ const GroupsModule = function (fvdSpeedDial) {
 						}
 
 						if (groupsInAdditionalList.length > 0) {
-							// add button for open additional groups list
+							// кнопка добавления для открытия списка дополнительных групп
 							const additionalGroupsButton
 								= fvdSpeedDial.SpeedDial.Builder.groupsAdditionalGroupsButton();
 
@@ -259,7 +259,7 @@ const GroupsModule = function (fvdSpeedDial) {
 							fvdSpeedDial.Scrolling.additionalGroupsListOpen = false;
 						}
 
-						// add group add item
+						// добавить группу добавить элемент
 						const item = document.createElement('div');
 						item.setAttribute('class', 'group add');
 						const image = document.createElement('div');
@@ -340,7 +340,7 @@ const GroupsModule = function (fvdSpeedDial) {
 			const btn = document.getElementsByClassName('additionalGroupsButton')[0];
 			const pos = Utils.getOffset(btn);
 
-			//listElem.style.left = pos.left + "px";
+			//listElem.style.left = pos.left + «px»;
 
 			if (document.body.clientWidth - pos.left > listElem.offsetWidth + 30) {
 				listElem.style.left = pos.left + 'px';
@@ -391,7 +391,7 @@ SpeedDialModule.prototype = new FVDEventEmitter();
 
 SpeedDialModule.prototype = {
 	_displayType: null, // (speeddial, mostvisited, recentlyclosed)
-	// currently opened group in this speeddial tab
+	// открытая в данный момент группа на этой вкладке быстрого набора
 	_nowOpenedGroup: null,
 	_cellsSizes: {
 		big: 364,
@@ -418,12 +418,12 @@ SpeedDialModule.prototype = {
 	_listElemMarginX: 15,
 	_listElemMarginY: 15,
 	_listElemSize: {
-		// for recentlyclosed and speeddial
+		// для недавно закрытых и быстрого набора
 		height: 15,
 		width: 522,
 	},
 	_listElemSizeMostVisited: {
-		// for mostvisited
+		// для самых посещаемых
 		height: 29,
 		width: 522,
 	},
@@ -437,7 +437,7 @@ SpeedDialModule.prototype = {
 	justAddedId: null,
 	sessionRestore: false,
 	fancySpecialDecrementCount: 0, // this value used for fixing fancy dials list
-	// some events
+	// некоторые события
 	onBuildStart: new FVDEventEmitter(),
 	onBuildCompleted: new FVDEventEmitter(),
 	onGroupChange: new FVDEventEmitter(),
@@ -478,8 +478,8 @@ SpeedDialModule.prototype = {
 		const has = 'WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix();
 
 		if (!has) {
-			// chrome 61 canary doesn't have m11 m11 key in a WebKitCSSMatrix instance
-			// use another approach to detect if css transforms are available
+			// chrome 61 canary не имеет ключа m11 m11 в экземпляре WebKitCSSMatrix
+			// используйте другой подход, чтобы определить, доступны ли преобразования CSS
 			const el = document.createElement('div');
 
 			document.body.insertBefore(el, null);
@@ -497,7 +497,7 @@ SpeedDialModule.prototype = {
 			return false;
 		}
 
-		// cache 3d css state
+		// кэширование 3D-состояния CSS
 		fvdSpeedDial.localStorage.setItem('has3dCss', 1);
 		return true;
 	},
@@ -557,20 +557,20 @@ SpeedDialModule.prototype = {
 			]);
 		}
 
-		// init css adjuster
+		// инициализация CSS-настройщика
 		CSS.stylesheets.push(document.styleSheets[0]);
 
-		// immedately actions
-		// refresh current type expand state
+		// немедленные действия
+		// обновить текущий тип, расширить состояние
 		this.refreshExpandState();
 
-		// refresh background
+		// обновить фон
 		this.refreshBackground();
 
-		// refresh CSS
+		// обновить CSS
 		this.refreshCSS();
 
-		// start need rebuild checker interval
+		// начать, необходимо перестроить интервал проверки
 		this._rebuildCheckerIntervalInst = setInterval(this._needRebuildChecker, 100);
 
 		window.addEventListener(
@@ -599,7 +599,7 @@ SpeedDialModule.prototype = {
 			true
 		);
 
-		// init drag and drop
+		// инициализация перетаскивания
 		this.DragAndDrop.init();
 
 		function trackGAPageViewEvent(tab) {
@@ -652,21 +652,21 @@ SpeedDialModule.prototype = {
 		}
 
 		
-		//Send google analytic page_view event on tab created
+		//Отправить событие Google Analytics page_view на созданной вкладке
 		chrome.tabs.onUpdated.addListener(function (tabId, change, tab) {
 			if (!fvdSpeedDial.localStorage.getItem('preventPageViewEvent')) {
 				onBrowserTabUpdated(tab);
 			}
 		});
 
-		// full rebuild when tab activated
+		// полная перестройка при активации вкладки
 		chrome.tabs.onActivated.addListener(function (info) {
 			chrome.tabs.getCurrent(function (tab) {
 				trackGAPageViewEvent(tab);
 
 				if (tab.id === info.tabId) {
 					if (document.body.hasAttribute('dial-search-show-results')) {
-						// if the search is active don't rebuild page
+						// если поиск активен, не перестраивать страницу
 						return;
 					}
 
@@ -730,17 +730,17 @@ SpeedDialModule.prototype = {
 
 		this.refreshCollapsedMessages();
 
-		// foce show group
+		// группа фокус-шоу
 		const forceShowGroupId = Utils.getQueryValue('show_group_id');
 
 		if (forceShowGroupId) {
 			that.setCurrentGroupId(forceShowGroupId);
 		}
 
-		// clear hash
+		// очистить хэш
 		document.location.hash = '#';
 
-		// message listener
+		// прослушиватель сообщений
 
 		Broadcaster.onMessage.addListener(function (message) {
 			switch (message.action) {
@@ -798,7 +798,7 @@ SpeedDialModule.prototype = {
 							if (fvdSpeedDial.SpeedDial.currentDisplayType() === 'recentlyclosed') {
 								SpeedDial.sheduleFullRebuild();
 							} else {
-								// else rebuild only misc content
+								// иначе пересобрать только разное содержимое
 								fvdSpeedDial.SpeedDialMisc.sheduleRebuild();
 							}
 						},
@@ -943,10 +943,10 @@ SpeedDialModule.prototype = {
 		wrapper.style.height = '';
 
 		const currentHeight = wrapper.offsetHeight;
-		//var topHeight = document.getElementById( "speedDialTop" ).offsetHeight;
+		//var topHeight = document.getElementById("speedDialTop").offsetHeight;
 		const bodyHeight = document.body.offsetHeight;
 		const speedDialHeight = bodyHeight - this._topLineHeight;
-		// height that not calcs, it's height of panels that occlude speed dial content, such as widgets panel
+		// высота, которая не рассчитывается, это высота панелей, которые закрывают содержимое быстрого набора, например панель виджетов.
 		let extraHeight = 0;
 
 		if (wrapper.hasAttribute('extraheight')) {
@@ -954,7 +954,7 @@ SpeedDialModule.prototype = {
 		}
 
 		if (currentHeight > speedDialHeight) {
-			// no do anything
+			// нет, ничего не делай
 			wrapper.style.height = currentHeight + 20 - extraHeight + 'px';
 		} else {
 			wrapper.style.height = speedDialHeight - extraHeight + 'px';
@@ -984,9 +984,9 @@ SpeedDialModule.prototype = {
 
 		params._correctAttempt++;
 
-		//experimental
+		//экспериментальный
 		if (!this.getExpandState()) {
-			// do not correct for collapsed speed dial
+			// не исправлять свернутый быстрый набор
 			return;
 		}
 
@@ -997,7 +997,7 @@ SpeedDialModule.prototype = {
 		if (fvdSpeedDial.Prefs.get('sd.display_mode') !== 'fancy') {
 			fixedPerspective = true;
 		} else if (this.currentDisplayType() === 'mostvisited') {
-			//  fixedPerspective = true;
+			//  фиксированная перспектива = правда;
 		} else if (this._currentSettingsColumnsCount() !== 'auto') {
 			const maxCols = that.cellsInRowMax('auto', null, {
 				objects: document.getElementById('cellsContainer').childNodes.length,
@@ -1027,7 +1027,7 @@ SpeedDialModule.prototype = {
 		let rect = el.getBoundingClientRect();
 
 		if (rect.right === 0) {
-			// wait for rendering
+			// дождаться рендеринга
 			setTimeout(function () {
 				that.correctPerspective(params);
 			}, 0);
@@ -1056,7 +1056,7 @@ SpeedDialModule.prototype = {
 
 			alreadyCheckedPers[pers]++;
 
-			// correct perspective
+			// правильная перспектива
 			const delta = 20;
 
 			el = els[els.length - 1];
@@ -1085,7 +1085,7 @@ SpeedDialModule.prototype = {
 
 			const scaleRatio = rect.width / el.offsetWidth;
 
-			// check side dials max scale
+			// проверьте боковые циферблаты максимальной шкалы
 			if (
 				inBorders
 				&& scaleRatio <= Config.FANCY_SIDE_DIALS_MAX_SCALE
@@ -1120,7 +1120,7 @@ SpeedDialModule.prototype = {
 
 		speedDialContent.setAttribute('style', fvdSpeedDial.Prefs.get('sd.display_mode'));
 
-		// collapse if need
+		// свернуть, если понадобится
 		this.refreshExpandState({ ifcollapsed: true });
 
 		const displayType = this.currentDisplayType();
@@ -1138,7 +1138,7 @@ SpeedDialModule.prototype = {
 
 		let tmpContainer = null;
 
-		// hide containers
+		// скрыть контейнеры
 		function _getContainer() {
 			const listContainer = that._listContainer();
 			const cellsContainer = that._cellsContainer();
@@ -1154,7 +1154,7 @@ SpeedDialModule.prototype = {
 		}
 		container = _getContainer();
 		tmpContainer = container.cloneNode(true);
-		// clear container
+		// прозрачный контейнер
 		while (tmpContainer.firstChild) {
 			tmpContainer.removeChild(tmpContainer.firstChild);
 		}
@@ -1193,7 +1193,7 @@ SpeedDialModule.prototype = {
 				document.getElementById('listContainerParent').setAttribute('hidden', true);
 			}
 
-			// magick
+			// магия
 			container = _getContainer();
 			container.parentNode.replaceChild(tmpContainer, container);
 			tmpContainer.removeAttribute('hidden');
@@ -1203,7 +1203,7 @@ SpeedDialModule.prototype = {
 			}, 0);
 
 			if (thumbsMode === 'list') {
-				// hide all list view menus
+				// скрыть все меню просмотра списка
 				const listViewMenus = document.getElementsByClassName('listViewMenu');
 
 				for (let i = 0; i !== listViewMenus.length; i++) {
@@ -1222,7 +1222,7 @@ SpeedDialModule.prototype = {
 
 				document.getElementById('listViewTypeSelector').removeAttribute('hidden');
 
-				//if( displayType == "speeddial" ){
+				//if( displayType == "быстрый набор") {
 				const listContainerParent = document.getElementById('listContainerParent');
 				const size = that.Builder.listViewContainerSize(tmpContainer, countInRow);
 
@@ -1241,7 +1241,7 @@ SpeedDialModule.prototype = {
 			} else {
 				document.getElementById('listViewTypeSelector').setAttribute('hidden', true);
 
-				// correct perspective
+				// правильная перспектива
 				that.correctPerspective();
 
 				if (fvdSpeedDial.Scrolling.activeScrollingType() === 'vertical') {
@@ -1265,7 +1265,7 @@ SpeedDialModule.prototype = {
 				}
 			}
 
-			// set height of speeddial wrapper
+			// установить высоту оболочки быстрого набора
 			//that.refreshSpeedDialWrapperHeight();
 			if (fvdSpeedDial.Prefs.get('sd.display_mode') === 'fancy' && !that.has3D()) {
 				if (_b(fvdSpeedDial.Prefs.get('sd.no3d_first'))) {
@@ -1284,7 +1284,7 @@ SpeedDialModule.prototype = {
 
 			l.profile.end('finishBuildCallback');
 			l.profile.end('total');
-			//console.log("** rebuildCells **\n", l.toString()); // #Debug
+			//console.log("** rebuildCells **\n", l.toString()); // #Отладка
 
 			that.onBuildCompleted.callListeners(rebuildCellsParams);
 		};
@@ -1378,8 +1378,8 @@ SpeedDialModule.prototype = {
 							let needAnimateAppear = false;
 
 							if (dialData.id === that.justAddedId) {
-								// need to animate dial appearing
-								//cell.style.webkitTransform += " scale(0)";
+								// нужно анимировать появление циферблата
+								//cell.style.webkitTransform += "масштаб (0)";
 								cell.style.opacity = 0;
 								that.justAddedId = null;
 								needAnimateAppear = true;
@@ -1392,7 +1392,7 @@ SpeedDialModule.prototype = {
 									setTimeout(function () {
 										cell.style.webkitTransform = cell.style.webkitTransform.replace('scale(0)', '');
 										cell.style.opacity = '';
-										// scroll to new dial if this is not visible
+										// прокрутите до нового циферблата, если он не виден
 										Utils.scrollToElem(cell);
 									}, 0);
 								})(cell);
@@ -1400,7 +1400,7 @@ SpeedDialModule.prototype = {
 						}
 
 						if (_b(fvdSpeedDial.Prefs.get('sd.display_plus_cells'))) {
-							// add plus cells
+							// добавить плюсовые ячейки
 							if (plusCellsCount === 0) {
 								plusCellsCount = parseInt(countInRow);
 							}
@@ -1448,8 +1448,8 @@ SpeedDialModule.prototype = {
 						}
 
 						if (fvdSpeedDial.Prefs.get('sd.display_mode') === 'fancy') {
-							// rendering more cols than dials are available for mostivited
-							// produces skewed dials UI (#1855)
+							// рендеринг большего количества столбцов, чем циферблатов, доступных для большинства
+							// создает перекошенный пользовательский интерфейс циферблата (#1855)
 							countInRow = Math.min(countInRow, data.length);
 						}
 
@@ -1584,7 +1584,7 @@ SpeedDialModule.prototype = {
 				},
 
 				function () {
-					// first remove all dials in group
+					// сначала удалите все циферблаты в группе
 					fvdSpeedDial.StorageSD.listDials(null, groupId, null, function (dials) {
 						Utils.Async.arrayProcess(
 							dials,
@@ -1721,7 +1721,7 @@ SpeedDialModule.prototype = {
 				return fvdSpeedDial.Prefs.get('sd.thumbs_type_most_visited');
 				break;
 			case 'recentlyclosed':
-				// always list
+				// всегда перечислять
 				return 'list';
 				break;
 		}
@@ -1853,7 +1853,7 @@ SpeedDialModule.prototype = {
 			const documentWidth = this._viewportWidth();
 			const sdWrapper = document.getElementById('speedDialWrapper');
 			let documentHeight = this._viewportHeightForHorizScroll();
-			// reduce height of overdraw panels
+			// уменьшить высоту панелей перерисовки
 
 			if (sdWrapper.hasAttribute('extraheight')) {
 				documentHeight -= parseInt(sdWrapper.getAttribute('extraheight'));
@@ -1890,7 +1890,7 @@ SpeedDialModule.prototype = {
 			if (fvdSpeedDial.Scrolling.activeScrollingType() === 'horizontal') {
 				if (additional.objects >= 0) {
 					if (countRows * count > additional.objects) {
-						// work as with vertical mode
+						// работать как в вертикальном режиме
 						countRows = null;
 					}
 				}
@@ -1904,7 +1904,7 @@ SpeedDialModule.prototype = {
 			rows: countRows,
 		};
 
-		// fixing fancy mode displaying if number of cols more than count displaying dials
+		// исправление отображения модного режима, если количество столбцов превышает количество отображаемых циферблатов
 		if (
 			displayMode === 'fancy'
 			&& !_b(fvdSpeedDial.Prefs.get('sd.display_plus_cells'))
@@ -1963,7 +1963,7 @@ SpeedDialModule.prototype = {
 
 		const that = this;
 
-		// open all dials in group in background tab
+		// открыть все циферблаты в группе на фоновой вкладке
 		StorageSD.listDials(null, groupId, null, function (dials) {
 			try {
 				for (let i = 0; i !== dials.length; i++) {
@@ -2063,10 +2063,10 @@ SpeedDialModule.prototype = {
 		let elements;
 
 		if (this.currentThumbsMode() === 'list') {
-			//var container = "listContainer";
+			//вар контейнер = "списокКонтейнер";
 			elements = document.getElementsByClassName('newtabListElem');
 		} else {
-			//var container = "cellsContainer";
+			//вар контейнер = "cellsContainer";
 			elements = document.getElementsByClassName('newtabCell');
 		}
 
@@ -2192,12 +2192,12 @@ SpeedDialModule.prototype = {
 		return allow;
 	},
 
-	/* Groups */
+	/* Группы */
 	sheduleRebuildGroupsList: function () {
 		this._needRebuildGroupsList = true;
 	},
 
-	/* Mostvisited related */
+	/* Связано с «часто посещаемыми» */
 
 	syncMostVisited: function () {
 		const { fvdSpeedDial } = this;
@@ -2271,7 +2271,7 @@ SpeedDialModule.prototype = {
 		);
 	},
 
-	// recently closed related
+	// недавно закрытое связанное
 
 	openAllCurrentRecentlyClosedLinks: function () {
 		RecentlyClosed.getData(
@@ -2303,7 +2303,7 @@ SpeedDialModule.prototype = {
 		);
 	},
 
-	/* something misc */
+	/* Разное */
 
 	wrapperDblClick: function (event) {
 		let prm = true;
@@ -2314,7 +2314,7 @@ SpeedDialModule.prototype = {
 			}
 		}
 
-		// need collapse/expand current display type
+		// нужно свернуть/развернуть текущий тип отображения
 		if (prm) this.toggleExpand();
 	},
 
@@ -2502,7 +2502,7 @@ SpeedDialModule.prototype = {
 		}, 100);
 	},
 
-	// interval callback function
+	// интервальная функция обратного вызова
 	_needRebuildChecker: function () {
 		const { fvdSpeedDial } = this;
 
@@ -2523,7 +2523,7 @@ SpeedDialModule.prototype = {
 
 	_viewportWidth: function () {
 		const maxRightScrollbarWidth = 20;
-		//return document.body.clientWidth;
+		//вернуть document.body.clientWidth;
 
 		return window.innerWidth - maxRightScrollbarWidth;
 	},
@@ -2544,7 +2544,7 @@ SpeedDialModule.prototype = {
 
 		if ('sd.thumbs_type' === name || 'sd.top_sites_columns' === name) {
 			if (name === 'sd.thumbs_type') {
-				// need check top sites columns value, if it large than auto value, set it it to auto value
+				// нужно проверить значение столбцов самых популярных сайтов. Если оно больше автоматического значения, установите для него автоматическое значение.
 
 				const autoColumnsCount = SpeedDial.cellsInRowMax('auto');
 
@@ -2587,7 +2587,7 @@ SpeedDialModule.prototype = {
 				SpeedDial.sheduleRebuild();
 			}
 		} else if (name === 'sd.search_bar_expanded') {
-			// need resize wrapper
+			// нужно изменить размер оболочки
 			SpeedDial.refreshSpeedDialWrapperHeight();
 		} else if (
 			['sd.enable_top_sites', 'sd.enable_most_visited', 'sd.enable_recently_closed'].indexOf(
@@ -2607,7 +2607,7 @@ SpeedDialModule.prototype = {
 			}
 
 			if (value && Prefs.get('sd.display_mode') == 'fancy') {
-				// if expand speed dial in fancy mode, to restore 3D, need to rebuild(maybe webkit bug?)
+				// если развернуть быстрый набор в необычном режиме, чтобы восстановить 3D, нужно пересобрать (может быть, ошибка вебкита?)
 				SpeedDial.sheduleRebuild();
 			}
 		} else if (
@@ -2615,7 +2615,7 @@ SpeedDialModule.prototype = {
 			|| ['sd.show_urls_under_dials', 'sd.show_icons_and_titles_above_dials'].indexOf(name) !== -1
 			|| name === 'sd.enable_dials_counter'
 		) {
-			// css changes
+			// изменения CSS
 			SpeedDial.Groups.rebuildGroupsList();
 			SpeedDial.rebuildCells();
 			SpeedDial.sheduleCSSRefresh();
@@ -2632,7 +2632,7 @@ SpeedDialModule.prototype = {
 				'sd.show_gray_line',
 			].indexOf(name) !== -1
 		) {
-			// css changes
+			// изменения CSS
 			SpeedDial.sheduleCSSRefresh();
 		} else if (name.indexOf('sd.background') === 0) {
 			SpeedDial.sheduleBackgroundRefresh();

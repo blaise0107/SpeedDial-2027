@@ -32,8 +32,8 @@ ContextMenu.prototype = {
 	},
 
 	rebuild: function () {
-		// removeAll() асинхронна: если создавать пункты сразу после неё, Chrome
-		// иногда возвращает "Cannot create item with duplicate id".
+		// RemoveAll() асинхронно: если указать пункты сразу после нее, Chrome
+		// иногда возвращает «Невозможно создать элемент с повторяющимся идентификатором».
 		// Перестраиваем меню только после полной очистки.
 		chrome.contextMenus.removeAll(() => {
 			this._rebuildMenu();
@@ -61,7 +61,7 @@ ContextMenu.prototype = {
 
 		const that = this;
 
-		// add groups list
+		// добавить список групп
 		fvdSpeedDial.StorageSD.groupsList(function (groups) {
 			for (let i = 0; i !== groups.length; i++) {
 				(function (i) {

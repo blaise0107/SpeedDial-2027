@@ -18,7 +18,7 @@ const WidgetsBuilder = new function () {
 		width: 250,
 		height: 200,
 	};
-	// number of rows and height
+	// количество строк и высота
 	const widgetsPanelHeights = {
 		1: 200,
 		2: 400,
@@ -29,7 +29,7 @@ const WidgetsBuilder = new function () {
 	function effCellWidth(x) {
 		let marginsIncludedWidth = 0;
 
-		// max width is 4 cells
+		// максимальная ширина — 4 ячейки
 		if (x > 4) {
 			x = 4;
 		}
@@ -41,7 +41,7 @@ const WidgetsBuilder = new function () {
 		return cellSize.width * x + marginsIncludedWidth;
 	}
 	function effCellHeight(y) {
-		// max widget height is 2 cells
+		// максимальная высота виджета — 2 ячейки
 		if (y > 2) {
 			y = 2;
 		}
@@ -227,7 +227,7 @@ const WidgetsBuilder = new function () {
 				});
 
 				draggie.on('dragStart', function (event, pointer) {
-					//el.setAttribute("dragging", 1);
+					//el.setAttribute("перетаскивание", 1);
 				});
 				draggie.on('dragMove', function (event, pointer) {
 					el.setAttribute("dragging", 1);

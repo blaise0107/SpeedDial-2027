@@ -1,4 +1,4 @@
-// redirect all requests from proxy to Storage object
+// перенаправить все запросы с прокси на объект Storage
 Broadcaster.onMessage.addListener(function (msg, sender, sendResponse) {
 	if (msg.action == "proxy:storage") {
 		const startTime = new Date().getTime();
@@ -27,7 +27,7 @@ Broadcaster.onMessage.addListener(function (msg, sender, sendResponse) {
 		accessObj[m].apply(accessObj, msg.args);
 
 		if (msg.wantResponse) {
-			// we call waitResponse after processing
+			// мы вызываем waitResponse после обработки
 			return true;
 		}
 	}

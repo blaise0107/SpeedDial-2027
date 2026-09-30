@@ -35,7 +35,7 @@ const Widgets = new function () {
 	function l_removeWidget(widgetId) {
 		fvdSpeedDial.Widgets.Builder.removeWidget(widgetId);
 		setTimeout(function () {
-			// additionaly refresh scroll
+			// дополнительно обновить прокрутку
 			_scroll.refresh();
 		}, 1000);
 		/*
@@ -56,7 +56,7 @@ const Widgets = new function () {
       preContainer.scrollLeft = maxScrollLeft;
     }*/
 
-		//refreshScrollManyTimes();
+		//обновитьScrollManyTimes();
 	}
 
 	function l_prefListener(key) {
@@ -75,8 +75,8 @@ const Widgets = new function () {
 	}
 
 	function refreshSpeedDialWrapperPadding() {
-		// padding for speedDialWrapper elem is used to
-		// view all dials on page if widgets panel is active
+		// заполнение для элемента SpeedDialWrapper используется для
+		// просмотреть все циферблаты на странице, если панель виджетов активна
 		const panelHeight = self.Builder.getWidgetsPanelHeight();
 		const speedDialWrapper = document.getElementById("speedDialWrapper");
 
@@ -90,7 +90,7 @@ const Widgets = new function () {
 
 	}
 
-	// view
+	// просмотр
 	function refreshScrollManyTimes(count) {
 		_scroll.refreshScrollManyTimes();
 	}
@@ -140,14 +140,14 @@ const Widgets = new function () {
 
 	this.openTab = function () {
 		const overlay = document.getElementById("widgetPanelBgOverlay");
-		//overlay.setAttribute( "active", 1 );
+		//overlay.setAttribute("активный", 1);
 		document.querySelector("#widgetsPanel").setAttribute("active", 1);
 		Prefs.set("widgets.opened", true);
 		_scroll.AutoScroll.setPause(false);
 		refreshSpeedDialWrapperPadding();
 
 		if (fvdSpeedDial.SpeedDial.Scrolling.activeScrollingType() == "horizontal") {
-			// need to rebuild for horizontal scroll type, because number of rows may change
+			// необходимо перестроить для типа горизонтальной прокрутки, поскольку количество строк может измениться
 			fvdSpeedDial.SpeedDial.sheduleRebuild();
 		}
 
@@ -162,7 +162,7 @@ const Widgets = new function () {
 		refreshSpeedDialWrapperPadding();
 
 		if (fvdSpeedDial.SpeedDial.Scrolling.activeScrollingType() == "horizontal") {
-			// need to rebuild for horizontal scroll type, because number of rows may change
+			// необходимо перестроить для типа горизонтальной прокрутки, поскольку количество строк может измениться
 			fvdSpeedDial.SpeedDial.sheduleRebuild();
 		}
 	};
@@ -234,7 +234,7 @@ const Widgets = new function () {
 
 		fvdSpeedDial.Widgets.Builder.rebuildAll();
 		fvdSpeedDial.Widgets.Builder.onReorderComplete.addListener(function () {
-			// timeout fixes scroll appear if not need(maybe problem with packery lib)
+			// исправление таймаута, прокрутка появляется, если она не нужна (возможно, проблема с библиотекой пакетов)
 			setTimeout(function () {
 				_scroll.refresh();
 			}, 0);

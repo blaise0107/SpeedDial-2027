@@ -22,7 +22,7 @@ ContextMenus.prototype = {
 		const that = this;
 
 		setTimeout(function () {
-			// apps cell menu
+			// меню ячеек приложений
 			that._appsCellMenu = new dhtmlXMenuObject();
 			that._appsCellMenu.renderAsContextMenu();
 			that.rebuildAppsCellMenu();
@@ -39,7 +39,7 @@ ContextMenus.prototype = {
 						break;
 				}
 			});
-			// recently closed cell menu
+			// недавно закрытое меню ячейки
 			that._recentlyClosedCellMenu = new dhtmlXMenuObject();
 			that._recentlyClosedCellMenu.renderAsContextMenu();
 			that.rebuildRecentlyClosedCellMenu();
@@ -88,7 +88,7 @@ ContextMenus.prototype = {
 					}
 				});
 			});
-			// most visited in group url menu
+			// наиболее посещаемые в меню URL группы
 			that._mostVisitedInGroupUrlMenu = new dhtmlXMenuObject();
 			that._mostVisitedInGroupUrlMenu.renderAsContextMenu();
 			that._mostVisitedInGroupUrlMenu.attachEvent('onclick', function (action, cellId) {
@@ -136,7 +136,7 @@ ContextMenus.prototype = {
 				);
 			});
 			that.rebuildMostVisitedInGroupUrlMenu();
-			// most visited cell menu
+			// меню самой посещаемой ячейки
 			that._mostVisitedCellMenu = new dhtmlXMenuObject();
 			that._mostVisitedCellMenu.renderAsContextMenu();
 			that._mostVisitedCellMenu.attachEvent('onContextMenu', function (x, cellId) {
@@ -247,7 +247,7 @@ ContextMenus.prototype = {
 				);
 			});
 			that.rebuildMostVisitedCellMenu();
-			// SpeedDial manage groups group menu
+			// Групповое меню управления группами SpeedDial
 			that._speedDialGroupManageGroupsMenu = new dhtmlXMenuObject();
 			that._speedDialGroupManageGroupsMenu.renderAsContextMenu();
 			that.rebuildSpeedDialGroupManageGroupsMenu();
@@ -296,7 +296,7 @@ ContextMenus.prototype = {
 						break;
 				}
 			});
-			// SpeeDial group menu
+			// Групповое меню SpeedDial
 			that._speedDialGroupContextMenu = new dhtmlXMenuObject();
 			that._speedDialGroupContextMenu.renderAsContextMenu();
 			that._speedDialGroupContextMenu.attachEvent('onContextMenu', function (x, elemId) {
@@ -312,11 +312,11 @@ ContextMenus.prototype = {
 				if (+groupId === 0 || (+groupId === recommendGroupId && !isPremiumUser)) {
 					menu.setItemDisabled('edit');
 					menu.setItemDisabled('remove');
-					//menu.setItemDisabled( "sync_group" );
+					//Menu.setItemDisabled("sync_group");
 				} else {
 					menu.setItemEnabled('edit');
 					menu.setItemEnabled('remove');
-					//menu.setItemEnabled( "sync_group" );
+					//Menu.setItemEnabled("sync_group");
 				}
 
 				menu.setCheckboxState(
@@ -327,8 +327,8 @@ ContextMenus.prototype = {
 					'last_selected_group',
 					fvdSpeedDial.Prefs.get('sd.default_group') === -1
 				);
-				//fvdSpeedDial.StorageSD.getGroup( groupId, function( group ){
-				//menu.setCheckboxState( "sync_group", group.sync == 1 );
+				//fvdSpeedDial.StorageSD.getGroup(groupId, функция(группа){
+				//menu.setCheckboxState("sync_group", group.sync == 1);
 				//} );
 			});
 			that._speedDialGroupContextMenu.attachEvent('onClick', function (action, elemId) {
@@ -403,7 +403,7 @@ ContextMenus.prototype = {
 				}
 			});
 			that.rebuildSpeedDialGroupContextMenu();
-			// SpeedDial cell menu
+			// Меню ячеек SpeedDial
 			that._speedDialCellMenu = new dhtmlXMenuObject();
 			that._speedDialCellMenu.renderAsContextMenu();
 			that._speedDialCellMenu.attachEvent('onContextMenu', function (x, elemId) {
@@ -795,7 +795,7 @@ ContextMenus.prototype = {
 			false,
 			false
 		);
-		//menu.addCheckbox("sibling", "last_selected_group", null, "sync_group", _("cm_speeddial_group_sync_this_group"), false, false);
+		//Menu.addCheckbox("sibling", "last_selected_group", null, "sync_group", _("cm_speeddial_group_sync_this_group"), false, false);
 		menu.addNewChild(menu.topId, 4, 'remove', _('cm_speeddial_group_remove'), false, false);
 		menu.addNewChild(menu.topId, 5, 'open_all', _('cm_speeddial_group_open_all'), false, false);
 		menu.addNewChild(menu.topId, 6, 'manage', _('cm_speeddial_group_manage'), false, false);
@@ -909,7 +909,7 @@ ContextMenus.prototype = {
 		);
 		menu.addNewSeparator('open_incognito_tab', 'sep');
 		menu.addNewChild(menu.topId, 5, 'refresh', _('cm_speeddial_cell_refresh'), false, false);
-		//menu.addNewChild(menu.topId, 5, "manual_refresh", _("cm_speeddial_cell_refresh_manual"), false, false);
+		//Menu.addNewChild(menu.topId, 5, "manual_refresh", _("cm_speeddial_cell_refresh_manual"), false, false);
 		menu.addNewChild(
 			menu.topId,
 			6,
@@ -1390,7 +1390,7 @@ ContextMenus.prototype = {
 			menu.setRadioChecked('number_of_columns', 'columns_' + preValue);
 		}
 		function onContextMenu() {
-			// need to build number of columns menu
+			// нужно построить меню количества столбцов
 			rebuildColumns();
 			let checkId = 'view_' + fvdSpeedDial.SpeedDial.currentThumbsMode();
 

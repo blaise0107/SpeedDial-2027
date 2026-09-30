@@ -1,4 +1,4 @@
-/* Serve horizontal and vertical scrolling types for thumbs modes */
+/* Поддержка горизонтальной и вертикальной прокрутки в режимах миниатюр */
 import Broadcaster from '../_external/broadcaster.js';
 
 const Scrolling = function (fvdSpeedDial) {
@@ -80,7 +80,7 @@ const Scrolling = function (fvdSpeedDial) {
 					) {
 						const menu = document.getElementsByClassName('additionalGroupsElemList')[0];
 
-						//console.info('Menu', event.wheelDelta, menu.scrollHeight, menu.scrollTop + menu.offsetHeight, menu.scrollTop, menu.offsetHeight);
+						//console.info('Menu', event.wheelDelta,menu.scrollHeight,menu.scrollTop +menu.offsetHeight,menu.scrollTop,menu.offsetHeight);
 
 						if (event.wheelDelta < 0 && menu.scrollHeight === menu.scrollTop + menu.offsetHeight) {
 							event.preventDefault();

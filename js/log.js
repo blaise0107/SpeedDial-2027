@@ -41,7 +41,7 @@ const AppLog = {
 		let logJSON = JSON.stringify(this._log);
 
 		while (logJSON.length > MAX_LOG_SIZE) {
-			// preserve log size not greater than MAX_LOG_SIZE
+			// сохранять размер журнала не более MAX_LOG_SIZE
 			this._log.shift();
 			logJSON = JSON.stringify(this._log);
 		}
@@ -83,7 +83,7 @@ const AppLog = {
 			logLine.push(elem);
 		}
 		logLine = logLine.join(" ");
-		// this._logUpdated = true;
+		// this._logUpdated = правда;
 		this._log.push(logLine);
 		this.write();
 	},

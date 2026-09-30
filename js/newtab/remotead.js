@@ -84,7 +84,7 @@ const RemoteAD = new function () {
 
 					adContainer.addEventListener("click", function (event) {
 						event.stopPropagation();
-						//event.preventDefault();
+						//событие.preventDefault();
 					}, false);
 
 					adContainer.style.opacity = 0;

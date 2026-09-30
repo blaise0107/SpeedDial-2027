@@ -194,7 +194,7 @@ class ServerDials {
 							function (next2) {
 								StorageSD.groupIdByGlobalId(serverGroup.globalId, function (_id) {
 									if (!_id) {
-										// debug.log('need to create group', serverGroup);
+										// debug.log('нужно создать группу', serverGroup);
 										StorageSD.groupAdd(
 											{
 												global_id: serverGroup.globalId,
@@ -370,9 +370,9 @@ class ServerDials {
 
 		params = params || {};
 
-		// Сервер рекомендаций fvdspeeddial.com заброшен
+		// Серверная поддержка fvdspeeddial.com заброшена
 		// и вместо JSON отдаёт JS-код (ошибка парсинга).
-		// Не выполняем запрос, если URL не настроен — возвращаем пустой список.
+		// Не выполнять запрос, если URL не настроен — возвращаем официальный список.
 		if (!this.serverUrl) {
 			return setTimeout(() => cb(null, []), 0);
 		}
@@ -435,7 +435,7 @@ class ServerDials {
 									return cb(err);
 								}
 
-								// debug.log('Fetching dials finished, found', result.length, 'dials');
+								// debug.log('Извлечение циферблатов завершено, найдено', result.length, 'циферблаты');
 								cb(null, result);
 							});
 						});
@@ -460,7 +460,7 @@ class ServerDials {
 		const lastUpdateTime = this.getLastUpdateRequestTime();
 
 		if (!lastUpdateTime) {
-			// just set last update time
+			// просто установите время последнего обновления
 			this.setLastUpdateRequestTime();
 			return;
 		}
@@ -468,7 +468,7 @@ class ServerDials {
 		const elapsedTimeFromUpdate = now - lastUpdateTime;
 
 		if (elapsedTimeFromUpdate < config.updateRequestInterval) {
-			// not time
+			// не время
 			return;
 		}
 
@@ -526,13 +526,13 @@ const dialPicker = {
 		Object.keys(dials).forEach(function (globalId) {
 			const dialChoices = dials[globalId];
 
-			// if there is only one choice and it is the best match with addAnyWay = true, add it
+			// если есть только один вариант и он лучше всего соответствует addAnyWay = true, добавьте его
 
 			if (dialChoices.length === 1 && dialChoices[0].addAnyWay && dialChoices[0].bestMatch) {
 				const dial = dialChoices[0];
 
 				dial.globalId = globalId;
-				// debug.log('Found anyway dial with one choice with the best match', dial);
+				// debug.log('Все равно найден набор с одним вариантом, наиболее подходящим', disk);
 				addAnyWayDials.push(dial);
 				delete dials[globalId];
 			}
@@ -578,7 +578,7 @@ const dialPicker = {
 						globalIds,
 						function (globalId, eachNext) {
 							let choices = dials[globalId];
-							// remove choices which used only in noHistory case
+							// удалить варианты, которые использовались только в случае noHistory
 
 							choices = choices.filter(function (choice) {
 								return !choice.noHistoryOnly;
@@ -611,7 +611,7 @@ const dialPicker = {
 							});
 						},
 						function () {
-							// order result and pick only needed amount of dials
+							// закажите результат и выберите только необходимое количество циферблатов
 							result.sort(function (a, b) {
 								return b.orderValue - a.orderValue;
 							});
@@ -626,7 +626,7 @@ const dialPicker = {
 					);
 				} else {
 					debug.log('Do not check history, add only the best choices of noHistory dials');
-					// just add the best matches of each dial(if found)
+					// просто добавьте лучшие совпадения для каждого циферблата (если есть)
 					for (const globalId in dials) {
 						const choices = dials[globalId];
 						const dial = self._getTheBestChoice(choices);
@@ -641,7 +641,7 @@ const dialPicker = {
 				}
 			},
 			function () {
-				// add addAnyWay and with AllowedCountries to the end of the result
+				// добавьте addAnyWay и AllowedCountries в конец результата
 				result = addAnyWayDials.concat(dialListWithAllowedCountries).concat(result);
 				cb(result);
 			},
@@ -705,24 +705,24 @@ HistorySearch.prototype.getChoices = function (dialsChoices, cb) {
 	
 	dialsChoices.forEach(function (dialChoice) {
 		if (!dialChoice.checkHost) {
-			// debug.log('checkHost is not provided for', dialChoice, 'skip');
+			// debug.log('checkHost не предусмотрен',ialChoice, 'пропустить');
 			return;
 		}
 		
 		const visitsCount = self.getVisitsCountBySign(dialChoice.checkHost);
 		
-		// debug.log('Count visits:', dialChoice.checkHost, visitsCount);
+		// debug.log('Подсчет посещений:',ialChoice.checkHost, visitsCount);
 		
 		if (visitsCount >= config.minVisits) {
-			// this url was found in history, add dial for this url
+			// этот URL был найден в истории, добавьте набор для этого URL
 			debug.log('Host', dialChoice.checkHost, 'found in the history, add choice', dialChoice);
 			dialChoice.orderValue = visitsCount;
 			choices.push(dialChoice);
 		} else {
-			// debug.log(
-			// 'Host',
-			// dialChoice.checkHost,
-			// ' not found in the history(or visits count less than needed)'
+			// отладка.журнал(
+			// «Хозяин»,
+			// набратьChoice.checkHost,
+			// 'не найдено в истории(или количество посещений меньше необходимого)'
 			// );
 		}
 	});

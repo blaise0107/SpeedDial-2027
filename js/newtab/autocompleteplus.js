@@ -194,10 +194,10 @@ function AutoCompletePlus(params) {
 			force_input_obj : document.querySelector(params.input),
 			force_form_obj : document.querySelector(params.form),
 			click_callback : function () {},
-			acp_searchbox_id : "force_acp_object_imput", /* ID of the search <input tag   */
-			acp_search_form_id : "force_acp_object_form", /* ID of the search form         */
+			acp_searchbox_id : "force_acp_object_imput", /* ID поля поиска <input>   */
+			acp_search_form_id : "force_acp_object_form", /* ID формы поиска         */
 			acp_partner : "flsh", /* AutoComplete+ partner ID      */
-			acp_suggestions : "7", /* Number of suggestions to get  */
+			acp_suggestions : "7", /* Количество подсказок для выдачи  */
 		};
 
 		const input = $(acpObj.acp_searchbox_id);
@@ -219,8 +219,8 @@ function AutoCompletePlus(params) {
 
 		tbody.setAttribute("id", suggestionsTableId);
 		table.appendChild(tbody);
-		//document.querySelector('#front-content').appendChild(container);
-	    //input.parentNode.appendChild(container);
+		//document.querySelector('#front-content').appendChild(контейнер);
+	    //input.parentNode.appendChild(контейнер);
 		document.body.appendChild(container);
 
 		if (!acpObj.acp_sig) {
@@ -324,7 +324,7 @@ function AutoCompletePlus(params) {
 
 				if (!this.dropdown.table) {
 					this.dropdown.table = $(suggestionsTableId);
-					//var elem = $(acpObj.acp_searchbox_id);
+					//вар элем = $(acpObj.acp_searchbox_id);
 				}
 
 				this.search(query);

@@ -111,13 +111,13 @@ OptionsModule.prototype = {
 		if (this.fvdSpeedDial.RuntimeStore.get("importing_in_process")) {
 			buttonImport.setAttribute("disabled", true);
 			buttonExport.setAttribute("disabled", true);
-			//buttonImportFile.setAttribute("disabled", true);
-			//buttonExportFile.setAttribute("disabled", true);
+			//buttonImportFile.setAttribute("отключено", true);
+			//buttonExportFile.setAttribute("отключено", true);
 		} else {
 			buttonImport.removeAttribute("disabled");
 			buttonExport.removeAttribute("disabled");
-			//buttonImportFile.removeAttribute("disabled");
-			//buttonExportFile.removeAttribute("disabled");
+			//buttonImportFile.removeAttribute("отключено");
+			//buttonExportFile.removeAttribute("отключено");
 		}
 	},
 
@@ -157,7 +157,7 @@ OptionsModule.prototype = {
 		this._roller = Roller.create(document.getElementById("rollerContent"), ROLLER_ELEM_WIDTH);
 		this._listenOptions();
 		this.refreshOptionValues();
-		// refresh options when tab activated
+		// обновить параметры при активации вкладки
 		chrome.tabs.onActivated.addListener(function (tabId) {
 			chrome.tabs.getCurrent(function (tab) {
 				if (tab.id === tabId) {
@@ -189,10 +189,10 @@ OptionsModule.prototype = {
 			}
 		});
 
-		// init tabs
+		// вкладки инициализации
 		this.Tabs.init();
 
-		// custom dials size
+		// индивидуальный размер циферблатов
 
 		const changeCDSize = () => {
 			const cdRange = document.getElementById("cdSizeRange_" + document.getElementById("themeSelect").value);
@@ -534,7 +534,7 @@ OptionsModule.prototype = {
 	},
 
 	rebuildGroupsList: function (callback) {
-		// get groups list
+		// получить список групп
 		this.fvdSpeedDial.StorageSD.groupsList(groups => {
 			const container = document.getElementById("speeddial_defaultGroup");
 
@@ -569,12 +569,12 @@ OptionsModule.prototype = {
 
 		if (page) {
 			if (page.getAttribute("data-no-buttons") === "1") {
-				// hide all buttons
+				// скрыть все кнопки
 				bottomButtons.setAttribute("hidden", 1);
 			}
 		}
 
-		//document.getElementById( "closeButton" ).setAttribute( "active", 0 );
+		//document.getElementById("closeButton").setAttribute("активный", 0);
 		this.fvdSpeedDial.Prefs.set("sd.last_opened_settings", type);
 		const index = this._settingsTypesIndexes[ type ];
 
@@ -623,7 +623,7 @@ OptionsModule.prototype = {
 			Prefs.set(name, this._getOptionValue(options[i]));
 		}
 
-		// check if need update background image in database
+		// проверьте, нужно ли обновить фоновое изображение в базе данных
 		const imageUrl = document.getElementById("bg_imageURL").value;
 		const imageType = document.getElementById("bg_imageType").value;
 		const applyChangesButton = document.getElementById("applyChangesButton");
@@ -663,7 +663,7 @@ OptionsModule.prototype = {
 				},
 				function () {
 					// console.log(doneCallback);
-					// doneCallback();
+					// сделаноОбратный вызов();
 					StorageSD.setMisc("sd.background", dataUrl, doneCallback);
 				},
 			]);
@@ -885,7 +885,7 @@ OptionsModule.prototype = {
 		const enabledTypes = Utils.arrayDiff(types, disabledTypes);
 
 		if (enabledTypes.length <= 1) {
-			// disable enabled
+			// отключить включено
 			for (let i = 0; i !== elems.length; i++) {
 				if (elems[i].checked) {
 					elems[i].setAttribute("disabled", true);
@@ -905,7 +905,7 @@ OptionsModule.prototype = {
 		}
 
 		if (disabledTypes.indexOf(currentValue) !== -1) {
-			// set new value
+			// установить новое значение
 			const newValue = enabledTypes[0];
 
 			for (let i = 0; i !== radioElems.length; i++) {
@@ -915,7 +915,7 @@ OptionsModule.prototype = {
 			}
 		}
 
-		// disable disabled default elements
+		// отключить отключенные элементы по умолчанию
 		for (let i = 0; i !== disabledTypes.length; i++) {
 			for (let j = 0; j !== radioElems.length; j++) {
 				if (radioElems[j].value === disabledTypes[i]) {
@@ -977,8 +977,8 @@ OptionsModule.prototype = {
 
 		brightness = (red * 299) + (green * 587) + (blue * 114);
 		brightness = brightness / 255000;
-		// values range from 0 to 1
-		// anything greater than 0.5 should be bright enough for dark text
+		// значения варьируются от 0 до 1
+		// все, что больше 0,5, должно быть достаточно ярким для темного текста
 
 		if (brightness >= 0.5) {
 			return "000000";

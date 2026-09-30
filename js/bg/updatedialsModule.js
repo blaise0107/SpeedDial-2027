@@ -38,7 +38,7 @@ class UpdateDials {
 
 				next();
 			},
-			// taking allowed group dials and preventing them from exclude
+			// получение разрешенных групповых вызовов и предотвращение их исключения
 			function (next) {
 				fvdSpeedDial.StorageSD.listDials(null, null, null, (_existingDials) => {
 					dbExistingDials = _existingDials;
@@ -52,12 +52,12 @@ class UpdateDials {
 					next();
 				});
 			},
-			// Sync local groups/dials with trash
+			// Синхронизировать локальные группы/звонки с корзиной
 			function (next) {
-				// Groups trash globalIDs
+				// Группы удаляют глобальные идентификаторы
 				const removedGroupsTrash = fvdSpeedDial.Prefs.get(GROUPS_TRASH_KEY, {});
 				const currentUserRemovedGroups = removedGroupsTrash[currentUserId] || [];
-				// Dials trash globalIDs
+				// Набирает мусорные глобальные идентификаторы
 				const removedDialsTrash = fvdSpeedDial.Prefs.get(DIALS_TRASH_KEY, {});
 				const currentUserRemovedDials = removedDialsTrash[currentUserId] || [];
 
@@ -83,7 +83,7 @@ class UpdateDials {
 
 				next();
 			},
-			// fetching allowed group dials
+			// получение разрешенных групповых номеров
 			function (next) {
 				serverDialsModule.fetch(
 					{
@@ -102,27 +102,27 @@ class UpdateDials {
 					true // True to ignor browser history check
 				);
 			},
-			// only default, sponsoredst and recommend group dials to update
+			// обновлять только групповые наборы по умолчанию, спонсируемые и рекомендуемые
 			function (next) {
 				serverDials = serverDials.filter((dial) => allowedGroups.includes(dial.group_globalId));
 				next();
 			},
-			// ignoring removed groups by user
+			// игнорирование удаленных пользователем групп
 			/**function (next) {
 				serverDials = serverDials.filter((dial) => !removedGroups.includes(dial.group_globalId));
 				next();
 			},*/
-			// ignoring removed dials by user
+			// игнорирование удаленных пользователем циферблатов
 			function (next) {
-				// Dials trash globalIDs
+				// Набирает мусорные глобальные идентификаторы
 				const removedDialsTrash = fvdSpeedDial.Prefs.get(DIALS_TRASH_KEY, {});
 				const currentUserRemovedDials = removedDialsTrash[currentUserId] || [];
 				serverDials = serverDials.filter((dial) => !currentUserRemovedDials.includes(dial.global_id));
 				next();
 			},
-			// Remove groups by user trash if login/logout
+			// Удалить группы по пользовательскому мусору при входе/выходе
 			function (next) {
-				// Groups trash globalIDs
+				// Группы удаляют глобальные идентификаторы
 				const removedGroupsTrash = fvdSpeedDial.Prefs.get(GROUPS_TRASH_KEY, {});
 				const currentUserRemovedGroups = removedGroupsTrash[currentUserId] || [];
 
@@ -139,7 +139,7 @@ class UpdateDials {
 				}
 
 			},
-			// Removing dials by server
+			// Удаление циферблатов по серверу
 			function (next) {
 				const dialsToRemove = [];
 
@@ -164,7 +164,7 @@ class UpdateDials {
 
 				Utils.Async.arrayProcess(dialsToRemove, removeDial, next);
 			},
-			// adding & updating dials
+			// добавление и обновление циферблатов
 			function (next) {
 				const processDial = function (dialData, done) {
 					const dialExists = allowedExitingDials.find((d) => d.global_id === dialData.global_id);
@@ -173,12 +173,12 @@ class UpdateDials {
 
 					if (dialData.previewUrl && !dialData.thumb_url) {
 						dialData.thumb_url = dialData.previewUrl;
-						//dialData.thumb = dialData.previewUrl;
+						//набираемых данных.thumb = набираемых данных.previewUrl;
 						dialData.get_screen_method = 'custom';
 						dialData.thumb_source_type = 'url';
 					}
 
-					// adding dial if not exists
+					// добавление циферблата, если он не существует
 					if (!dialExists) {
 						fvdSpeedDial.StorageSD.addDial(dialData, function (res) {
 							if (res) {
@@ -213,7 +213,7 @@ class UpdateDials {
 							done();
 						});
 					} else {
-						// editing dial if exists
+						// редактирование циферблата, если существует
 						if ([defaultGroupGlobalIDs.sponsoredst, defaultGroupGlobalIDs.recommend].includes(dialData.group_globalId)) {
 							fvdSpeedDial.ThumbMaker.getImageDataPath(
 								{

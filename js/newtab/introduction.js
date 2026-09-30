@@ -54,7 +54,7 @@ const IntroductionModule = function (fvdSpeedDial) {
 	});
 
 	let currentSlideIndex = -1;
-	// for ad dials
+	// для рекламных звонков
 	let selectedMobileStore = null;
 	let hideRequestInProcess = false;
 
@@ -62,7 +62,7 @@ const IntroductionModule = function (fvdSpeedDial) {
 		document.getElementById('introductionOverlay').setAttribute('appear', 1);
 		buildImages();
 		selectSlide(0);
-		// setup store select step
+		// настройка шаг выбора магазина
 		let as = document.querySelectorAll('#introductionDialog .mobile-stores-select > a');
 
 		as = [].slice.call(as);
@@ -123,7 +123,7 @@ const IntroductionModule = function (fvdSpeedDial) {
 		}
 
 		const images = imgContainer.getElementsByTagName('img');
-		// hide step contents
+		// скрыть содержимое шага
 		const stepContents = document.querySelectorAll('#introductionDialog .step-content[appear]');
 
 		for (let i = 0; i !== stepContents.length; i++) {
@@ -242,7 +242,7 @@ const IntroductionModule = function (fvdSpeedDial) {
 								}
 							}
 
-							// SpeedDial.sheduleFullRebuild();
+							// SpeedDial.scheduleFullRebuild();
 						},
 						false
 					);

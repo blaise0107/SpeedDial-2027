@@ -7,17 +7,17 @@ const proxyMethods = [
 	"setMisc",
 	"getMisc",
 	"dump",
-	// Deny
+	// Запретить
 	"clearDeny",
 	"editDeny",
 	"isDenyUrl",
 	"deny",
 	"denyList",
 	"removeDeny",
-	// Apps
+	// Приложения
 	"Apps.get",
 	"Apps.storePositions",
-	// Dials
+	// Циферблаты
 	"countDials",
 	"searchDials",
 	"listDials",
@@ -34,7 +34,7 @@ const proxyMethods = [
 	"setAutoPreviewGlobally",
 	"turnOffAutoUpdateGlobally",
 	"setAutoUpdateGlobally",
-	// groups
+	// группы
 	"groupExists",
 	"groupUpdate",
 	"groupAdd",
@@ -43,7 +43,7 @@ const proxyMethods = [
 	"clearGroups",
 	"groupsCount",
 	"groupDelete",
-	// Most Visited
+	// Самые посещаемые
 	"MostVisited.getAvailableCount",
 	"MostVisited.getData",
 	"MostVisited.getDataByHost",
@@ -53,7 +53,7 @@ const proxyMethods = [
 	"MostVisited.deleteId",
 	"MostVisited.invalidateCache",
 	"MostVisited.restoreRemoved",
-	// Recently Closed
+	// Недавно закрыто
 	"RecentlyClosed.getAvailableCount",
 	"RecentlyClosed.getData",
 	"RecentlyClosed.get",
@@ -86,7 +86,7 @@ proxyMethods.forEach(function (methodName) {
 		const startTime = new Date().getTime();
 
 		chrome.runtime.sendMessage(request, function (data) {
-			//if("duration" in data) {
+			//if("длительность" в данных) {
 			if (typeof data === "object" && "duration" in data) {
 				const now = new Date().getTime();
 				const toBgDuration = (data.receiveTime - startTime)/1000;

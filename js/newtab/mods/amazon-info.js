@@ -400,7 +400,7 @@
 			const data = event.data;
 
 			if (data.action === 'amazon-info-size' && amazonInfoPopupInstance) {
-				// add extra 10 pixels to really fit the page
+				// добавьте дополнительные 10 пикселей, чтобы они соответствовали странице
 				amazonInfoPopupInstance.resizeFrame(
 					data.size.width,
 					Math.max(data.size.height + 10, amazonInfoPopupInstance.defaultFrameHeight)

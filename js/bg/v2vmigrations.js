@@ -1,5 +1,5 @@
 import {Utils} from '../utils.js';
-// import StorageSD from "../storage.js";
+// импортировать StorageSD из «../storage.js»;
 
 function runMigrations(lastV, currentV) {
 	console.log("Run migrations. lastver:", lastV, "currentver:", currentV);
@@ -16,7 +16,7 @@ function runMigrations(lastV, currentV) {
 
 	migrations.push(function () {
 		console.log("Migrations process completed, runned", countRunned, "migrations");
-		// force refresh speeddial
+		// принудительное обновление быстрого набора
 		chrome.runtime.sendMessage({
 			action: "forceRebuild",
 		});

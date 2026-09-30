@@ -1,5 +1,5 @@
 import Broadcaster from '../_external/broadcaster.js';
-// import StorageSD from "../storage.js";
+// импортировать StorageSD из «../storage.js»;
 
 function intervalToSeconds(str) {
 	let interval = str.split("|");

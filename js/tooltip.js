@@ -30,7 +30,7 @@ ToolTip.prototype = {
 
 			this._container = toolTipContainer;
 
-			// position
+			// позиция
 			const offset = Utils.getOffset(elem);
 
 			toolTipContainer.style.left = offset.left + (elem.offsetWidth/2) - this._arrowLeftOffset - 1 + "px";

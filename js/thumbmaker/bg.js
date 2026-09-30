@@ -46,7 +46,7 @@ ThumbMakerModule.prototype = {
 					});
 					*/
 
-					// draw svg on canvas
+					// нарисовать SVG на холсте
 					const cc = document.createElement('canvas');
 
 					cc.width = img.width;
@@ -76,7 +76,7 @@ ThumbMakerModule.prototype = {
 				}
 			},
 			function () {
-				// simple resize
+				// простое изменение размера
 				const canvas = document.createElement('canvas');
 				const sy = (sx * img.height) / img.width;
 
@@ -151,7 +151,7 @@ ThumbMakerModule.prototype = {
 
 		for (let i = 0; i !== this._listenData.length; i++) {
 			if (this._listenData[i].tabId === params.tabId) {
-				// replace listener
+				// заменить прослушиватель
 				this._listenData[i] = listener;
 				return;
 			}
@@ -209,7 +209,7 @@ ThumbMakerModule.prototype = {
 				}
 
 				function saveToDB(result, thumbSize, callback) {
-					// get last tab info
+					// получить информацию о последней вкладке
 					chrome.tabs.get(tabId, function (tab) {
 						switch (listener.type) {
 							case 'speeddial':
@@ -291,7 +291,7 @@ ThumbMakerModule.prototype = {
 				}
 
 				if (!listener.saveImage) {
-					// without image, grab only title
+					// без изображения, выберите только заголовок
 					if (tab.title) {
 						that.removeListener(listener);
 						saveToDB(null, null, function () {
@@ -308,7 +308,7 @@ ThumbMakerModule.prototype = {
 					setTimeout(function () {
 						chrome.tabs.get(tabId, function (tab) {
 							if (tab.status === 'complete') {
-								// remove listener
+								// удалить прослушиватель
 								that.removeListener(listener);
 
 								chrome.tabs.captureVisibleTab(
@@ -345,17 +345,17 @@ ThumbMakerModule.prototype = {
 								files: ['content-scripts/cropper/cropper.js'],
 							},
 							() => {
-								// wait one second for response
+								// подождите одну секунду для ответа
 								setTimeout(function () {
 									if (!listener.canBeScripted) {
-										// make screen of tab
+										// сделать скрин вкладки
 
-										// wait while tab will be completed
+										// подождите, пока вкладка будет завершена
 										function _waitForTabCompletion() {
-											// if tab already completed
+											// если вкладка уже завершена
 											chrome.tabs.get(tabId, function (tab) {
 												if (!tab) {
-													// tab removed
+													// вкладка удалена
 													return;
 												}
 
@@ -373,7 +373,7 @@ ThumbMakerModule.prototype = {
 									}
 								}, 1000);
 
-								// connect to tab
+								// подключиться к вкладке
 
 								port = chrome.tabs.connect(tabId, {
 									name: 'thumbmaker_cropper',
@@ -407,7 +407,7 @@ ThumbMakerModule.prototype = {
 
 										case 'ready_to_init':
 											listener.canBeScripted = true;
-											// next include all other scripts and init cropper
+											// затем включите все остальные скрипты и обрежьте инициализацию
 											callbackChain();
 
 											break;
@@ -421,7 +421,7 @@ ThumbMakerModule.prototype = {
 											break;
 
 										case 'click_cancel':
-											// remove listener
+											// удалить прослушиватель
 											try {
 												that.removeListener(listener);
 												port.postMessage({
@@ -446,7 +446,7 @@ ThumbMakerModule.prototype = {
 												},
 												function (dataurl) {
 													port.postMessage({ message: 'captured' });
-													// remove listener
+													// удалить прослушиватель
 													try {
 														that.removeListener(listener);
 													} catch (ex) {

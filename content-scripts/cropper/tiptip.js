@@ -38,7 +38,7 @@
 	  	};
 	 	var opts = $.extend(defaults, options);
 	 	
-	 	// Setup tip tip elements and render them to the DOM
+	 	// Настройте элементы подсказки и визуализируйте их в DOM.
 	 	if($("#tiptip_holder").length <= 0){
 	 		var tiptip_holder = $('<div id="tiptip_holder" style="max-width:'+ opts.maxWidth +';"></div>');
 			var tiptip_content = $('<div id="tiptip_content"></div>');

@@ -199,7 +199,7 @@ const ManageGroupsModule = function (fvdSpeedDial) {
 	this.currentGroupsList = function () {
 		const groups = [];
 		const groupsIds = [];
-		// first get list of groups
+		// сначала получить список групп
 		const elems = document
 			.getElementById('dialogManageGroups_groupsList')
 			.getElementsByClassName('group');
@@ -228,7 +228,7 @@ const DialogsModule = function (fvdSpeedDial) {
 DialogsModule.prototype = {
 	LOCAL_FILE_URL: '<customFile>',
 	_erroredFields: [],
-	// default dialogs
+	// диалоги по умолчанию
 	alert: function (title, text, callback, param) {
 		const btns = {};
 
@@ -390,7 +390,7 @@ DialogsModule.prototype = {
 			previewElem.className = 'item';
 			const img = document.createElement('div');
 			img.className = 'preview';
-			//            img.setAttribute("src", preview.url);
+			//            img.setAttribute("src",view.url);
 			const tmpImg = new Image();
 			tmpImg.onload = function () {
 				try {
@@ -423,7 +423,7 @@ DialogsModule.prototype = {
 			const closeReport = document.createElement('div');
 			closeReport.className = 'close';
 			reportContainer.appendChild(buttonInappropriate);
-			//reportContainer.appendChild( buttonDuplicate );
+			//reportContainer.appendChild (кнопкаДублировать);
 			reportContainer.appendChild(closeReport);
 			const thankYouReport = document.createElement('div');
 			thankYouReport.textContent = _('dialog_pick_user_pics_report_thanks');
@@ -854,7 +854,7 @@ DialogsModule.prototype = {
 				tr.appendChild(tdType);
 				tr.appendChild(tdActions);
 				(function (d) {
-					// events
+					// события
 					iconRemove.addEventListener(
 						'click',
 						function () {
@@ -955,7 +955,7 @@ DialogsModule.prototype = {
 						} catch (ex) {
 							console.warn(ex);
 							try {
-								// try to translate import file
+								// попробуйте перевести файл импорта
 								importData = importTranslate.translate(JSON.parse(text));
 
 								if (!importData) {
@@ -973,14 +973,14 @@ DialogsModule.prototype = {
 						}
 						const importContainer = document.getElementById('dialogImportExportContainer');
 						importContainer.setAttribute('type', 'importing');
-						// activate import chain
+						// активировать цепочку импорта
 						const statusTextContainer = document.getElementById('importingProcessState');
 						const groupsRelations = {}; // relations between groups ids in dump and imported groups IDS
 						let countGroupsImported = 0;
 						let countDialsImported = 0;
 						RuntimeStore.set('importing_in_process', true);
 						Utils.Async.chain([
-							// step 1. Clear old data
+							// шаг 1. Очистите старые данные
 							function (callback) {
 								importInProcess = true;
 								statusTextContainer.textContent = _('dlg_importing_step1');
@@ -997,7 +997,7 @@ DialogsModule.prototype = {
 									callback,
 								]);
 							},
-							// step 2. Import prefs
+							// шаг 2. Импортируйте настройки
 							function (callback) {
 								statusTextContainer.textContent = _('dlg_importing_step2');
 								for (const k in importData.prefs) {
@@ -1009,7 +1009,7 @@ DialogsModule.prototype = {
 									});
 								});
 							},
-							// step 3. Import deny
+							// шаг 3. Отказ в импорте
 							function (callback) {
 								statusTextContainer.textContent = _('dlg_importing_step3');
 
@@ -1035,7 +1035,7 @@ DialogsModule.prototype = {
 									}
 								);
 							},
-							// step 4. Import groups
+							// шаг 4. Импортируйте группы
 							function (callback) {
 								statusTextContainer.textContent = _('dlg_importing_step4');
 								Utils.Async.arrayProcess(
@@ -1083,7 +1083,7 @@ DialogsModule.prototype = {
 									}
 								);
 							},
-							// step 5. Import dials
+							// шаг 5. Импортируйте циферблаты
 							function (callback) {
 								statusTextContainer.textContent = _('dlg_importing_step5');
 								Utils.Async.arrayProcess(
@@ -1148,7 +1148,7 @@ DialogsModule.prototype = {
 									}
 								);
 							},
-							// finish step
+							// финишный шаг
 							function () {
 								statusTextContainer.textContent = _('dlg_importing_finished')
 									.replace('%groups%', String(countGroupsImported))
@@ -1204,7 +1204,7 @@ DialogsModule.prototype = {
 			buttons: btns,
 			onShow: function () {
 				that.ViewGroup.rebuild();
-				// set events
+				// устанавливать события
 				document.getElementById('dialogViewGroup_typeTitle').addEventListener(
 					'click',
 					function () {
@@ -1312,7 +1312,7 @@ DialogsModule.prototype = {
 			}
 
 			if (settings.id) {
-				// edit deny
+				// редактировать отрицать
 				StorageSD.editDeny(
 					settings.id,
 					{
@@ -1374,7 +1374,7 @@ DialogsModule.prototype = {
 
 				signBox.setAttribute('value', settings.sign);
 				that.Deny.changeType();
-				// set events
+				// устанавливать события
 				document.getElementById('dialogDeny_denyHost').addEventListener(
 					'click',
 					function () {
@@ -1466,7 +1466,7 @@ DialogsModule.prototype = {
 										position: group.position,
 									},
 									function (result) {
-										// console.log('added group', group);
+										// console.log('добавлена группа', группа);
 
 										if (result.result) {
 											Sync.addDataToSync({
@@ -1522,7 +1522,7 @@ DialogsModule.prototype = {
 				if (groupsIdsToRemove.length > 0) {
 					for (let i = 0; i !== groupsIdsToRemove.length; i++) {
 						(function (i) {
-							// remove group
+							// удалить группу
 							SpeedDial.removeGroup(
 								groupsIdsToRemove[i],
 								function () {
@@ -1629,7 +1629,7 @@ DialogsModule.prototype = {
 				});
 			},
 			function () {
-				// display dialog if need
+				// отобразить диалог, если нужно
 				if (_b(Prefs.get('sd.display_move_to_nosync_group_dialog'))) {
 					Dialogs.confirmCheck(
 						_('dlg_move_to_nosync_group_title'),
@@ -1778,7 +1778,7 @@ DialogsModule.prototype = {
 											});
 
 											if (addPosition === 'top') {
-												// need to add all groups to sync
+												// нужно добавить все группы для синхронизации
 												StorageSD.groupsRawList({}, function (groups) {
 													groups.forEach(function (group) {
 														if (group.id === result.id) {
@@ -1930,14 +1930,14 @@ DialogsModule.prototype = {
 
 		const btns = {};
 		btns[buttonAddModifyText] = function () {
-			// check if need grab img
+			// проверьте, нужно ли получить img
 			let backgroundUrl = '';
 
 			if (!document.getElementById('addDialog_image_url').hasAttribute('autoText')) {
 				backgroundUrl = document.getElementById('addDialog_image_url').value;
 			}
 
-			// check fields
+			// проверить поля
 			let url = document.getElementById('addDialog_url').value.trim();
 			let title = document.getElementById('addDialog_title').value.trim();
 			const groupValue = document.getElementById('addDialog_group').value;
@@ -1979,7 +1979,7 @@ DialogsModule.prototype = {
 
 			if (!Utils.isValidUrl(url)) {
 				//that.errorToField( document.getElementById( "addDialog_url" ), document.body, _("error_invalid_url") );
-				//return false;
+				//вернуть ложь;
 				url = SpeedDialMisc.addProtocolToURL(url);
 
 				if (!Utils.isValidUrl(url)) {
@@ -2018,7 +2018,7 @@ DialogsModule.prototype = {
 
 					const getGroupValue = function (callback) {
 						if (groupValue === 0) {
-							// check if group exists
+							// проверьте, существует ли группа
 							StorageSD.groupExists(
 								{
 									name: groupName,
@@ -2027,7 +2027,7 @@ DialogsModule.prototype = {
 									if (exists) {
 										that.errorToField(groupNameNode, document.body, _('error_already_exists'));
 									} else {
-										// add group
+										// добавить группу
 										StorageSD.groupAdd(
 											{
 												name: groupName,
@@ -2051,7 +2051,7 @@ DialogsModule.prototype = {
 							callback(groupValue);
 						}
 					};
-					// check deny
+					// проверить отклонить
 					StorageSD.isDenyUrl(url, function (deny, denyDetails) {
 						if (deny) {
 							that.errorToField(
@@ -2060,7 +2060,7 @@ DialogsModule.prototype = {
 								_('error_url_deny_' + denyDetails.deny.type)
 							);
 						} else {
-							// check existing
+							// проверить существующие
 							StorageSD.dialExists(
 								{
 									url: url,
@@ -2103,9 +2103,9 @@ DialogsModule.prototype = {
 																updateData.screen_maked = 0;
 															}
 														} else if (thumb_source_type === 'screen') {
-															// if url no have changes save old screen thumb
+															// если URL-адрес отсутствует, внесите изменения, сохраните старый эскиз экрана
 															if (dialDataOld.url !== url) {
-																// reset screen maked flag
+																// сброс экрана сделал флаг
 																updateData.screen_maked = 0;
 															} else if (getScreenMethod !== dialDataOld.get_screen_method) {
 																dataUrl = '';
@@ -2114,7 +2114,7 @@ DialogsModule.prototype = {
 																dataUrl = dialDataOld.thumb;
 															}
 														} else if (thumb_source_type === 'local_file') {
-															//dataUrl = dialDataOld.thumb;
+															//dataUrl = diskDataOld.thumb;
 														}
 
 														updateData.thumb = dataUrl;
@@ -2180,7 +2180,7 @@ DialogsModule.prototype = {
 															});
 															SpeedDial.justAddedId = result.id;
 															setTimeout(function () {
-																// need to send user in group where dial created
+																// необходимо отправить пользователя в группу, где создан циферблат
 																if (SpeedDial.currentDisplayType() !== 'speeddial') {
 																	SpeedDial.setCurrentDisplayType('speeddial');
 																}
@@ -2192,7 +2192,7 @@ DialogsModule.prototype = {
 																SpeedDial.sheduleFullRebuild();
 															}, 200);
 
-															// GA dial add event track
+															// GA, добавьте отслеживание событий
 															StorageSD.getGroupTitleById(groupValue, (groupTitle) => {
 																const GADialAddParams = {
 																	title,
@@ -2333,7 +2333,7 @@ DialogsModule.prototype = {
 			};
 
 			if (document.getElementById('addDialog_title').hasAttribute('autoText')) {
-				// get auto title
+				// получить автоматический заголовок
 				title = '';
 				afterTitle();
 			} else {
@@ -2573,7 +2573,7 @@ DialogsModule.prototype = {
 					);
 				};
 				const fillGroups = function (selectGroup) {
-					// fill groups
+					// заполнять группы
 					StorageSD.groupsList(function (groups) {
 						const selectGroups = document.getElementById('addDialog_group');
 						selectGroups.options.length = 0;
@@ -2589,7 +2589,7 @@ DialogsModule.prototype = {
 							option.value = groups[i].id;
 							selectGroups.appendChild(option);
 						}
-						// add create group
+						// добавить создать группу
 						const option = document.createElement('option');
 						option.textContent = _('dlg_adddial_create_group');
 						option.value = 0;
@@ -2627,7 +2627,7 @@ DialogsModule.prototype = {
 					const customPreviewCheckbox = document.getElementById('addDialog_useCustomPreview');
 
 					if (dialData.thumb_source_type === 'url') {
-						// check if default url is selected
+						// проверьте, выбран ли URL-адрес по умолчанию
 						let isDefaultPreview = false;
 						const select = document.getElementById('addDialog_default_image');
 						for (let i = 0; i !== select.options.length; i++) {
@@ -2700,7 +2700,7 @@ DialogsModule.prototype = {
 					} else if (type === 'mostvisited') {
 						const selectGroups = document.getElementById('addDialog_group');
 						selectGroups.parentNode.parentNode.setAttribute('hidden', true);
-						// disable url field
+						// отключить поле URL
 						document.getElementById('addDialog_url').setAttribute('disabled', true);
 					}
 
@@ -2731,7 +2731,7 @@ DialogsModule.prototype = {
 				}
 
 				Dialogs.AddDial.refreshCustomPreviewState();
-				// set events
+				// устанавливать события
 				document.getElementById('addDialog_title').addEventListener(
 					'focus',
 					function () {

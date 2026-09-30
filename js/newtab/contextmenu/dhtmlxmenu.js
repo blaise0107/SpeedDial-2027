@@ -1,4 +1,4 @@
-//v.3.0 build 110707
+//v.3.0 сборка 110707
 /*
  Copyright DHTMLX LTD. http://www.dhtmlx.com
  You allowed to use this component or parts of it under GPL terms
@@ -728,7 +728,7 @@ const dhtmlxEventable = function (a) {
 	};
 })();
 
-//v.3.0 build 110707
+//v.3.0 сборка 110707
 
 /*
  Copyright DHTMLX LTD. http://www.dhtmlx.com

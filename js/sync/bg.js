@@ -68,7 +68,7 @@ const TempStore = {
 		}
 
 		currentValue.push(value);
-		// save temp data for 10 minutes
+		// сохранить данные о температуре в течение 10 минут
 		MemoryCache.set(this._key(id), currentValue, 600000);
 	},
 };
@@ -77,9 +77,9 @@ const Sync = function (fvdSpeedDial) {
 	const { Prefs, UserInfoSync } = fvdSpeedDial;
 	const fvdSynchronizerName = 'EverSync';
 	const fvdSynchronizerIds = [
-		// Chrome Webstore EverSync ID
+		// Идентификатор EverSync в интернет-магазине Chrome
 		'iohcojnlgnfbmjfjfkbhahhmppcggdog',
-		// Opera addons EverSync ID
+		// Дополнения Opera EverSync ID
 		'ffhogmjbkahkkpjpjmeppoegnjhpopmc',
 	];
 
@@ -238,12 +238,12 @@ const Sync = function (fvdSpeedDial) {
 	};
 
 	this.groupSyncChanged = function (groupId, requestId, callback) {
-		// need sync group as new and all it dials.
+		// нужна синхронизация группы как новой и все ее набирает.
 		fvdSpeedDial.StorageSD.getGroup(groupId, function (group) {
 			if (group.sync === 1) {
 				Utils.Async.chain([
 					function (chainCallback) {
-						// remove data from sync
+						// удалить данные из синхронизации
 						Sync.removeSyncData(
 							requestId,
 							{
@@ -278,8 +278,8 @@ const Sync = function (fvdSpeedDial) {
 					},
 
 					function (chainCallback) {
-						// add data to sync
-						// need to sync all groups
+						// добавить данные для синхронизации
+						// нужно синхронизировать все группы
 						fvdSpeedDial.StorageSD.groupsRawList({}, function (groups) {
 							Utils.Async.arrayProcess(
 								groups,
@@ -323,7 +323,7 @@ const Sync = function (fvdSpeedDial) {
 			} else if (group.sync === 0) {
 				Utils.Async.chain([
 					function (chainCallback) {
-						// remove data from sync
+						// удалить данные из синхронизации
 						Sync.removeSyncData(
 							requestId,
 							{
@@ -346,7 +346,7 @@ const Sync = function (fvdSpeedDial) {
 					},
 
 					function (chainCallback) {
-						// add data to sync
+						// добавить данные для синхронизации
 						Sync.addDataToSync(
 							{
 								category: ['deleteGroups'],
@@ -588,7 +588,7 @@ const Sync = function (fvdSpeedDial) {
 		callback(fvdSpeedDial.StorageSD);
 	}
 
-	// transactions
+	// транзакции
 
 	function createTransaction(callback) {
 		lastTransactionId++;
@@ -612,13 +612,13 @@ const Sync = function (fvdSpeedDial) {
 				const value = message.data.value;
 
 				TempStore.append(id, value);
-				// console.log('Got a chunk', id);
+				// console.log('Есть кусок', id);
 				sendResponse(currentPort, message.requestId, {
 					id: id,
 				});
 				break;
 
-			// transactions
+			// транзакции
 			case 'startTransaction':
 				createTransaction(function (id) {
 					sendResponse(currentPort, message.requestId, {
@@ -667,7 +667,7 @@ const Sync = function (fvdSpeedDial) {
 				AppLog.info('restore backup');
 
 				if (typeof message.data === 'string') {
-					// got a temp data id
+					// получил идентификатор временных данных
 					message.data = JSON.parse(TempStore.pop(message.data));
 				}
 
@@ -809,7 +809,7 @@ const Sync = function (fvdSpeedDial) {
 				break;
 
 			case 'updateMass':
-				// console.log('OBtained message', message);
+				// console.log('Полученное сообщение', сообщение);
 				StorageSD.syncUpdateMass(message.globalIds, message.data, function () {
 					if (message.requestId) {
 						sendResponse(currentPort, message.requestId, {});
@@ -854,7 +854,7 @@ const Sync = function (fvdSpeedDial) {
 					});
 				}
 				
-				// need to refresh default group id
+				// необходимо обновить идентификатор группы по умолчанию
 				const activeGroupId = Prefs.get('sd.default_group');
 
 				if (activeGroupId && activeGroupId > 0) {
@@ -1092,11 +1092,11 @@ const Sync = function (fvdSpeedDial) {
 		currentPort.port.onMessage.addListener((message) => processPortMessage(message, currentPort, responsePorts, _p?.sender?.documentId));
 		currentPort.port.onDisconnect.addListener(function () {
 			setActivity(false, currentPort);
-			// currentPort.active = false;
+			// текущийПорт.активный = ложь;
 		});
 
 		if (fvdSpeedDial.PowerOff.isHidden()) {
-			//do not send activate message to synchronizer if speed dial is locked
+			//не отправлять сообщение активации синхронизатору, если быстрый набор заблокирован
 			return;
 		}
 

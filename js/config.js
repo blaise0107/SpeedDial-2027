@@ -3,7 +3,7 @@ export default new (function () {
 	this.ANALYTICS_APP = 'FVDSD Chrome';
 	this.FANCY_SIDE_DIALS_MAX_SCALE = 5;
 	this.FANCY_SIDE_DIALS_MIN_SCALE = 1.3;
-	//this.DISPLAY_AD_EVERY = (Math.floor(Math.random() * 3) + 3) * 24 * 3600 * 1000; // 3 - 5 days
+	//this.DISPLAY_AD_EVERY = (Math.floor(Math.random() * 3) + 3) * 24 * 3600 * 1000; // 3–5 дней
     this.DISPLAY_AD_EVERY = Number(8.64E10); // display every 1000 days
 	this.FS_DIALS_PREVIEW_DIR = 'sd_previews';
 	this.FS_MOSTVISITED_PREVIEW_DIR = 'mostvisited_previews';

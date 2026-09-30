@@ -40,17 +40,17 @@ Prefs.prototype = {
 		},
 	},
 
-	// default values
+	// значения по умолчанию
 	_defaults: {
 		'surfcanyon.enabled': true,
 
-		// apps
+		// приложения
 		'apps.opened': true,
 
-		// dial mods
+		// набрать моды
 		'quick-preview.enabled': true,
 
-		// widgets
+		// виджеты
 		'widgets.enabled': true,
 		'widgets.locked': true,
 		'widgets.opened': true,
@@ -59,7 +59,7 @@ Prefs.prototype = {
 		'widgets.autoscroll': false,
 		'widgets.autoscroll.speed': 1,
 
-		// Power off
+		// Выключить питание
 		'poweroff.enabled': false,
 		'poweroff.hidden': false,
 		'poweroff.password': '',
@@ -104,7 +104,7 @@ Prefs.prototype = {
 
 		'sd.display_superfish': false,
 
-		/* styling */
+		/* стили */
 
 		'sd.display_mirror': true,
 
@@ -155,18 +155,18 @@ Prefs.prototype = {
 		'sd.text.group_active_font.color': 'FFFFFF',
 		'sd.text.group_font.bolder': false,
 		'sd.text.group_font.size': '12',
-		/* sd related */
+		/* связано со SpeedDial */
 		'sd.show_urls_under_dials': true,
 		'sd.show_icons_and_titles_above_dials': true,
 		'sd.display_plus_cells': true,
 		'sd.display_popular_group': true,
-		/* recentlyclosed related */
+		/* связано с недавно закрытыми */
 		'sd.recentlyclosed_columns': 'auto',
-		/* Misc */
+		/* Разное */
 		'sd.scrolling': 'vertical',
 		'sd.show_in_context_menu': true,
 		'sd.disable_custom_search': false,
-		/* In new tab */
+		/* На новой вкладке */
 		'sd.preview_creation_delay_default': 1200,
 
 		'sd.main_menu_displayed': true,
@@ -259,7 +259,7 @@ Prefs.prototype = {
 			return defaultValue;
 		}
 
-		// console.info('Prefs.get', 'result', name, value);
+		// console.info('Prefs.get', 'результат', имя, значение);
 
 		return value;
 	},
@@ -277,7 +277,7 @@ Prefs.prototype = {
 
 		if (_r(oldValue) !== _r(value)) {
 			fvdSpeedDial.localStorage.setItem(this._name(name), value).then(() => {
-				// call change listeners
+				// вызов смены слушателей
 				Broadcaster.sendMessage({
 					action: 'pref:changed',
 					name: name,

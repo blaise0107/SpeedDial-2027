@@ -26,7 +26,7 @@
 					}
 
 					if (document.querySelector('.bigInfoDialogOverlay[appear="1"]')) {
-						// another biginfo dialog is displaying
+						// отображается другое диалоговое окно biginfo
 						return;
 					}
 

@@ -6,10 +6,10 @@ const DragAndDrop = function (fvdSpeedDial) {
 
 DragAndDrop.prototype = {
 	elem: null,
-	// position of elem
+	// положение элемента
 	_elemOffset: null,
 	_elemsMargin: null, // margin between elements
-	// clear elements positions list
+	// очистить список позиций элементов
 	_elementsPositions: [],
 	_elementsGrid: {},
 	_dragSuccessListener: null,
@@ -38,7 +38,7 @@ DragAndDrop.prototype = {
 			'mousemove',
 			function (event) {
 				if (that.elem && event.buttons) {
-					// check is under group
+					// чек находится в группе
 					that.elem.style.display = 'none';
 					const elemUnder = document.elementFromPoint(event.x, event.y);
 
@@ -107,7 +107,7 @@ DragAndDrop.prototype = {
 							that._elemsMargin = SpeedDial._cellsMarginX;
 						}
 
-						// search elements
+						// элементы поиска
 						let dials = [];
 
 						if (displayType === 'list') {
@@ -158,7 +158,7 @@ DragAndDrop.prototype = {
 					}
 
 					if (!that.elem.hasAttribute('noclick')) {
-						// chrome can call mouse move when mouse not moved!
+						// Chrome может вызвать перемещение мыши, когда мышь не перемещается!
 						if (marginLeft !== 0 || marginTop !== 0) {
 							that.elem.setAttribute('noclick', 1);
 						}
@@ -192,7 +192,7 @@ DragAndDrop.prototype = {
 					};
 
 					let elemDraggedOn = null;
-					// check element is on another element
+					// проверить, что элемент находится на другом элементе
 
 					let ignoreInCicleElem = null;
 
@@ -260,7 +260,7 @@ DragAndDrop.prototype = {
 									newCol === that.elem.getAttribute('col')
 									&& newRow === that.elem.getAttribute('row')
 								) {
-									// same position - no reaction
+									// та же позиция - никакой реакции
 									if (elemPos.elem.hasAttribute('dragon')) {
 										elemPos.elem.removeAttribute('dragon');
 									}
@@ -330,7 +330,7 @@ DragAndDrop.prototype = {
 									newCol === that.elem.getAttribute('col')
 									&& newRow === that.elem.getAttribute('row')
 								) {
-									// same position - no reaction
+									// та же позиция - никакой реакции
 									if (elemPos.elem.hasAttribute('dragon')) {
 										elemPos.elem.removeAttribute('dragon');
 
@@ -450,7 +450,7 @@ DragAndDrop.prototype = {
 
 		this.elem = null;
 
-		// remove dragon in all elements if found
+		// удалить дракона во всех элементах, если он найден
 		if (this._elementsPositions.length !== 0) {
 			for (let i = 0; i !== this._elementsPositions.length; i++) {
 				const elemPos = this._elementsPositions[i];

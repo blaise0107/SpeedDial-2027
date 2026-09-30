@@ -1,9 +1,9 @@
 (function(){
 
-  // setup
+  // установка
   var WELCOME_URL = "https://nimbus.everhelper.pro/app-update/chromespeeddial.php?v={VERSION}",
       BADGE_TEXT = "new!";
-  // end setup
+  // конец настройки
 
   var LAST_VERSION_KEY = "welcomemod:lastversion"
     , SHOULD_SHOW_WELCOME_KEY = "welcomemode:show_welcome"

@@ -1,4 +1,4 @@
-// tab script for hidden capture, sends and receive data from background tab
+// скрипт вкладки для скрытого захвата, отправки и получения данных из фоновой вкладки
 
 const HiddenCaptureQueue = {
 	capture: function (params, callback) {

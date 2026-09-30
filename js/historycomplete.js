@@ -45,7 +45,7 @@ _HistoryComplete.prototype = {
 
 		this._elem.addEventListener('keydown', function (event) {
 			if (event.keyCode === 40) {
-				// down
+				// вниз
 				if (that._displayed()) {
 					that._focusedIndex++;
 
@@ -73,7 +73,7 @@ _HistoryComplete.prototype = {
 					});
 				}
 			} else if (event.keyCode === 38) {
-				// up
+				// вверх
 				if (that._displayed()) {
 					that._focusedIndex--;
 
@@ -188,7 +188,7 @@ _HistoryComplete.prototype = {
 		if (this._completionContainer === null) {
 			this._completionContainer = this._document.createElement('div');
 			this._completionContainer.className = 'historyComplete';
-			// set position to elem
+			// установить позицию для элемента
 			const elemPos = Utils.getOffset(this._elem);
 
 			this._completionContainer.style.left = elemPos.left + 'px';
@@ -329,7 +329,7 @@ HistoryComplete.prototype = {
 					endTime: new Date().getTime(),
 				},
 				function (_results) {
-					// filter results
+					// фильтровать результаты
 					const results = [];
 
 					for (let i = 0; i !== _results.length && results.length < that._maxCacheRecords; i++) {
@@ -377,7 +377,7 @@ HistoryComplete.prototype = {
 	},
 
 	searchInHistory: function (query, maxResults, callback) {
-		// * old variant
+		// * старый вариант
 		this.getHistory(function (data) {
 			let results = [];
 

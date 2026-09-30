@@ -89,7 +89,7 @@ const DialSearchModule = function (fvdSpeedDial) {
 				'keydown',
 				function (event) {
 					if (event.keyCode === 27) {
-						// escape pressed, clear and blur input
+						// нажатие клавиши Escape, очистка и размытие ввода
 						DialSearch.reset();
 						DialSearch.doSearch();
 					}

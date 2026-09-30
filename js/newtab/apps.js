@@ -15,7 +15,7 @@ Apps.prototype = {
 	_imgContainerHeight: 80,
 	_appHeight: 112,
 	_appMargin: 10,
-	// active drag and drop instance if in scrolling now
+	// активный экземпляр перетаскивания, если сейчас прокручивается
 	_activeDD: null,
 	_scrollOfContentAmount: 50,
 	_containerMarginTop: 0,
@@ -138,7 +138,7 @@ Apps.prototype = {
 			that.adjustMarginTop();
 
 			if (_b(this.fvdSpeedDial.Prefs.get("apps.opened"))) {
-				//that.display();
+				//это.дисплей();
 			}
 
 			Shortcut.add("ctrl+space", function () {
@@ -440,13 +440,13 @@ Apps.prototype = {
 		let ddPlaceHolderPos = null;
 		const allowScrollAuto = true;
 		/*
-      // describes elem position while dragging inside a container
-      // it can be top when element in top container position
-      // normal if element is elsewhere in container but no in top or bottom
-      // bottom if element is in bottom container position
+      // описывает положение элемента при перетаскивании внутри контейнера
+      // он может быть верхним, когда элемент находится в верхней позиции контейнера
+      // нормально, если элемент находится где-то в контейнере, но не сверху или снизу
+      // дно, если элемент находится в нижней позиции контейнера
       var dragInsidePosition = "normal";
-      // when user moves app to the bottom or top of container and waits 2s
-      // container will be scrolled to top or bottom depending on app position
+      // когда пользователь перемещает приложение в нижнюю или верхнюю часть контейнера и ждет 2 секунды
+      // контейнер будет прокручиваться вверх или вниз в зависимости от положения приложения
       var _dragScrollTimeout = null;
       function activateDragScrollTimeout() {
         if(_dragScrollTimeout) {
@@ -490,11 +490,11 @@ Apps.prototype = {
 
 				top -= correctTop;
 				const y = startTop + top;
-				//y -= correctTop;
+				//y -= правильныйверх;
 				const yGlobal = y + that._containerMarginTop;
 				const scrollTop = yGlobal < -10 && y > 0;
 
-				//console.log(top, correctTop);
+				//console.log(вверх, правильныйTop);
 				if (y < 0 || scrollTop) {
 					top = false;
 				}
@@ -508,14 +508,14 @@ Apps.prototype = {
 				if (lessThanNeed) {
 					top = -that._containerMarginTop - startTop;
 					top = false;
-					//dragInsidePosition = "top";
-					//activateDragScrollTimeout();
+					//dragInsidePosition = "сверху";
+					//активироватьDragScrollTimeout();
 				} else if (moreThanNeed) {
 					top = window.innerHeight - appDiv.offsetHeight - startTop - that._containerMarginTop - that._listTopMarginConst();
-					//dragInsidePosition = "bottom";
-					//activateDragScrollTimeout();
+					//dragInsidePosition = "внизу";
+					//активироватьDragScrollTimeout();
 				} else {
-					//dragInsidePosition = "normal";
+					//dragInsidePosition = "нормальный";
 					//deActivateDragScrollTimeout();
 				}
 
@@ -578,9 +578,9 @@ Apps.prototype = {
 				const newIndex = dragOnElem.getAttribute("index");
 
 				appDiv.setAttribute("index", newIndex);
-				// reassign elements indexes
+				// переназначить индексы элементов
 				const _elems = that.appsPanel().getElementsByClassName("app");
-				// remove element from position
+				// удалить элемент с позиции
 				let i = 0; let e; let index;
 
 				for (i = 0; i !== _elems.length; i++) {
@@ -596,7 +596,7 @@ Apps.prototype = {
 						e.setAttribute("index", index - 1);
 					}
 				}
-				// insert element to new position
+				// вставить элемент в новую позицию
 				for (i = 0; i !== _elems.length; i++) {
 					e = _elems[i];
 
@@ -610,7 +610,7 @@ Apps.prototype = {
 						e.setAttribute("index", index + 1);
 					}
 				}
-				// refresh style top by new indexes
+				// обновить топ стиля по новым индексам
 				for (i = 0; i !== _elems.length; i++) {
 					e = _elems[i];
 

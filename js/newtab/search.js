@@ -6,7 +6,7 @@ const Search = function (fvdSpeedDial) {
 	this.fvdSpeedDial = fvdSpeedDial;
 	fvdSpeedDial.addEventListener(EventType.LOAD, function () {});
 };
-/* TODO new search functions - monitor */
+/* TODO новые функции поиска - наблюдение */
 Search.prototype = {
 	_searchURL: 'https://search.fvdspeeddial.com/results.aspx?gd=SY1002769&searchsource=69&q={q}',
 	doSearch: async function (query) {
@@ -108,9 +108,9 @@ export default Search;
 	_ui: {},
 	_menuState: false,
 	_searchProviders: {
-		// removed all of the original search redirects 
-		// searches changed to either standard search parameters or removed entirely
-		// removed fvd and yandex search
+		// удалены все исходные поисковые перенаправления
+		// поиск изменен на стандартные параметры поиска или полностью удален
+		// удален фвд и поиск яндекса
 		google: {
 			name: 'Google',
 			url: 'https://www.google.com/search?q={q}',
@@ -221,7 +221,7 @@ export default Search;
 	listeners: function () {
 		this.ui.$logo.on('click', function (event) {
 			return;
-			//that.menu('show')
+			//that.menu('показать')
 		});
 		this.ui.$list.on('click', 'li', event => {
 			this.clickProvider($(event.currentTarget));

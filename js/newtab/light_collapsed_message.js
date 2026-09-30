@@ -9,7 +9,7 @@ function reposition() {
 	const msg = elem();
 
 	if (msg.hasAttribute("top")) {
-		// message in top, do not center it
+		// сообщение вверху, не центрировать его
 		return;
 	}
 

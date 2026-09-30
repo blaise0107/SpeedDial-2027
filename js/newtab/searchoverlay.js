@@ -49,7 +49,7 @@ const SearchOverlay = {
 		Utils.Async.chain([
 			function (next) {
 				if (typeof url === "function") {
-					// url is a function, call to get an url
+					// url — это функция, вызовите ее, чтобы получить URL-адрес
 					url(function (err, resultUrl) {
 						url = resultUrl;
 						next();
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	}, false);
 
-	// init autocomplete
+	// инициализировать автозаполнение
 	const autocomplete = new AutoCompletePlus({
 		input: "#searchOverlayForm .searchField input",
 		form: "#searchOverlayForm",

@@ -197,7 +197,7 @@ class Worker {
             }
             else if (message.action === 'storage:fs:getState') {
                 // sendResponse() не вызывался, но return true удерживал канал —
-                // Chrome: "message channel closed before a response was received".
+                // Chrome: «канал сообщений закрыт до получения ответа».
                 sendResponse(FileSystemSD.state || 'normal');
             }
             else if (message.action === 'thumbmaker:getimagedatapath') {

@@ -16,7 +16,7 @@ translators["speeddial2"] = function (data) {
 		return null;
 	}
 
-	// ok, it's speeddial2 data
+	// ок, это данные SpeedDial2
 	const res = {
 		db: {
 			dials: [],
@@ -26,8 +26,8 @@ translators["speeddial2"] = function (data) {
 		prefs: {},
 	};
 
-	// restore prefs
-	// now can restore only backound
+	// восстановить настройки
+	// теперь можно восстановить только фоновый звук
 
 	if (data.settings["options.background"] && /https?:\/\//i.test(data.settings["options.background"])) {
 		res.prefs["sd.background_url_type"] = "fill";
@@ -42,7 +42,7 @@ translators["speeddial2"] = function (data) {
 		name: "Home",
 		position: 1,
 	});
-	// groups
+	// группы
 	for (k in data.groups) {
 		const group = data.groups[k];
 

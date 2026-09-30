@@ -73,7 +73,7 @@ const OptionsPowerOff = function (fvdSpeedDial) {
 		document.getElementById("reserveEmailValue").value = "";
 
 		PowerOff.setup(email, passCode);
-		//document.getElementById( "closeButton" ).setAttribute( "active", 1 );
+		//document.getElementById("closeButton").setAttribute("активный", 1);
 		refresh();
 	};
 
@@ -90,7 +90,7 @@ const OptionsPowerOff = function (fvdSpeedDial) {
 		document.getElementById("oldPasscodeValue").value = "";
 		document.getElementById("newPasscodeValue").value = "";
 
-		//document.getElementById( "closeButton" ).setAttribute( "active", 1 );
+		//document.getElementById("closeButton").setAttribute("активный", 1);
 
 		if (!newPassCode) {
 			PowerOff.removePassword();

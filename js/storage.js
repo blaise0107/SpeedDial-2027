@@ -37,7 +37,7 @@ function checkLocalFile(url, thumb_source_type, thumb_url, cb) {
 			res.thumb_url = thumb_url;
 		}
 
-		// process add local file to speed dial
+		// процесс добавления локального файла для быстрого набора
 		try {
 			res.title = url.match(/[\/\\]([^\/\\?]+)[^\/\\]*$/i)[1];
 		} catch (ex) {
@@ -62,7 +62,7 @@ function checkLocalFile(url, thumb_source_type, thumb_url, cb) {
 		} else if (/(\.html?|\.pdf)$/i.test(url)) {
 			cb(res);
 		} else {
-			// not allowed for auto screen use standard image for local file
+			// для автоматического экрана не разрешено использовать стандартное изображение для локального файла
 			res.screen_maked = 1; // use force url
 			res.thumb_url = 'https://s3.amazonaws.com/fvd-data/sdpreview/local_file.png';
 			Utils.imageUrlToDataUrl(res.thumb_url, function (th, size) {
@@ -101,10 +101,10 @@ class StorageSD {
 	_connection = null;
 	_dbName = 'fvdSpeedDialDataBase';
 	_estimatedSize = 500 * 1024 * 1024;
-	// state of establishing connection and doing the inital actions
+	// состояние установления соединения и выполнения начальных действий
 	connecting = false;
 	connectionPromise = Promise.resolve(null);
-	// callbacks
+	// обратные вызовы
 	_groupsChangeCallbacks = [];
 	_dialsChangeCallbacks = [];
 	_standardThumbDirUrl = '/images/newtab/dials_standard';
@@ -113,7 +113,7 @@ class StorageSD {
 		'`thumb_source_type`, `thumb_url`, `position`, `group_id`, `clicks`, `deny`, `screen_maked`, ' +
 		'`thumb`, `thumb_version`, `screen_delay`, `thumb_width`, `thumb_height`, `get_screen_method`, ' +
 		'`global_id`, `previewTitle`, `preview_style`';
-	// force use transaction
+	// транзакция принудительного использования
 	_transaction = null;
 	_backupRegexp = /_backup_(.+?)_(.+)$/i;
 	_requiredTables = ['deny', 'dials', 'groups', 'misc', 'mostvisited_extended'];
@@ -354,7 +354,7 @@ class StorageSD {
 			callback(this._transaction);
 		} else {
 			self._connection.transaction(callback, function (err) {
-				// ugly way of comparement(messages) but code is always 0 for SQLError
+				// уродливый способ сравнения (сообщений), но код всегда равен 0 для SQLError
 				if (err.message !== 'database has been closed') {
 					return console.error('Fail to get a transaction(not recoverable)', err);
 				}
@@ -418,13 +418,13 @@ class StorageSD {
 								}
 
 								if (!row.thumb) {
-									// thumb not found, probably kind of a bug, but now just ignore this preview
+									// большой палец не найден, возможно, это какая-то ошибка, но теперь просто игнорируйте этот предварительный просмотр
 									return next();
 								}
 
 								if (row.thumb.indexOf('data:') !== 0) {
 									if (row.thumb_source_type === 'url' && row.thumb_url) {
-										// need to fetch thumb from url
+										// нужно получить большой палец с URL
 										Utils.imageUrlToDataUrl(row.thumb_url, function (th, size) {
 											if (!th || !size) {
 												console.info('Fail to fetch thumb from', row.thumb_url);
@@ -459,7 +459,7 @@ class StorageSD {
 										*/
 									}
 								} else {
-									// save data uri to file, by update dial thumb
+									// сохранить URI данных в файл, обновив большой палец набора
 									fvdSpeedDial.StorageSD.updateDial(
 										res.insertId,
 										{
@@ -472,7 +472,7 @@ class StorageSD {
 								}
 
 								if (!transactionCreated) {
-									// prevent staling transaction by async requests
+									// предотвратить задержку транзакции с помощью асинхронных запросов
 									next();
 								}
 							},
@@ -530,9 +530,9 @@ class StorageSD {
 
 									if (row && typeof row === 'object' && row.global_id) {
 										if (globalIds.indexOf(row.global_id) !== -1) {
-											//skip
+											//пропустить
 											rowIndex++;
-											//rowDoneCb();
+											//строкаDoneCb();
 											apc2();
 										} else {
 											globalIds.push(row.global_id);
@@ -547,7 +547,7 @@ class StorageSD {
 									});
 								},
 								function () {
-									// console.log('Done table', table);
+									// console.log('Готово, таблица', таблица);
 									cb();
 								}
 							);
@@ -557,7 +557,7 @@ class StorageSD {
 			},
 		]);
 	};
-	// restore tables data
+	// восстановить данные таблиц
 	restoreTablesDataInOneTransaction = function (data, callback, progressCallback, tx) {
 		const tables = [];
 		let totalRows = 0;
@@ -580,7 +580,7 @@ class StorageSD {
 						table,
 						data[table],
 						function () {
-							//console.log("Restored data for", table);
+							//console.log("Восстановленные данные для", table);
 							apc1();
 						},
 						function () {
@@ -593,7 +593,7 @@ class StorageSD {
 					);
 				},
 				function () {
-					//console.log("Restore in one transaction finished");
+					//console.log("Восстановление одной транзакцией завершено");
 					callback();
 				}
 			);
@@ -651,7 +651,7 @@ class StorageSD {
 			}
 		);
 	};
-	// dump functions
+	// функции дампа
 	dump = function (dumpToJsonCallback) {
 		const { fvdSpeedDial } = this;
 		const that = this;
@@ -703,7 +703,7 @@ class StorageSD {
 		const self = this;
 		let whereIn = false;
 		const where = {
-			// get_screen_method: 'auto',
+			// get_screen_method: 'авто',
 			thumb_source_type: 'screen',
 		};
 
@@ -744,7 +744,7 @@ class StorageSD {
 									arrayProcessCallback();
 								},
 								error: function (tx, error) {
-									//console.error("Query failed", error);
+									//console.error("Ошибка запроса", error);
 									arrayProcessCallback();
 								},
 							});
@@ -773,7 +773,7 @@ class StorageSD {
 		}
 
 		dbTransaction(function (tx) {
-			//need check
+			//нужна проверка
 			dbSelect(fvdSpeedDial, {
 				tx: tx,
 				from: 'dials',
@@ -825,7 +825,7 @@ class StorageSD {
 		const self = this;
 
 		dbTransaction(function (tx) {
-			//need check
+			//нужна проверка
 			dbSelect(fvdSpeedDial, {
 				tx: tx,
 				from: 'dials',
@@ -882,7 +882,7 @@ class StorageSD {
 		const self = this;
 
 		dbTransaction(function (tx) {
-			//need check
+			//нужна проверка
 			dbSelect(fvdSpeedDial, {
 				tx: tx,
 				from: 'dials',
@@ -938,7 +938,7 @@ class StorageSD {
 			});
 		});
 	};
-	// dial functions
+	// функции набора номера
 	dialGlobalId = function (id, callback) {
 		const { fvdSpeedDial } = this;
 
@@ -994,7 +994,7 @@ class StorageSD {
 			dbSelect(fvdSpeedDial, {
 				tx: tx,
 				from: 'dials',
-				//fields: ['id', 'rowid', 'update_interval', 'last_preview_update', 'url'],
+				//поля: ['id', 'rowid', 'update_interval', 'last_preview_update', 'url'],
 				where: {
 					'update_interval !': '',
 					'thumb_source_type': 'screen',
@@ -1038,9 +1038,9 @@ class StorageSD {
 						}
 						interval *= 1000;
 
-						//if (now - dial.last_preview_update < interval) {
+						//if (сейчас — disk.last_preview_update <интервал) {
 						if (now - dial.last_preview_update < interval - 15e3) {
-							//Task #1002
+							//Задача №1002
 							continue;
 						}
 
@@ -1228,17 +1228,17 @@ class StorageSD {
 								}
 							}
 						}
-						// preparations
+						// приготовления
 						list.forEach(function (dial) {
-							// fix bug when update_interval set to undefined(maybe with sync)
+							// исправить ошибку, когда update_interval установлен на неопределенное значение (возможно, с синхронизацией)
 							if (dial.update_interval === 'undefined') {
 								dial.update_interval = '';
 							}
 						});
 
 						if (params.fetchThumb) {
-							// need to replace filesystem urls by data uris
-							// because rawList request is used for sync
+							// необходимо заменить URL-адреса файловой системы на URIS данных
+							// потому что запрос rawList используется для синхронизации
 							Utils.Async.arrayProcess(
 								list,
 								function (dial, next) {
@@ -1247,14 +1247,14 @@ class StorageSD {
 											dial.thumb_source_type === 'local_file' ||
 											(dial.thumb_source_type === 'screen' && dial.get_screen_method === 'manual')
 										) {
-											// fetch allowed
+											// выборка разрешена
 										} else {
 											return setTimeout(next, 0);
 										}
 									}
 
 									self._resolveDialThumb(dial, function (dataUrl) {
-										//dial.thumb = dataUrl; Task 951
+										//disk.thumb = dataUrl; Задача 951
 										next();
 									});
 								},
@@ -1296,7 +1296,7 @@ class StorageSD {
 			dbSelect(fvdSpeedDial, {
 				tx: tx,
 				from: 'dials',
-				//fields: ['thumb'],
+				//поля: ['большой палец'],
 				where: {
 					global_id: globalId,
 				},
@@ -1441,7 +1441,7 @@ class StorageSD {
 			},
 			function (next) {
 				if (addData.thumb) {
-					// store thumb separately
+					// хранить большой палец отдельно
 					storeThumb = addData.thumb;
 					delete addData.thumb;
 				}
@@ -1499,7 +1499,7 @@ class StorageSD {
 					return next();
 				}
 
-				// store thumb
+				// хранить большой палец
 				fvdSpeedDial.StorageSD.updateDial(
 					res.id,
 					{
@@ -1540,7 +1540,7 @@ class StorageSD {
 							dbUpdate(fvdSpeedDial, {
 								tx: tx,
 								table: 'dials',
-								//noResponse: true,
+								//noResponse: правда,
 								set: {
 									position: position,
 								},
@@ -1576,14 +1576,14 @@ class StorageSD {
 
 		fields = fields || ['rowid', '*'];
 		dbTransaction(function (tx) {
-			//need check
+			//нужна проверка
 			dbSelect(fvdSpeedDial, {
 				tx: tx,
 				from: 'dials',
 				fields: fields.join(','),
 				where: {
 					global_id: globalId,
-					//key: 'global_id', val: globalId
+					//ключ: 'global_id', значение: globalId
 				},
 				success: function (tx, results) {
 					if (results.rows.length >= 1) {
@@ -1764,7 +1764,7 @@ class StorageSD {
 										if (result) {
 											oldData = result;
 
-											// check if dials moved
+											// проверьте, сдвинулись ли циферблаты
 											if (oldData.group_id !== dial.group_id) {
 												saveInfo.move = {
 													from: oldData.group_id,
@@ -1829,7 +1829,7 @@ class StorageSD {
 								(currentData?._previewUrl && currentData?.thumb_source_type === 'local_file') ||
 								(currentData?._previewUrl && currentData?.thumb_source_type === 'screen')
 							) {
-								// need to grab thumb from url
+								// нужно отхватить большой палец с URL
 								let loadContentUrl = currentData.thumb_url;
 
 								if (
@@ -1918,7 +1918,7 @@ class StorageSD {
 						return next();
 					}
 
-					// GA dial remove event track
+					// Диск GA удалить отслеживание событий
 					that.getGroupTitleById(d.group_id, (groupTitle) => {
 						const GADialAddParams = {
 							title: d.title,
@@ -1994,7 +1994,7 @@ class StorageSD {
 		}
 
 		dbTransaction(function (tx) {
-			//need check
+			//нужна проверка
 			dbSelect(fvdSpeedDial, {
 				tx: tx,
 				from: 'dials',
@@ -2091,7 +2091,7 @@ class StorageSD {
 					data.thumb.indexOf('blob:') !== -1 ||
 					data.thumb.indexOf('file:') !== -1 ||
 					data.thumb.indexOf('http') === 0
-					// || data.thumb.indexOf('data:') === 0
+					// || data.thumb.indexOf('данные:') === 0
 				) {
 					return next(data.thumb);
 				}
@@ -2123,7 +2123,7 @@ class StorageSD {
 						}
 					},
 					function (next1) {
-						// store thumb
+						// хранить большой палец
 						const thumb = Utils.dataURIToBlob(data.thumb);
 						const ext = Utils.typeToExt(thumb.type);
 						const thumbName = '/' + Config.FS_DIALS_PREVIEW_DIR + '/' + fname + '.' + ext;
@@ -2252,7 +2252,7 @@ class StorageSD {
 		const { fvdSpeedDial } = this;
 
 		dbTransaction(function (tx) {
-			//need check
+			//нужна проверка
 			dbSelect(fvdSpeedDial, {
 				tx: tx,
 				from: 'dials',
@@ -2287,7 +2287,7 @@ class StorageSD {
 
 		this.getDialDataList(dialId, ['group_id'], function (dial) {
 			dbTransaction(function (tx) {
-				//need check
+				//нужна проверка
 				const changedGlobalIds = [];
 				const positionGlobalIds = {};
 
@@ -2399,7 +2399,7 @@ class StorageSD {
 	};
 	dialExistsByGlobalId = function (globalId, callback) {
 		const { fvdSpeedDial } = this;
-		//ff match results!
+		//фф результаты матча!
 
 		dbTransaction(function (tx) {
 			dbSelect(fvdSpeedDial, {
@@ -2418,7 +2418,7 @@ class StorageSD {
 	};
 	getDialByGroupId = function (globalId, callback) {
 		const { fvdSpeedDial } = this;
-		//ff match results!
+		//фф результаты матча!
 
 		dbTransaction(function (tx) {
 			dbSelect(fvdSpeedDial, {
@@ -2448,7 +2448,7 @@ class StorageSD {
 	};
 	getDialListByGroupId = function (groupId, callback) {
 		const { fvdSpeedDial } = this;
-		//ff match results!
+		//фф результаты матча!
 
 		dbTransaction(function (tx) {
 			dbSelect(fvdSpeedDial, {
@@ -2540,10 +2540,10 @@ class StorageSD {
 	refreshDenyDials = function (callback) {
 		const { fvdSpeedDial } = this;
 		const that = this;
-		// go away all dials and refresh its deny field
+		// убрать все наборы и обновить поле запрета
 
 		dbTransaction(function (tx) {
-			//need check
+			//нужна проверка
 			dbSelect(fvdSpeedDial, {
 				tx: tx,
 				from: 'dials',
@@ -2590,7 +2590,7 @@ class StorageSD {
 			});
 		});
 	};
-	// deny functions
+	// запретить функции
 	deny = function (type, sign, callback) {
 		const { fvdSpeedDial } = this;
 
@@ -2671,7 +2671,7 @@ class StorageSD {
 					const updateData = that._getUpdateData(data);
 
 					dbTransaction(function (tx) {
-						//need check
+						//нужна проверка
 						dbUpdate(fvdSpeedDial, {
 							tx: tx,
 							table: 'deny',
@@ -2699,7 +2699,7 @@ class StorageSD {
 		const { fvdSpeedDial } = this;
 
 		dbTransaction(function (tx) {
-			//need check
+			//нужна проверка
 			dbSelect(fvdSpeedDial, {
 				tx: tx,
 				from: 'deny',
@@ -2798,7 +2798,7 @@ class StorageSD {
 			});
 		});
 	};
-	/* Groups */
+	/* Группы */
 	resetDefaultGroupId = function () {
 		const { fvdSpeedDial } = this;
 
@@ -3043,7 +3043,7 @@ class StorageSD {
 
 		return group.name;
 	};
-	// save group for sync
+	// сохранить группу для синхронизации
 	syncSaveGroup = function (group, callback) {
 		const { fvdSpeedDial } = this;
 
@@ -3053,14 +3053,14 @@ class StorageSD {
 		this.groupExistsByGlobalId(group.global_id, function (exists) {
 			if (exists) {
 				dbTransaction(function (tx) {
-					//need check
+					//нужна проверка
 					dbUpdate(fvdSpeedDial, {
 						tx: tx,
 						table: 'groups',
 						set: {
 							name: group.name, //that.getSafeGroupName(group),
 							position: group.position,
-							//sync : 1
+							//синхронизация: 1
 						},
 						where: {
 							key: 'global_id',
@@ -3072,7 +3072,7 @@ class StorageSD {
 						},
 						error: function (tx, err) {
 							//that.onDataChanged.dispatch();
-							//callback();
+							//обратный вызов();
 						},
 					});
 				}, 1);
@@ -3093,14 +3093,14 @@ class StorageSD {
 						},
 						error: function (tx, err) {
 							//that.onDataChanged.dispatch();
-							//callback();
+							//обратный вызов();
 						},
 					});
 				}, 1);
 			}
 		});
 	};
-	// get group id by global id
+	// получить идентификатор группы по глобальному идентификатору
 	syncGetGroupId = function (globalId, callback) {
 		const { fvdSpeedDial } = this;
 
@@ -3122,7 +3122,7 @@ class StorageSD {
 			});
 		}, 1);
 	};
-	// remove groups that not in list
+	// удалить группы, которых нет в списке
 	syncRemoveGroups = function (notRemoveIds, callback) {
 		const { fvdSpeedDial } = this;
 		const that = this;
@@ -3238,7 +3238,7 @@ class StorageSD {
 		const { fvdSpeedDial } = this;
 
 		dbTransaction(function (tx) {
-			//need check
+			//нужна проверка
 			dbSelect(fvdSpeedDial, {
 				tx: tx,
 				from: 'groups',
@@ -3682,7 +3682,7 @@ class StorageSD {
 					value !== fvdSpeedDial.Prefs._themeDefaults['fancy']['sd.background_url'] &&
 					value !== fvdSpeedDial.Prefs._themeDefaults['standard']['sd.background_url']
 				) {
-					// save to file
+					// сохранить в файл
 					const img = Utils.dataURIToBlob(value);
 					const ext = Utils.typeToExt(img.type);
 
@@ -4091,7 +4091,7 @@ db.prototype = {
 		return JSON.parse(str);
 	},
 };
-// const dbCache = new db();
+// const dbCache = новая БД ();
 const lastQueryTime = Date.now();
 
 function dbSelect(fvdSpeedDial, obj) {
@@ -4283,7 +4283,7 @@ function dbSelectProcess(obj, arr) {
 	}
 
 	if (param.maxOf) {
-		//Max of item
+		//Максимум предмета
 		let maxVal = 0;
 
 		if (typeof param.maxOf === 'string') param.maxOf = { field: param.maxOf, name: param.maxOf };
@@ -4296,7 +4296,7 @@ function dbSelectProcess(obj, arr) {
 		for (const r in results.rows) results.rows[r][param.maxOf.name] = maxVal;
 	}
 
-	//Fields
+	//Поля
 	if (param.fields && typeof param.fields !== 'undefined')
 		if (typeof param.fields === 'string')
 			param.fields = String(param.fields).split('`').join('').split(',');
@@ -4314,7 +4314,7 @@ function dbSelectProcess(obj, arr) {
 			}
 	}
 
-	//Rename fields
+	//Переименование полей
 	if (param.rename) {
 		for (const r in results.rows) {
 			for (const f in results.rows[r]) {
@@ -4436,7 +4436,7 @@ function dbUpdate(fvdSpeedDial, obj) {
 			if (String(parseInt(param.where.val)) === String(param.where.val)) {
 				param.where.val = parseInt(param.where.val);
 			} else {
-				//console.warn("NOT EQUAL", param.where.val, obj);
+				//console.warn("НЕ РАВНО", param.where.val, obj);
 			}
 		}
 	}

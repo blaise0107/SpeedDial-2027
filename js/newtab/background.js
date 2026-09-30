@@ -137,7 +137,7 @@ BackgroundModule.prototype = {
 				}
 
 				if (!bgData.adaptiveSize) {
-					// if not specified adaptive size - this is not preview, than set attachment
+					// если не указан адаптивный размер - это не предпросмотр, тогда ставим вложение
 					elem.style.backgroundAttachment = 'fixed';
 				}
 

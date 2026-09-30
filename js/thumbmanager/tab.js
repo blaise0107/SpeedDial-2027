@@ -6,7 +6,7 @@ export function onHiddenCaptureFinishedTab(fvdSpeedDial, params, resultData) {
 		return;
 	}
 
-	// update info in speeddial
+	// обновить информацию в быстром наборе
 	const elem = document.getElementById(params.elemId);
 	let dialData;
 
@@ -21,7 +21,7 @@ export function onHiddenCaptureFinishedTab(fvdSpeedDial, params, resultData) {
 					dialData = dial;
 
 					if (dial.title) {
-						//delete resultData.title;
+						//удалить resultData.title;
 					}
 
 					chainCallback();
@@ -44,7 +44,7 @@ export function onHiddenCaptureFinishedTab(fvdSpeedDial, params, resultData) {
 			elem.removeAttribute('loadscreen');
 
 			if (!resultData) {
-				// failed here
+				// здесь не удалось
 				return;
 			}
 
@@ -52,7 +52,7 @@ export function onHiddenCaptureFinishedTab(fvdSpeedDial, params, resultData) {
 				let titleContainer = elem.querySelector('.head span');
 
 				if (!titleContainer) {
-					// try to get titlecontainer for list element
+					// попробуйте получить контейнер заголовка для элемента списка
 					titleContainer = elem.querySelector('.leftData .text');
 				}
 
@@ -112,7 +112,7 @@ export const ThumbManagerModule = function (fvdSpeedDial) {
 					});
 				}
 			} else {
-				// setup screen
+				// экран настройки
 				if (screen) {
 					Utils.setScreenPreview(screen, data.thumb, params.nocache, false, data);
 				}
@@ -140,9 +140,9 @@ export const ThumbManagerModule = function (fvdSpeedDial) {
 					Utils.setCustomPreview(screen, data.preview_style, data.previewTitle);
 					// const adElem = elem.querySelector('.body .screenParent .add');
 
-					// if (adElem) {
+					// если (адЭлем) {
 					// 	adElem.style.color = data.preview_style.color;
-					// 	adElem.style.border = `1px solid ${data.preview_style.color}`;
+					// 	adElem.style.border = `1px сплошной ${data.preview_style.color}`;
 					// }
 				}
 

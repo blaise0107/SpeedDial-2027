@@ -30,7 +30,7 @@ CSS.prototype = {
 		const { fvdSpeedDial } = this;
 		const { Prefs } = fvdSpeedDial;
 
-		// get colors from settings
+		// получить цвета из настроек
 		const classesColors = {
 			'.newtabCell .head': {
 				'color': this._color(Prefs.get('sd.text.cell_title.color')),
@@ -362,14 +362,14 @@ CSS.prototype = {
 					Prefs.sSet('sd.top_sites_columns', 'auto');
 					Prefs.sSet('sd.most_visited_columns', 'auto');
 
-					// set fonts
+					// установить шрифты
 					prefsToRestore.forEach(function (pref) {
 						if (Prefs.get(pref) === standardDefaults[pref]) {
 							Prefs.set(pref, fancyDefaults[pref]);
 						}
 					});
 
-					// in fancy mode plus cells always display
+					// в необычном режиме плюс ячейки всегда отображаются
 					if (!_b(Prefs.get('sd.display_plus_cells'))) {
 						Prefs.sSet('sd.display_plus_cells', true);
 					}

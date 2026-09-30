@@ -1,5 +1,5 @@
 // Google Analytics / geoloc.tempest.com отключены.
-// Extension ID меняется при переустановке из магазина, поэтому GA-идентификаторы
+// Идентификатор расширения меняется при переустановке из магазина, поэтому GA-идентификаторы
 // всё равно не работают; запросы к несуществующим хостам вызывают ошибки в логах.
 const noop = async () => true;
 
@@ -35,8 +35,8 @@ class AnalyticsStub {
         firePageview() {
                 return Promise.resolve(true);
         }
-        // Заглушка не содержала методов fire*Event — вызывающий код падал
-        // с "Analytics.fireTabViewEvent is not a function". No-op-обёртки:
+        // Заглушка не вызвана методами пожар*Событие — вызывающий код падал
+        // с «Analytics.fireTabViewEvent не является функцией». Нет-оп-обёртки:
         fireTabViewEvent() {
                 return Promise.resolve(true);
         }

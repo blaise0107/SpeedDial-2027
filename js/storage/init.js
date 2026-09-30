@@ -32,7 +32,7 @@ const initStorage = function (fvdSpeedDial, tx, databaseBackup, callback) {
 
 	Utils.Async.chain([
 		function (callback1) {
-			// get list of current tables
+			// получить список текущих таблиц
 			fvdSpeedDial.StorageSD._getTables(tx, function (tables) {
 				currentTables = tables;
 				callback1();
@@ -83,9 +83,9 @@ const initStorage = function (fvdSpeedDial, tx, databaseBackup, callback) {
 		},
 
 		function (callback2) {
-			// create default dials
+			// создать циферблаты по умолчанию
 			if (backupRestored) {
-				// do not create default dials because database has just been restore
+				// не создавайте наборы по умолчанию, поскольку база данных только что была восстановлена
 				return callback2();
 			}
 
@@ -94,18 +94,18 @@ const initStorage = function (fvdSpeedDial, tx, databaseBackup, callback) {
 			}
 
 			if (legacyDials) {
-				// do not create default dials because legacy restored
+				// не создавайте наборы по умолчанию, поскольку устаревшая версия восстановлена
 				return callback2();
 			}
 
 			const dialsCreated = [];
 
-			// add default group
+			// добавить группу по умолчанию
 			let groupDials;
 
 			Utils.Async.chain([
 				function (next) {
-					// need to fetch dials from server
+					// нужно получить циферблаты с сервера
 
 					const serverDials = new ServerDials(fvdSpeedDial);
 
@@ -154,7 +154,7 @@ const initStorage = function (fvdSpeedDial, tx, databaseBackup, callback) {
 
 						if (dialData.previewUrl && !dialData.thumb_url) {
 							dialData.thumb_url = dialData.previewUrl;
-							//dialData.thumb = dialData.previewUrl;
+							//набираемых данных.thumb = набираемых данных.previewUrl;
 							dialData.get_screen_method = 'custom';
 							dialData.thumb_source_type = 'url';
 						}
