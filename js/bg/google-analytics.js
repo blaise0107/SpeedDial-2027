@@ -35,6 +35,26 @@ class AnalyticsStub {
         firePageview() {
                 return Promise.resolve(true);
         }
+        // Заглушка не содержала методов fire*Event — вызывающий код падал
+        // с "Analytics.fireTabViewEvent is not a function". No-op-обёртки:
+        fireTabViewEvent() {
+                return Promise.resolve(true);
+        }
+        fireGroupVisitEvent() {
+                return Promise.resolve(true);
+        }
+        fireDialClickEvent() {
+                return Promise.resolve(true);
+        }
+        fireAddDialEvent() {
+                return Promise.resolve(true);
+        }
+        fireRemoveDialEvent() {
+                return Promise.resolve(true);
+        }
+        fireSearchEvent() {
+                return Promise.resolve(true);
+        }
 }
 
 const Analytics = new AnalyticsStub();

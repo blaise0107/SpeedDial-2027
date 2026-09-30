@@ -27,6 +27,7 @@ import PowerOffModule from './js/poweroff.js';
 import UpdateDials from './js/bg/updatedialsModule.js';
 import { default as FvdSpeedDialModule } from './js/speedDialCore.js';
 import Analytics from './js/bg/google-analytics.js';
+import FileSystemSD from './js/storage/filesystem.js';
 class Worker {
     constructor() {
         this.fvdSpeedDial = new FvdSpeedDialModule(this.addEventListener, { mode: "worker" });
@@ -190,12 +191,14 @@ class Worker {
                 sendEvent('install');
             }
             else if (message.action === 'sdtab:open') {
-                setTimeout(() => {
-                }, 3000);
+                // Пустой setTimeout был заглушкой аналитики; отправитель ждал
+                // ответа и получал закрытый канал. Отвечаем сразу.
+                sendResponse(true);
             }
             else if (message.action === 'storage:fs:getState') {
-                console.info('sendResponse(FileSystem.state)');
-                return true;
+                // sendResponse() не вызывался, но return true удерживал канал —
+                // Chrome: "message channel closed before a response was received".
+                sendResponse(FileSystemSD.state || 'normal');
             }
             else if (message.action === 'thumbmaker:getimagedatapath') {
                 console.info('thumbmaker:getimagedatapath', message.params);

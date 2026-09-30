@@ -32,9 +32,16 @@ ContextMenu.prototype = {
 	},
 
 	rebuild: function () {
-		const { fvdSpeedDial } = this;
+		// removeAll() асинхронна: если создавать пункты сразу после неё, Chrome
+		// иногда возвращает "Cannot create item with duplicate id".
+		// Перестраиваем меню только после полной очистки.
+		chrome.contextMenus.removeAll(() => {
+			this._rebuildMenu();
+		});
+	},
 
-		chrome.contextMenus.removeAll();
+	_rebuildMenu: function () {
+		const { fvdSpeedDial } = this;
 
 		if (this._mainId) {
 			// chrome.contextMenus.remove(this._mainId);

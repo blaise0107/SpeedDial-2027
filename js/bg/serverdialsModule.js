@@ -370,6 +370,13 @@ class ServerDials {
 
 		params = params || {};
 
+		// Сервер рекомендаций fvdspeeddial.com заброшен
+		// и вместо JSON отдаёт JS-код (ошибка парсинга).
+		// Не выполняем запрос, если URL не настроен — возвращаем пустой список.
+		if (!this.serverUrl) {
+			return setTimeout(() => cb(null, []), 0);
+		}
+
 		if (this.clientSoftware) {
 			params.clientSoftware = this.clientSoftware;
 		}
