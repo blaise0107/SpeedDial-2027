@@ -97,6 +97,12 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 	const isWin = navigator.platform.toLowerCase().indexOf('win') === 0;
 
 	this.capture = function (params, callback) {
+		// размеры окна захвата подбираются под реальный экран (см. getCaptureSize);
+		// CAPTURE_WIDTH/CAPTURE_HEIGHT — локальные переменные, которые подставляются
+		// во все вызовы chrome.windows.update перед запуском цепочки
+		let CAPTURE_WIDTH = DEFAULT_CAPTURE_SIZE.width;
+		let CAPTURE_HEIGHT = DEFAULT_CAPTURE_SIZE.height;
+
 		function returnFailedImage() {
 			setTimeout(function () {
 				callback({
@@ -381,12 +387,19 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 		}
 
 		setTimeout(() => {
-			try {
-				chrome.windows.create(winCreateParams, onWindowCreate);
-			} catch (err) {
-				console.log('something went wrong during hidden capture:', err, 'skip');
-				returnFailedImage();
-			}
+			// сначала подбираем безопасные размеры под текущий экран,
+			// затем запускаем окно захвата (иначе bounds могут выходить за пределы видимой области)
+			getCaptureSize((size) => {
+				CAPTURE_WIDTH = size.width;
+				CAPTURE_HEIGHT = size.height;
+
+				try {
+					chrome.windows.create(winCreateParams, onWindowCreate);
+				} catch (err) {
+					console.log('something went wrong during hidden capture:', err, 'skip');
+					returnFailedImage();
+				}
+			});
 		}, delay);
 	};
 };

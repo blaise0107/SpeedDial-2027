@@ -25,21 +25,7 @@
 
 	</div>
 
-	<div id="getSatisfactionSuggestSelect">
-		<a href="https://nimbusweb.co/contact.php" target="_blank" msg="options_submit_suggestion"></a>
-
-				<a href="https://nimbusweb.co/contact.php" target="_blank" msg="options_submit_bug"></a>
-		
-		
-		<a msg="options_help_url" target="_blank" msg_target="href"><span msg="options_help"></span></a>
-		<!--<a msg="options_release_notes_url" target="_blank" msg_target="href"><span msg="options_release_notes"></span></a>-->
-	</div>
-
 	<div id="mainContainer">
-		<div id="donate-container">
-			<div class="close-donate"></div>
-			<iframe></iframe>
-		</div>
 		<div id="mainMenu">
 
 			<div msg="options_global_options" msg_target="title" id="buttonBigSettings" class="buttonBig settings"
@@ -54,20 +40,11 @@
 				class="buttonBig sdBackground"></div>
 			<div msg="options_fonts_options" msg_target="title" id="buttonBigSdFontColors"
 				class="buttonBig sdFontColors"></div>
-			<div msg="options_sync_need_install" msg_target="title" id="buttonBigSdSync" class="buttonBig sdSync"></div>
-			<div msg="options_poweroff_options" msg_target="title" id="buttonBigSdPowerOff"
-				class="buttonBig sdPowerOff"></div>
 			<!--<div msg="options_widgets_options" msg_target="title" id="buttonBigSdWidgets" class="buttonBig sdWidgets"></div>-->
-			<div msg_target="title" id="buttonBigSdGetSatisfaction" class="buttonBig sdGetSatisfaction"></div>
-			<div msg_target="title" id="buttonBigSdDonate" class="buttonBig sdDonate" style="display:none"></div>
 
 		</div>
 
 		<div id="settingsContent">
-			<div class="backupViaEversyncSuggestion">
-				<div class="backupSuggestionText" msg="options_backup_via_eversync_suggestion"></div>
-				<button class="fvdButton main" msg="options_backup_via_eversync_suggestion_button"></button>
-			</div>
 			<div id="rollerContent">
 
 				<div class="settingsPage" id="globalSettings">
@@ -770,144 +747,6 @@
 					</div>
 
 				</div>
-				<div data-no-buttons="1" class="settingsPage" id="syncSettings">
-					<iframe src="/install-eversync/index.html" class="eversync-install-frame"></iframe>
-				</div>
-				<div class="settingsPage" id="poweroffSettings">
-
-					<div class="pageTitle" msg="options_poweroff_options"></div>
-
-					<div class="poweroffDesc">
-						<div msg="options_poweroff_tab_desc_1"></div>
-						<div msg="options_poweroff_tab_desc_2"></div>
-						<div msg="options_poweroff_tab_desc_3" class="small"></div>
-					</div>
-
-					<div class="tabs" id="powerOffTabs">
-						<div class="tabsHead">
-							<span class="tabHead" msg="options_poweroff_tab_main_title"></span>
-							<span class="tabHead" id="poweroffTabChangePassCode"
-								msg="options_poweroff_tab_change_pass_title"></span>
-							<span class="tabHead" id="poweroffTabRestorePassCode"
-								msg="options_poweroff_tab_restore_title"></span>
-						</div>
-						<div class="tabsData">
-
-							<div class="tabContent tabCreate">
-
-								<fieldset class="createPassCode">
-									<legend msg="options_poweroff_create_passcode"></legend>
-
-									<div class="error" id="createPassCodeError"></div>
-
-									<table>
-
-										<tr>
-											<td msg="options_poweroff_passcode"></td>
-											<td><input enteron="createPassCode" type="password" id="passcodeValue"></td>
-										</tr>
-
-										<tr>
-											<td msg="options_poweroff_repeat_passcode"></td>
-											<td><input enteron="createPassCode" type="password"
-													id="repeatPasscodeValue"></td>
-										</tr>
-
-										<tr>
-											<td msg="options_poweroff_email"></td>
-											<td><input enteron="createPassCode" type="text" id="reserveEmailValue"></td>
-										</tr>
-
-										<tr>
-											<td></td>
-											<td>
-												<button class="fvdButton" id="createPassCode"
-													msg="options_poweroff_create_passcode_button"></button>
-											</td>
-										</tr>
-
-									</table>
-
-								</fieldset>
-
-								<div class="setuped">
-
-									<div id="currentPassCodeEmail"></div>
-
-									<span msg="options_poweroff_passcode_setuped"></span>
-
-									<div>
-										<span msg="options_poweroff_idle_timeout_enable"></span>
-										<select sname="poweroff.idle.interval" id="poweroff_idle_timeout">
-											<option value="0" msg="newtab_none"></option>
-											<option value="180" msg="options_poweroff_3min"></option>
-											<option value="300" msg="options_poweroff_5min"></option>
-											<option value="600" msg="options_poweroff_10min"></option>
-											<option value="900" msg="options_poweroff_15min"></option>
-											<option value="1800" msg="options_poweroff_30min"></option>
-											<option value="3600" msg="options_poweroff_60min"></option>
-										</select>
-									</div>
-								</div>
-
-							</div>
-
-							<div class="tabContent">
-
-								<fieldset>
-									<legend msg="options_poweroff_change_passcode"></legend>
-
-									<div class="error" id="changePassCodeError"></div>
-
-									<table>
-
-										<tr>
-											<td msg="options_poweroff_old_passcode"></td>
-											<td><input enteron="changePassCode" type="password" id="oldPasscodeValue">
-											</td>
-										</tr>
-
-										<tr>
-											<td msg="options_poweroff_new_passcode"></td>
-											<td><input enteron="changePassCode" type="password" id="newPasscodeValue">
-											</td>
-										</tr>
-
-										<tr>
-											<td></td>
-											<td>
-												<button class="fvdButton" id="changePassCode"
-													msg="options_poweroff_change_passcode_button"></button>
-											</td>
-										</tr>
-
-									</table>
-
-									<div>
-										<span msg="options_poweroff_star_desc"></span>
-									</div>
-
-								</fieldset>
-
-							</div>
-
-							<div class="tabContent restorePassCode">
-
-								<button class="fvdButton" id="resorePassCode"
-									msg="options_poweroff_restore_button"></button>
-
-							</div>
-
-						</div>
-					</div>
-
-					<div class="poweroffHelpMessage">
-
-						<img src="/images/options/poweroff_help.png">
-
-					</div>
-
-				</div>
 				<div class="settingsPage" id="widgetsSettings">
 
 					<div class="pageTitle" msg="options_widgets_options"></div>
@@ -984,10 +823,6 @@
 			</div>
 		</div>
 
-		<div id="startDonateButton">
-			<button class="fvdButton green" id="buttonStartDonateButton"><i></i><span class="text"
-					msg="options_start_donate"></span></button>
-		</div>
 
 	</div>
 
