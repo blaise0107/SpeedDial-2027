@@ -14,6 +14,16 @@ function getCaptureSize(cb) {
 			return;
 		}
 
+		// Если разрешение «system.display» не выдано, API будет undefined —
+		// в этом случае подбираем размеры по screen.availWidth/availHeight текущего монитора
+		if (!chrome.system || !chrome.system.display || typeof chrome.system.display.getInfo !== 'function') {
+			const width = Math.max(600, Math.min(DEFAULT_CAPTURE_SIZE.width, Math.floor((screen.availWidth || 1024) * 0.85)));
+			const height = Math.max(400, Math.min(DEFAULT_CAPTURE_SIZE.height, Math.floor((screen.availHeight || 768) * 0.85)));
+
+			cb({ width: width, height: height });
+			return;
+		}
+
 		chrome.system.display.getInfo((displays) => {
 			if (chrome.runtime.lastError || !displays || !displays.length) {
 				cb(DEFAULT_CAPTURE_SIZE);

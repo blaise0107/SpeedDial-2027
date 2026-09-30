@@ -1,6 +1,5 @@
 import { _b, Utils } from '../utils.js';
 import { _ } from '../localizer.js';
-import Sync from '../sync/tab.js';
 import Broadcaster from '../_external/broadcaster.js';
 import Roller from './roller.js';
 
@@ -21,9 +20,7 @@ OptionsModule.prototype = {
 		"recentlyclosed": 3,
 		"bg": 4,
 		"fonts": 5,
-		"sync": 6,
-		"poweroff": 7,
-		"widgets": 8,
+		"widgets": 6,
 	},
 
 	_typesButtons:{
@@ -33,8 +30,6 @@ OptionsModule.prototype = {
 		"recentlyclosed": "recentlyClosed",
 		"bg": "sdBackground",
 		"fonts": "sdFontColors",
-		"sync": "sdSync",
-		"poweroff": "sdPowerOff",
 		"widgets": "sdWidgets",
 	},
 
@@ -285,19 +280,16 @@ OptionsModule.prototype = {
 			} else if (hash === "#display-in-new-tab") {
 				this.Tabs.tabs[0].setActiveTab(1);
 				document.getElementById("displayInNewTabLabel").className += " highlight";
-			} else if (hash === "#sync") {
-				setType = "sync";
-			} else if (hash === "#poweroff") {
-				setType = "poweroff";
 			} else if (hash === "#widgets") {
 				setType = "widgets";
 			}
+			// Страницы «Синхронизация» и «PowerOff» выпилены — старые ссылки (#sync, #poweroff) игнорируются
 
 		} else {
 			const lastType = this.fvdSpeedDial.Prefs.get("sd.last_opened_settings");
 
-			if (lastType === "sync") {
-				this.syncOptionsOpen(true);
+			if (lastType === "sync" || lastType === "poweroff") {
+				setType = "global";
 			} else {
 				setType = lastType;
 			}
@@ -562,6 +554,11 @@ OptionsModule.prototype = {
 	},
 
 	setType: function (type) {
+		// защита от устаревших типов («sync», «poweroff» и т.п.), страницы которых выпилены
+		if (!(type in this._settingsTypesIndexes)) {
+			type = "global";
+		}
+
 		const page = document.getElementById(type + "Settings");
 		const bottomButtons = document.querySelector(".bottomButtons");
 
@@ -586,7 +583,9 @@ OptionsModule.prototype = {
 		}
 		const button = document.getElementsByClassName(this._typesButtons[type])[0];
 
-		button.setAttribute("active", 1);
+		if (button) {
+			button.setAttribute("active", 1);
+		}
 	},
 
 	applyChanges: function (applyChangesCallback) {

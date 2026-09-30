@@ -23,7 +23,8 @@
     "storage",
     "idle",
     "scripting",
-    "activeTab"
+    "activeTab",
+    "downloads"
   ],
   "host_permissions": [
     "*://*/*",
