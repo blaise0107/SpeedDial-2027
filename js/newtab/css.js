@@ -12,7 +12,16 @@ CSS.prototype = {
 	},
 
 	setTheme: function (name) {
-		document.getElementById('themeCSS').setAttribute('href', '/themes/' + name + '.css');
+		// На страницах настроек (options.html) элемент themeCSS отсутствует —
+		// раньше это вызывало «Cannot read properties of null (reading 'setAttribute')».
+		// Тема применяется только на новой вкладке, поэтому здесь просто выходим.
+		const link = document.getElementById('themeCSS');
+
+		if (!link) {
+			return;
+		}
+
+		link.setAttribute('href', '/themes/' + name + '.css');
 	},
 
 	refreshTheme: function () {
