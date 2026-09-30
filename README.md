@@ -1,49 +1,43 @@
-# Notice
-There will probably not be any updates for this. With Chrome's move to Manifest v3 (and subsequently disabling adblocking and many other extensions) I am no longer using Chrome. I may look into moving it over to Firefox but that is quite the undertaking. At least for now it works on Chrome and the injected ads are fairly well taken care of.
+# SpeedDial-2027
 
-# SpeedDial-FVD-Cleansed
-This is a "forked" version of the [Speed Dial [FVD] - New Tab Page](https://chrome.google.com/webstore/detail/speed-dial-fvd-new-tab-pa/llaficoajjainaijghjlofdfmbjpebpa?hl=en). Since the developer, nimbus had decided to start doing ad redirects I've decided to remove them. If they get their act together or Google removes/forces them to stop then I'll remove this.
+Русская отремонтированная версия расширения [SpeedDial-FVD-Cleansed](https://github.com/Smokex365/SpeedDial-FVD-Cleansed) (форк оригинального «Speed Dial [FVD] - New Tab Page»). Оригинальное расширение заброшено, поэтому здесь мы поддерживаем и исправляем его под современные реалии Chrome.
 
-Currently based on version 81.8.1.
+Текущая база: версия 81.8.1 (наш форк — 1.81.8.2).
 
-Current Modifications:
+## Что сделано в этом форке
 
-* Removed Ad redirects
-* Changed default search to Google for now
-* Started on adding on-dial search for more sites
+* Убраны рекламные редиректы и внедрённая реклама
+* Удалена телеметрия и мёртвые серверы (`fvdspeeddial.com`, `everhelper` и т.п.)
+* Исправлены ошибки в консоли: парсинг диалов с мёртвого сервера, отсутствующие методы аналитики, дубликаты ID контекстного меню, закрытые каналы сообщений
+* Удалены все языки, кроме русского (`_locales/ru`) и английского (`en` — технический fallback); `default_locale` установлен в `ru`
+* Все комментарии в коде переведены на русский язык
+* Обновлён `manifest.json` под текущие требования Chrome (убраны устаревшие permissions, `update_url`, `externally_connectable`)
 
-## To-do
+## Как загрузить расширение в Chrome
 
-* Remove data collection
-* Improve general transparency of the extension
-* Remove Russian connections - Yandex, several Russian sites
-  * where it feels necessary (search like Yandex can stay but everything else will likely be removed)
-* Add new search providers - [search.js]([js/newtab/search.js#L16)
+1. Скачайте или клонируйте репозиторий на компьютер:
+   `git clone https://github.com/blaise0107/SpeedDial-2027.git`
+2. Откройте страницу управления расширениями `chrome://extensions` и включите **Режим разработчика** (переключатель справа сверху).
+3. Нажмите **«Загрузить распакованное расширение»**.
+4. Выберите корневую папку скачанного расширения (там, где лежит `manifest.json`).
+5. Подтвердите. Возможно, расширение нужно будет включить вручную переключателем, после чего открыть новую вкладку — она станет стартовой страницей SpeedDial.
+
+## Планы (to-do)
+
+* [ ] Полностью убрать остатки английских строк из интерфейса (языковой fallback)
+* [x] Удалить сбор данных и рекламу
+* [x] Перевести комментарии в коде на русский
+* [ ] Добавить новые поисковые провайдеры для поиска прямо на плитках (`js/newtab/search.js`):
   * [x] DuckDuckGo
-  * [x] Youtube
+  * [x] YouTube
   * [x] Reddit
-* Fix search selection menu
-![search-selection-menu](https://github.com/Smokex365/SpeedDial-FVD-Cleansed/assets/5600410/ce808010-d98f-4e85-8bcf-9a785113f168)
-  * [x] Providers set up (google, reddit, youtube, duckduckgo)
-  * [ ] menu works...kind of
-    * menu can be selected once on load and will switch to selected provider
-    * after selection you can't access the menu without a reload
-  * [ ] find a way to set the menu to the search logo (or alternately add it to the right-click menu)
-  * [ ] create hover or onClick to change provider
-* [ ]  Add ability to export settings to file and re-import from file instead of text string
-* [x]  Add some instructions for loading the extension for general users.
+* [ ] Починить меню выбора поискового провайдера:
+  * [x] Провайдеры настроены (Google, Reddit, YouTube, DuckDuckGo)
+  * [ ] Меню работает... частично: провайдер можно выбрать один раз после загрузки, затем меню недоступно до перезагрузки страницы
+  * [ ] Привязать меню к логотипу поиска (или добавить выбор провайдера в меню правой кнопки мыши)
+  * [ ] Смена провайдера по наведению или клику
+* [ ] Экспорт настроек в файл и импорт из файла (вместо текстовой строки)
 
-### Instructions
+## Примечание
 
-How to load SpeedDial-FVD-Cleansed into Chrome
-
-1. Download or `git clone` to your local computer.
-2. In Chrome open the extension management page and enable developer mode if not already enabled.
-3. Select Load Unpacked
-
-   ![load-unpacked-ext](https://github.com/Smokex365/SpeedDial-FVD-Cleansed/assets/5600410/0c9a8593-87e4-4184-be7f-36a8752fc8c6)
-4. Select where you saved the extension folder and select the root.
-
-   ![select-ext-dir](https://github.com/Smokex365/SpeedDial-FVD-Cleansed/assets/5600410/2253ddf3-cc21-456f-afe7-4f34980cb283)
-
-5. Confirm and let Chrome load the extension. You may have to toggle it to enable or open a new tab to get it to load.
+Оригинальный автор форка (Smokex365) отказался от поддержки из-за перехода Chrome на Manifest V3. Данное расширение пока работает на Manifest V2 через режим «запакованного» разработческого расширения; полный переезд на MV3 — отдельная большая задача.
