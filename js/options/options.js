@@ -1018,8 +1018,13 @@ OptionsModule.prototype = {
 					return;
 				} else if (option.type === "radio") {
 					const name = option.name;
+					// защита от null: если радиокнопка с таким значением отсутствует в разметке,
+					// пропускаем установку (раньше это вызывало "Cannot set properties of null")
+					const radio = document.querySelector("[name="+name+"][value="+value+"]");
 
-					document.querySelector("[name="+name+"][value="+value+"]").checked = true;
+					if (radio) {
+						radio.checked = true;
+					}
 					return;
 				}
 			}
