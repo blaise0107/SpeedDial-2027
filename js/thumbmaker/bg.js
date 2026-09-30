@@ -7,6 +7,34 @@ const PAGE_SCREEN_PARAMS = {
 
 const ThumbMakerModule = function (fvdSpeedDial) {
 	this.fvdSpeedDial = fvdSpeedDial;
+
+	// В service worker (MV3) нет document/Image — подменяем Utils.Async.chain
+	// на простую последовательную цепочку колбэков, чтобы не зависеть от DOM.
+	if (typeof document === 'undefined') {
+		try {
+			const utils = fvdSpeedDial && fvdSpeedDial.Utils;
+
+			if (utils && utils.Async && typeof utils.Async.chain === 'function') {
+				utils.Async.chain = function (funcs) {
+					let index = 0;
+
+					const next = function () {
+						if (index >= funcs.length) {
+							return;
+						}
+
+						const fn = funcs[index++];
+						fn(next);
+					};
+
+					next();
+				};
+			}
+		} catch (ex) {
+			console.warn('ThumbMaker chain patch:', ex && ex.message);
+		}
+	}
+
 	this.init();
 };
 
@@ -263,10 +291,9 @@ ThumbMakerModule.prototype = {
 									};
 
 									if (oldDial) {
-										if (typeof Sync !== 'object') {
-											console.info('Sync is', typeof Sync);
-										} else {
-											Sync.addDataToSync({
+										// EverSync выпилён: синхронизация — no-op заглушка (локальные данные)
+										if (fvdSpeedDial.Sync && typeof fvdSpeedDial.Sync.addDataToSync === 'function') {
+											fvdSpeedDial.Sync.addDataToSync({
 												category: 'dials',
 												data: listener.dialId,
 												translate: 'dial',

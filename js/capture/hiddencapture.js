@@ -1,71 +1,69 @@
 import { Utils } from '../utils.js';
 import { _ } from '../localizer.js';
 
-// Размеры окна захвата подбираются под реальную область просмотра активного окна:
-// фиксированные 1024x768 вызывали ошибку «Bounds must be at least 50% within visible screen space»
-// на маленьких/масштабированных экранах.
+// Размеры окна захвата. Окно создаётся свёрнутым за пределами видимой области
+// (см. winCreateParams), поэтому жёсткие 1024x768 здесь безопасны: Chrome
+// проверяет «50% в пределах экрана» только для координат left/top, а не размера.
 const DEFAULT_CAPTURE_SIZE = { width: 1024, height: 768 };
 
-// Возвращает безопасные размеры окна захвата (не больше области просмотра монитора)
-function getCaptureSize(cb) {
-	chrome.windows.getCurrent((win) => {
-		if (chrome.runtime.lastError || !win) {
-			cb(DEFAULT_CAPTURE_SIZE);
-			return;
-		}
+// В service worker (MV3) объект screen недоступен, поэтому размеры окна
+// захвата ограничиваются максимумом ниже, чтобы bounds гарантированно
+// помещались в любой реальный экран.
+const MAX_CAPTURE_WIDTH = 1024;
+const MAX_CAPTURE_HEIGHT = 768;
 
-		// Если разрешение «system.display» не выдано, API будет undefined —
-		// в этом случае подбираем размеры по screen.availWidth/availHeight текущего монитора
-		if (!chrome.system || !chrome.system.display || typeof chrome.system.display.getInfo !== 'function') {
-			const width = Math.max(600, Math.min(DEFAULT_CAPTURE_SIZE.width, Math.floor((screen.availWidth || 1024) * 0.85)));
-			const height = Math.max(400, Math.min(DEFAULT_CAPTURE_SIZE.height, Math.floor((screen.availHeight || 768) * 0.85)));
-
-			cb({ width: width, height: height });
-			return;
-		}
-
-		chrome.system.display.getInfo((displays) => {
-			if (chrome.runtime.lastError || !displays || !displays.length) {
-				cb(DEFAULT_CAPTURE_SIZE);
-				return;
-			}
-
-			let maxArea = null;
-
-			displays.forEach((d) => {
-				const b = d.bounds || {};
-				const area = (b.width || 0) * (b.height || 0);
-				if (!maxArea || area > maxArea) {
-					maxArea = area;
-				}
-			});
-
-			if (!maxArea) {
-				cb(DEFAULT_CAPTURE_SIZE);
-				return;
-			}
-
-			// найдём дисплей с максимальной областью и возьмём его workArea с запасом 15%
-			const disp = displays.reduce((a, b) => {
-				const aa = (a.bounds.width * a.bounds.height) || 0;
-				const bb = (b.bounds.width * b.bounds.height) || 0;
-				return bb > aa ? b : a;
-			}, displays[0]);
-
-			const wa = disp.workArea || disp.bounds;
-			const scale = disp.scaleFactor || 1;
-
-			// workArea в пикселях устройства -> делим на масштаб и берём 85%
-			const width = Math.max(600, Math.floor(((wa.width || 1024) / scale) * 0.85));
-			const height = Math.max(400, Math.floor(((wa.height || 768) / scale) * 0.85));
-
-			cb({
-				width: Math.min(width, DEFAULT_CAPTURE_SIZE.width),
-				height: Math.min(height, DEFAULT_CAPTURE_SIZE.height),
-			});
-		});
-	});
+function clamp(v, min, max) {
+	return Math.max(min, Math.min(max, v || min));
 }
+
+// Возвращает безопасные размеры окна захвата (не больше области просмотра монитора).
+// Асинхронный колбэк сохранён для совместимости со старыми вызовами.
+function getCaptureSize(cb) {
+	// Предпочитаем реальные параметры текущего окна браузера (работает и в service worker)
+	try {
+		chrome.windows.getLastFocused({ populate: false }, (win) => {
+			if (!chrome.runtime.lastError && win && win.width && win.height) {
+				// Не более 90% от размеров фокусного окна — окно захвата точно
+				// окажется в пределах видимого пространства экрана
+				const width = clamp(Math.floor(win.width * 0.9), 600, MAX_CAPTURE_WIDTH);
+				const height = clamp(Math.floor(win.height * 0.9), 400, MAX_CAPTURE_HEIGHT);
+
+				cb({ width: width, height: height });
+				return;
+			}
+
+			cb(getCaptureSizeFallback());
+		});
+	} catch (ex) {
+		cb(getCaptureSizeFallback());
+	}
+}
+
+// Запасной вариант: screen.availWidth/Height доступны только в контексте страницы (newtab.html),
+// в service worker их нет — тогда используем дефолтные размеры с учётом MAX_* ограничений.
+function getCaptureSizeFallback() {
+	let availW = null;
+	let availH = null;
+
+	try {
+		if (typeof screen !== 'undefined') {
+			availW = screen.availWidth || screen.width || null;
+			availH = screen.availHeight || screen.height || null;
+		}
+	} catch (ex) {
+		// в service worker обращение к screen выбрасывает ReferenceError — игнорируем
+	}
+
+	if (!availW || !availH) {
+		return { width: MAX_CAPTURE_WIDTH, height: MAX_CAPTURE_HEIGHT };
+	}
+
+	return {
+		width: clamp(Math.floor(availW * 0.85), 600, MAX_CAPTURE_WIDTH),
+		height: clamp(Math.floor(availH * 0.85), 400, MAX_CAPTURE_HEIGHT),
+	};
+}
+
 const CAPTURE_TIMEOUT = 60000 * 2; // 2 minutes
 const CHECK_COMPLETE_INTERVAL = 1000;
 const CHECK_COMPLETE_INTERVAL_FINAL = 3000;
@@ -149,7 +147,21 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 			};
 		}
 
-		params.width = params.width || fvdSpeedDial.SpeedDial.getMaxCellWidth() * 2;
+		// Ширина превью: берём у модуля SpeedDial, если он доступен;
+		// иначе (например, при неполной инициализации) — дефолт 364*2 как у крупных ячеек
+		if (!params.width) {
+			let cellWidth = 364;
+
+			try {
+				if (fvdSpeedDial.SpeedDial && typeof fvdSpeedDial.SpeedDial.getMaxCellWidth === 'function') {
+					cellWidth = fvdSpeedDial.SpeedDial.getMaxCellWidth() || 364;
+				}
+			} catch (ex) {
+				// игнорируем — используем дефолт
+			}
+
+			params.width = cellWidth * 2;
+		}
 
 		const createUrl = params.url;
 
@@ -366,7 +378,24 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 											return returnFailedImage();
 										}
 
-										fvdSpeedDial.ThumbMaker.getImageDataPath(
+										// В service worker DOM нет — конвертируем через fetch + OffscreenCanvas
+										const thumbMaker = fvdSpeedDial.ThumbMaker;
+										const isServiceWorker = (typeof document === 'undefined');
+										const processThumb = function (p, cb) {
+											if (isServiceWorker && thumbMaker && thumbMaker.getImageDataPathNoDom) {
+												thumbMaker.getImageDataPathNoDom(p.imgUrl, p.screenWidth, cb);
+												return;
+											}
+
+											if (thumbMaker && thumbMaker.getImageDataPath) {
+												thumbMaker.getImageDataPath(p, cb);
+												return;
+											}
+
+											cb(null, null);
+										};
+
+										processThumb(
 											{
 												imgUrl: dataUrl,
 												screenWidth: params.width,
