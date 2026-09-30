@@ -22,8 +22,6 @@ import IntroductionModule from './introduction.js';
 import { _b } from '../utils.js';
 import { start_drop_down } from './dropdown.js';
 import CSSModule from './css.js';
-import PowerOffModule from '../poweroff.js';
-import PowerOffClientModule from './poweroffclient.js';
 import BackgroundModule from './background.js';
 import StorageSD from '../storage.js';
 import MostVisitedModule from '../storage/mostvisited.js';
@@ -59,8 +57,6 @@ class NewtabModule {
             fvdSpeedDial.Search = new Search(fvdSpeedDial);
             fvdSpeedDial.Scrolling = new Scrolling(fvdSpeedDial);
             fvdSpeedDial.CSS = new CSSModule(fvdSpeedDial);
-            fvdSpeedDial.PowerOff = new PowerOffModule(fvdSpeedDial);
-            fvdSpeedDial.PowerOffClient = new PowerOffClientModule(fvdSpeedDial);
             fvdSpeedDial.Background = new BackgroundModule(fvdSpeedDial);
             fvdSpeedDial.MostVisited = new MostVisitedModule(fvdSpeedDial);
             fvdSpeedDial.RecentlyClosed = new RecentlyClosedModule(fvdSpeedDial);

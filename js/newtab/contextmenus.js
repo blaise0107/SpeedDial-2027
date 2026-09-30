@@ -1010,10 +1010,6 @@ ContextMenus.prototype = {
 		menu.attachEvent('onContextMenu', function () {
 			rebuildColumns();
 
-			if (fvdSpeedDial.PowerOffClient.isHidden()) {
-				menu.hide();
-			}
-
 			const checkId = 'style_' + fvdSpeedDial.Prefs.get('sd.display_mode');
 
 			menu.setRadioChecked('style', checkId);
@@ -1193,9 +1189,6 @@ ContextMenus.prototype = {
 				menu.setItemEnabled('scroll_type');
 			}
 
-			if (fvdSpeedDial.PowerOffClient.isHidden()) {
-				menu.hide();
-			}
 		}
 		menu.attachEvent('onContextMenu', onContextMenu);
 		menu.attachEvent('onClick', function (action) {
@@ -1409,9 +1402,6 @@ ContextMenus.prototype = {
 				menu.setItemEnabled('scroll_type');
 			}
 
-			if (fvdSpeedDial.PowerOffClient.isHidden()) {
-				menu.hide();
-			}
 		}
 
 		menu.attachEvent('onContextMenu', onContextMenu);

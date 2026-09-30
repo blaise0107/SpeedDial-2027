@@ -842,14 +842,8 @@ OptionsModule.prototype = {
 	},
 
 	dontAllowIfLocked: function () {
-		console.log('dontAllowIfLocked', this.fvdSpeedDial.PowerOff.isHidden());
-
-		if (this.fvdSpeedDial.PowerOff.isHidden()) {
-			this.fvdSpeedDial.Dialogs.alert(_("dlg_alert_sd_locked_action_title"), _("dlg_alert_sd_locked_action_text"));
-			return false;
-		} else {
-			return true;
-		}
+		// PowerOff выпилён — блокировка паролем больше не используется, действие всегда разрешено
+		return true;
 	},
 
 	_refreshEnableTypes: function () {

@@ -9,9 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import Broadcaster from './js/_external/broadcaster.js';
 import collectAndSendReport from './js/crashreport.js';
-import { refreshIdleInterval } from './js/bg/poweroffidle.js';
 import { sendEvent } from './js/bg/analytics.js';
-import Sync from './js/sync/bg.js';
+import Sync from './js/sync/tab.js';
 import UserInfoSync from './js/sync/user.js';
 import HiddenCaptureQueueModule from './js/capture/hiddencapturequeue.js';
 import ContextMenu from './js/bg/contextmenu.js';
@@ -23,7 +22,6 @@ import StorageModuleSD from './js/storage.js';
 import { Utils, _b } from './js/utils.js';
 import Config from './js/config.js';
 import { EventType } from './js/types.js';
-import PowerOffModule from './js/poweroff.js';
 import UpdateDials from './js/bg/updatedialsModule.js';
 import { default as FvdSpeedDialModule } from './js/speedDialCore.js';
 import Analytics from './js/bg/google-analytics.js';
@@ -93,7 +91,6 @@ class Worker {
         fvdSpeedDial.UpdateDialsModule = new UpdateDials(fvdSpeedDial);
         fvdSpeedDial.UserInfoSync = new UserInfoSync(fvdSpeedDial);
         fvdSpeedDial.Sync = new Sync(fvdSpeedDial);
-        fvdSpeedDial.PowerOff = new PowerOffModule(fvdSpeedDial);
         fvdSpeedDial.HiddenCaptureQueue = new HiddenCaptureQueueModule(fvdSpeedDial);
     }
     browserAction() {
@@ -213,56 +210,11 @@ class Worker {
             else if (message.action === 'thumbmaker:screentab') {
                 ThumbMaker.screenTab(message.params);
             }
-            else if (message.action === 'sync:adddatatosync') {
-                fvdSpeedDial.Sync.addDataToSync(message.params, function () {
-                    if (message.wantResponse) {
-                        sendResponse();
-                    }
-                });
-                if (message.wantResponse) {
-                    return true;
-                }
+            else if (message.action.startsWith('sync:')) {
+                // EverSync выпилён — все sync-запросы обрабатываются как неактивные
+                sendResponse(false);
             }
-            else if (message.action === 'sync:removesyncdata') {
-                fvdSpeedDial.Sync.removeSyncData(message.params, function () {
-                    sendResponse();
-                });
-                return true;
-            }
-            else if (message.action === 'sync:isactive') {
-                sendResponse(fvdSpeedDial.Sync.isActive());
-                return true;
-            }
-            else if (message.action === 'sync:hasdatatosync') {
-                fvdSpeedDial.Sync.hasDataToSync(message.requestId, function (has) {
-                    sendResponse(has);
-                });
-                return true;
-            }
-            else if (message.action === 'sync:getaccountinfo') {
-                fvdSpeedDial.Sync.getAccountInfo(function (info) {
-                    sendResponse(info);
-                });
-                return true;
-            }
-            else if (message.action === 'sync:start') {
-                fvdSpeedDial.Sync.startSync(message.type, message.requestId, function (state) {
-                    sendResponse(state);
-                });
-                return true;
-            }
-            else if (message.action === 'sync:addonoptionsurl') {
-                fvdSpeedDial.Sync.syncAddonOptionsUrl(sendResponse);
-                return true;
-            }
-            else if (message.action === 'sync:importfinish') {
-                fvdSpeedDial.Sync.importFinished();
-            }
-            else if (message.action === 'sync:syncaddonexists') {
-                fvdSpeedDial.Sync.syncAddonExists(sendResponse);
-                return true;
-            }
-            else if (message.action === 'hiddencapture:queue') {
+else if (message.action === 'hiddencapture:queue') {
                 const params = message.params;
                 let cb = null;
                 if (params.wantResponse) {
@@ -308,18 +260,9 @@ class Worker {
             }
             else if (message.action === 'miscDataSet' && message.name === 'sd.background') {
             }
-            if (message.action === 'pref:changed' &&
-                (message.name === 'poweroff.enabled' || message.name === 'poweroff.hidden')) {
-                Broadcaster.sendMessage({
-                    action: 'poweroff:hiddenchange',
-                    isHidden: message.value,
-                });
-            }
+            // PowerOff выпилён — обработчики pref:changed для poweroff.* удалены
             if (message.action === 'pref:changed') {
                 that._prefChangeCallback(message.name, message.value);
-            }
-            if (message.action === 'pref:changed' && message.name === 'poweroff.idle.interval') {
-                refreshIdleInterval(fvdSpeedDial);
             }
         });
     }

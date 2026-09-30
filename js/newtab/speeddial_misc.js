@@ -88,7 +88,7 @@ SpeedDialMisc.prototype = {
 
 	init: function () {
 		const { fvdSpeedDial } = this;
-		const { SpeedDial, Dialogs, PowerOffClient, Apps } = fvdSpeedDial;
+		const { SpeedDial, Dialogs, Apps } = fvdSpeedDial; // PowerOff выпилён
 		const that = this;
 
 		this.refreshSearchPanel();
@@ -469,10 +469,6 @@ SpeedDialMisc.prototype = {
 			&& document.getElementById('speedDialExpand').addEventListener(
 				'click',
 				function () {
-					if (PowerOffClient.isHidden()) {
-						return;
-					}
-
 					fvdSpeedDial.Prefs.toggle('sd.speeddial_expanded');
 				},
 				false
@@ -482,10 +478,6 @@ SpeedDialMisc.prototype = {
 			&& document.getElementById('speedDialHide').addEventListener(
 				'click',
 				function () {
-					if (PowerOffClient.isHidden()) {
-						return;
-					}
-
 					fvdSpeedDial.Prefs.toggle('sd.speeddial_expanded');
 				},
 				false
@@ -513,10 +505,6 @@ SpeedDialMisc.prototype = {
 			&& document.getElementById('mostVisitedExpand').addEventListener(
 				'click',
 				function () {
-					if (PowerOffClient.isHidden()) {
-						return;
-					}
-
 					fvdSpeedDial.Prefs.toggle('sd.mostvisited_expanded');
 				},
 				false
@@ -526,10 +514,6 @@ SpeedDialMisc.prototype = {
 			&& document.getElementById('mostVisitedHide').addEventListener(
 				'click',
 				function () {
-					if (PowerOffClient.isHidden()) {
-						return;
-					}
-
 					fvdSpeedDial.Prefs.toggle('sd.mostvisited_expanded');
 				},
 				false
@@ -561,10 +545,6 @@ SpeedDialMisc.prototype = {
 			&& document.getElementById('recentlyClosedExpand').addEventListener(
 				'click',
 				function () {
-					if (PowerOffClient.isHidden()) {
-						return;
-					}
-
 					fvdSpeedDial.Prefs.toggle('sd.recentlyclosed_expanded');
 				},
 				false
@@ -574,10 +554,6 @@ SpeedDialMisc.prototype = {
 			&& document.getElementById('recentlyClosedHide').addEventListener(
 				'click',
 				function () {
-					if (PowerOffClient.isHidden()) {
-						return;
-					}
-
 					fvdSpeedDial.Prefs.toggle('sd.recentlyclosed_expanded');
 				},
 				false
