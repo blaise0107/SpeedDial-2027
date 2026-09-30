@@ -17,8 +17,6 @@ import { default as FvdSpeedDialModule } from '../speedDialCore.js';
 import SpeedDialModule from '../newtab/speeddial.js';
 import SpeedDialMiscModule from '../newtab/speeddial_misc.js';
 import { EventType } from "../types.js";
-import PowerOffModule from '../poweroff.js';
-import OptionsPowerOffModule from './poweroff.js';
 import StorageSD from '../storage.js';
 import Sync from '../sync/tab.js';
 import UserInfoSync from '../sync/user.js';
@@ -58,12 +56,10 @@ class SettingModule {
             fvdSpeedDial.ContextMenus = new ContextMenus(fvdSpeedDial);
             fvdSpeedDial.Options = new OptionsModule(fvdSpeedDial);
             fvdSpeedDial.CSS = new CSSModule(fvdSpeedDial);
-            fvdSpeedDial.PowerOff = new PowerOffModule(fvdSpeedDial);
             fvdSpeedDial.Background = new BackgroundModule(fvdSpeedDial);
             fvdSpeedDial.Dialogs = new DialogsModule(fvdSpeedDial);
             fvdSpeedDial.Apps = new AppsModule(fvdSpeedDial);
             fvdSpeedDial.StorageApps = new StorageAppsModule(fvdSpeedDial);
-            fvdSpeedDial.OptionsPowerOff = new OptionsPowerOffModule(fvdSpeedDial);
             fvdSpeedDial.ThumbMaker = new ThumbMakerModule(fvdSpeedDial);
             this.start();
             this.initEvent();
@@ -122,14 +118,10 @@ class SettingModule {
     initEvent() {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18;
         const { fvdSpeedDial } = this;
-        const { ToolTip, Dialogs, Options, StorageSD, Prefs, PowerOff, CSS, SpeedDialMisc, ContextMenus } = fvdSpeedDial;
+        const { ToolTip, Dialogs, Options, StorageSD, Prefs, CSS, SpeedDialMisc, ContextMenus } = fvdSpeedDial;
         Broadcaster.onMessage.addListener(function (msg, sender, sendResponse) {
             const that = this;
-            if (msg.action === 'poweroff:hide') {
-                if (!PowerOff.isHidden()) {
-                    Prefs.set('poweroff.hidden', true);
-                }
-            }
+            // PowerOff выпилён — сообщение 'poweroff:hide' игнорируется
             if (msg.action === 'pref:changed' && msg.name === 'sd.display_mode') {
                 CSS.prefChanged(msg.name, msg.value);
             }
@@ -215,9 +207,6 @@ class SettingModule {
         }, false);
         (_k = document.getElementById("buttonBigSdDonate")) === null || _k === void 0 ? void 0 : _k.addEventListener("click", function (event) {
             Options.openDonateMessage(event);
-        }, false);
-        (_l = document.getElementById("buttonBigSdPowerOff")) === null || _l === void 0 ? void 0 : _l.addEventListener("click", function (event) {
-            Options.setType('poweroff');
         }, false);
         try {
             if (document.getElementById("buttonBigSdWidgets"))

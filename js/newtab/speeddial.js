@@ -692,25 +692,32 @@ SpeedDialModule.prototype = {
 			false
 		);
 
-		document.getElementById('cbNotDisplayCollapsedWithPowerOff').addEventListener(
-			'click',
-			function () {
-				setTimeout(function () {
-					fvdSpeedDial.Prefs.set('collapsed_message.with_poweroff.display', false);
-				}, 0);
-			},
-			false
-		);
+		// PowerOff выпилён — обработчики чекбоксов навешиваем только если элементы остались в DOM
+		const cbCollapsedWith = document.getElementById('cbNotDisplayCollapsedWithPowerOff');
+		if (cbCollapsedWith) {
+			cbCollapsedWith.addEventListener(
+				'click',
+				function () {
+					setTimeout(function () {
+						fvdSpeedDial.Prefs.set('collapsed_message.with_poweroff.display', false);
+					}, 0);
+				},
+				false
+			);
+		}
 
-		document.getElementById('cbNotDisplayCollapsedWithoutPowerOff').addEventListener(
-			'click',
-			function () {
-				setTimeout(function () {
-					fvdSpeedDial.Prefs.set('collapsed_message.without_poweroff.display', false);
-				}, 0);
-			},
-			false
-		);
+		const cbCollapsedWithout = document.getElementById('cbNotDisplayCollapsedWithoutPowerOff');
+		if (cbCollapsedWithout) {
+			cbCollapsedWithout.addEventListener(
+				'click',
+				function () {
+					setTimeout(function () {
+						fvdSpeedDial.Prefs.set('collapsed_message.without_poweroff.display', false);
+					}, 0);
+				},
+				false
+			);
+		}
 
 		document.querySelector('#searchBar .rightMenu .showHide').addEventListener(
 			'click',
@@ -720,13 +727,7 @@ SpeedDialModule.prototype = {
 			false
 		);
 
-		document.querySelector('#speedDialCollapsedContent .aboutPowerOff').addEventListener(
-			'click',
-			function () {
-				window.open(chrome.runtime.getURL('/options.html#poweroff'));
-			},
-			false
-		);
+		// PowerOff выпилён — ссылка «о PowerOff» на страницу настроек больше не нужна
 
 		this.refreshCollapsedMessages();
 
@@ -2320,26 +2321,17 @@ SpeedDialModule.prototype = {
 
 	getExpandState: function () {
 		const { fvdSpeedDial } = this;
-		const { PowerOffClient } = fvdSpeedDial;
 
+		// PowerOff выпилён — состояние разворота зависит только от настройки
 		const currentState = _b(
 			fvdSpeedDial.Prefs.get('sd.' + this.currentDisplayType() + '_expanded')
 		);
-
-		if (PowerOffClient.isHidden()) {
-			return false;
-		}
 
 		return currentState;
 	},
 
 	toggleExpand: function () {
 		const { fvdSpeedDial } = this;
-		const { PowerOffClient } = fvdSpeedDial;
-
-		if (PowerOffClient.isHidden()) {
-			return;
-		}
 
 		const newVal = !_b(
 			fvdSpeedDial.Prefs.get('sd.' + fvdSpeedDial.SpeedDial.currentDisplayType() + '_expanded')
@@ -2362,9 +2354,6 @@ SpeedDialModule.prototype = {
 	},
 
 	refreshExpandState: function (args) {
-		const {
-			fvdSpeedDial: { PowerOff, PowerOffClient },
-		} = this;
 		const that = this;
 
 		const currentState = this.getExpandState();
@@ -2385,13 +2374,8 @@ SpeedDialModule.prototype = {
 		if (!currentState) {
 			const collapsedContainer = document.querySelector('#speedDialCollapsedContent');
 
-			if (PowerOffClient.isHidden()) {
-				collapsedContainer.setAttribute('type', 'poweroff');
-			} else if (PowerOff.isEnabled()) {
-				collapsedContainer.setAttribute('type', 'poweroffmessage');
-			} else {
-				collapsedContainer.setAttribute('type', 'simple');
-			}
+			// PowerOff выпилён — всегда простой тип свёрнутого контейнера
+			collapsedContainer.setAttribute('type', 'simple');
 		}
 
 		that.refreshSpeedDialWrapperHeight();

@@ -1,101 +1,38 @@
+/**
+ * Модуль синхронизации с EverSync выпилён (сервис закрыт, расширение заброшено).
+ * Оставлена no-op заглушка, чтобы не переписывать десятки вызовов в storage/dialogs/menu.
+ * Все изменения хранятся только локально; для переноса настроек используйте локальный бэкап.
+ */
 const Sync = {
-	addDataToSync: function (params, cb) {
-		const req = {
-			action: 'sync:adddatatosync',
-			params: params,
-		};
-
-		if (cb) {
-			req.wantResponse = true;
-		}
-
-		chrome.runtime.sendMessage(req, function () {
-			if (cb) {
-				cb();
-			}
-		});
-	},
-	removeSyncData: function (params, cb) {
-		cb = cb || function () {};
-		chrome.runtime.sendMessage(
-			{
-				action: 'sync:removesyncdata',
-				params: params,
-			},
-			function () {
-				cb();
-			}
-		);
-	},
-	isActive: function (cb) {
-		chrome.runtime.sendMessage(
-			{
-				action: 'sync:isactive',
-			},
-			function (active) {
-				cb(active);
-			}
-		);
-	},
-	hasDataToSync: function (cb) {
-		chrome.runtime.sendMessage(
-			{
-				action: 'sync:hasdatatosync',
-			},
-			function (has) {
-				cb(has);
-			}
-		);
-	},
-	getAccountInfo: function (cb) {
-		chrome.runtime.sendMessage(
-			{
-				action: 'sync:getaccountinfo',
-			},
-			function (info) {
-				const lastError = chrome.runtime.lastError;
-
-				if (lastError) {
-					console.log(lastError.message);
-					// 'Не удалось установить соединение. Принимающей стороны не существует».
-					cb(null);
-				}
-
-				cb(info);
-			}
-		);
-	},
-	startSync: function (type, cb) {
-		cb = cb || function () {};
-		chrome.runtime.sendMessage(
-			{
-				action: 'sync:start',
-				type: type,
-			},
-			cb
-		);
-	},
-	syncAddonOptionsUrl: function (cb) {
-		chrome.runtime.sendMessage(
-			{
-				action: 'sync:addonoptionsurl',
-			},
-			cb
-		);
-	},
-	importFinished: function () {
-		chrome.runtime.sendMessage({
-			action: 'sync:importfinish',
-		});
-	},
-	syncAddonExists: function (cb) {
-		chrome.runtime.sendMessage(
-			{
-				action: 'sync:syncaddonexists',
-			},
-			cb
-		);
-	},
+addDataToSync: function (params, cb) {
+if (cb) cb();
+},
+removeSyncData: function (params, cb) {
+if (cb) cb();
+},
+isActive: function (cb) {
+if (cb) cb(false);
+return false;
+},
+hasDataToSync: function (cb) {
+if (cb) cb(false);
+},
+getAccountInfo: function (cb) {
+if (cb) cb(null);
+},
+startSync: function (type, cb) {
+if (cb) cb();
+},
+syncAddonOptionsUrl: function (cb) {
+if (cb) cb('');
+},
+importFinished: function () {},
+syncAddonExists: function (cb) {
+if (cb) cb(false);
+},
+groupSyncChanged: function (groupId, cb) {
+if (cb) cb();
+},
 };
 
 export default Sync;
