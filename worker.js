@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import Broadcaster from './js/_external/broadcaster.js';
 import collectAndSendReport from './js/crashreport.js';
 import { sendEvent } from './js/bg/analytics.js';
-import Sync from './js/sync/tab.js';
+import SyncStub from './js/sync/tab.js';
 import UserInfoSync from './js/sync/user.js';
 import HiddenCaptureQueueModule from './js/capture/hiddencapturequeue.js';
 import ContextMenu from './js/bg/contextmenu.js';
@@ -90,7 +90,8 @@ class Worker {
         fvdSpeedDial.ThumbMaker = new ThumbMakerModule(fvdSpeedDial);
         fvdSpeedDial.UpdateDialsModule = new UpdateDials(fvdSpeedDial);
         fvdSpeedDial.UserInfoSync = new UserInfoSync(fvdSpeedDial);
-        fvdSpeedDial.Sync = new Sync(fvdSpeedDial);
+        // EverSync выпилён: Sync — no-op заглушка (не конструктор), используем как есть
+        fvdSpeedDial.Sync = SyncStub;
         fvdSpeedDial.HiddenCaptureQueue = new HiddenCaptureQueueModule(fvdSpeedDial);
     }
     browserAction() {
@@ -104,7 +105,8 @@ class Worker {
         fvdSpeedDial.StorageSD = new StorageModuleSD(fvdSpeedDial);
         const { StorageSD } = fvdSpeedDial;
         StorageSD.connect(() => {
-            fvdSpeedDial.ContextMenu.rebuild();
+            // Контекстное меню создаётся в this.contextMenu() (после инициализации хранилища),
+            // здесь перестройка не нужна — иначе rebuild() вызывался до создания экземпляра.
             onStorageConnected.apply(that);
         });
         StorageSD.addGroupsCallback(function () {
@@ -170,7 +172,10 @@ class Worker {
                 message.action === 'finishLocalStorageRestore') {
             }
             else if (message.action === 'pref:changed') {
-                fvdSpeedDial.ContextMenu.rebuild();
+                // Защита на случай, если сообщение придёт до инициализации контекстного меню
+                if (fvdSpeedDial.ContextMenu && fvdSpeedDial.ContextMenu.rebuild) {
+                    fvdSpeedDial.ContextMenu.rebuild();
+                }
             }
             else if (message && message.action === 'databaseBackup:getState') {
                 sendResponse(Backup.isRestoring ? 'restoring' : 'normal');

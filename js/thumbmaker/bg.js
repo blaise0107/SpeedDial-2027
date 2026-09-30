@@ -103,10 +103,9 @@ ThumbMakerModule.prototype = {
 		const imgUrl = params.imgUrl;
 		let screenWidth = params.screenWidth;
 
-		if (typeof document === 'undefined') {
-			Utils.imageUrlToDataUrl(imgUrl, (dataUrl, size) => {
-				callback(dataUrl, size);
-			});
+		if (typeof document === 'undefined' || typeof Image === 'undefined') {
+			// service worker: DOM недоступен — конвертируем через fetch + OffscreenCanvas
+			this.getImageDataPathNoDom(imgUrl, screenWidth, callback);
 		} else {
 			const img = document.createElement('img');
 			const that = this;
@@ -135,6 +134,51 @@ ThumbMakerModule.prototype = {
 			};
 			img.setAttribute('src', imgUrl);
 		}
+	},
+
+	// Конвертация изображения в dataURL без DOM (для service worker) через fetch + OffscreenCanvas
+	getImageDataPathNoDom: function (imgUrl, screenWidth, callback) {
+		const run = async () => {
+			try {
+				let blob;
+
+				if (String(imgUrl).startsWith('data:')) {
+					blob = await (await fetch(imgUrl)).blob();
+				} else {
+					const resp = await fetch(imgUrl, { mode: 'cors' });
+					blob = await resp.blob();
+				}
+
+				const bitmap = await createImageBitmap(blob);
+				let width = bitmap.width;
+				let height = bitmap.height;
+
+				if (screenWidth && width > screenWidth) {
+					height = Math.round((screenWidth * height) / width);
+					width = screenWidth;
+				}
+
+				const canvas = new OffscreenCanvas(width, height);
+				const ctx = canvas.getContext('2d');
+				ctx.drawImage(bitmap, 0, 0, width, height);
+				bitmap.close();
+
+				const outBlob = await canvas.convertToBlob({ type: 'image/png' });
+				const dataUrl = await new Promise((resolve, reject) => {
+					const reader = new FileReader();
+					reader.onload = () => resolve(reader.result);
+					reader.onerror = () => reject(reader.error);
+					reader.readAsDataURL(outBlob);
+				});
+
+				callback(dataUrl, { width: width, height: height });
+			} catch (ex) {
+				console.warn('getImageDataPathNoDom:', ex && ex.message);
+				callback(null, null);
+			}
+		};
+
+		run();
 	},
 
 	screenTab: function (params) {

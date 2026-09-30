@@ -1,8 +1,61 @@
 import { Utils } from '../utils.js';
 import { _ } from '../localizer.js';
 
-const CAPTURE_WIDTH = 1024;
-const CAPTURE_HEIGHT = 768;
+// Размеры окна захвата подбираются под реальную область просмотра активного окна:
+// фиксированные 1024x768 вызывали ошибку «Bounds must be at least 50% within visible screen space»
+// на маленьких/масштабированных экранах.
+const DEFAULT_CAPTURE_SIZE = { width: 1024, height: 768 };
+
+// Возвращает безопасные размеры окна захвата (не больше области просмотра монитора)
+function getCaptureSize(cb) {
+	chrome.windows.getCurrent((win) => {
+		if (chrome.runtime.lastError || !win) {
+			cb(DEFAULT_CAPTURE_SIZE);
+			return;
+		}
+
+		chrome.system.display.getInfo((displays) => {
+			if (chrome.runtime.lastError || !displays || !displays.length) {
+				cb(DEFAULT_CAPTURE_SIZE);
+				return;
+			}
+
+			let maxArea = null;
+
+			displays.forEach((d) => {
+				const b = d.bounds || {};
+				const area = (b.width || 0) * (b.height || 0);
+				if (!maxArea || area > maxArea) {
+					maxArea = area;
+				}
+			});
+
+			if (!maxArea) {
+				cb(DEFAULT_CAPTURE_SIZE);
+				return;
+			}
+
+			// найдём дисплей с максимальной областью и возьмём его workArea с запасом 15%
+			const disp = displays.reduce((a, b) => {
+				const aa = (a.bounds.width * a.bounds.height) || 0;
+				const bb = (b.bounds.width * b.bounds.height) || 0;
+				return bb > aa ? b : a;
+			}, displays[0]);
+
+			const wa = disp.workArea || disp.bounds;
+			const scale = disp.scaleFactor || 1;
+
+			// workArea в пикселях устройства -> делим на масштаб и берём 85%
+			const width = Math.max(600, Math.floor(((wa.width || 1024) / scale) * 0.85));
+			const height = Math.max(400, Math.floor(((wa.height || 768) / scale) * 0.85));
+
+			cb({
+				width: Math.min(width, DEFAULT_CAPTURE_SIZE.width),
+				height: Math.min(height, DEFAULT_CAPTURE_SIZE.height),
+			});
+		});
+	});
+}
 const CAPTURE_TIMEOUT = 60000 * 2; // 2 minutes
 const CHECK_COMPLETE_INTERVAL = 1000;
 const CHECK_COMPLETE_INTERVAL_FINAL = 3000;
