@@ -599,27 +599,49 @@ OptionsModule.prototype = {
 		const options = document.querySelectorAll("[sname]");
 
 		for (let i = 0; i !== options.length; i++) {
-			const name = options[i].getAttribute("sname");
+			let optionElem = options[i];
+			const name = optionElem.getAttribute("sname");
+
+			// sname может отсутствовать (например, у скрытых/служебных элементов или
+			// у неактивного дубликата #columnsSelect/#rowsSelect — _rowsOrColumns()
+			// снимает sname с неактивного селекта). Prefs.set(null, ...) бросал
+			// TypeError внутри цикла, из-за чего прерывался весь applyChanges:
+			// часть настроек сохранялась, остальные — нет.
+			if (!name) {
+				continue;
+			}
 
 			if (settedOptions.indexOf(name) !== -1) {
 				continue;
 			}
 
+			// У #columnsSelect/#rowsSelect одно и то же sname="sd.top_sites_columns",
+			// неактивный скрыт атрибутом hidden. querySelectorAll возвращает оба в
+			// порядке DOM, из-за чего применялось значение скрытого селекта, а
+			// видимый (с изменённым пользователем значением) пропускался через continue.
+			if (optionElem.hidden) {
+				const active = document.querySelector(`[sname="${name}"]:not([hidden])`);
+
+				if (active && active !== optionElem) {
+					optionElem = active;
+				}
+			}
+
 			settedOptions.push(name);
 
 			if (name === 'sd.custom_dial_size'
-          && this._getOptionValue(options[i]) > Prefs.get('sd.custom_dial_size')
+          && this._getOptionValue(optionElem) > Prefs.get('sd.custom_dial_size')
           || name === 'sd.custom_dial_size_fancy'
-          && this._getOptionValue(options[i]) > Prefs.get('sd.custom_dial_size_fancy')
+          && this._getOptionValue(optionElem) > Prefs.get('sd.custom_dial_size_fancy')
 			) {
 				Prefs.set("sd.top_sites_columns", "auto");
 			}
 
 			if (name === 'sd.enable_search' && UserInfoSync.getIsPremiumUser()) {
-				UserInfoSync.setIsSearchEnable(this._getOptionValue(options[i]));
+				UserInfoSync.setIsSearchEnable(this._getOptionValue(optionElem));
 			}
 
-			Prefs.set(name, this._getOptionValue(options[i]));
+			Prefs.set(name, this._getOptionValue(optionElem));
 		}
 
 		// проверьте, нужно ли обновить фоновое изображение в базе данных
@@ -634,6 +656,17 @@ OptionsModule.prototype = {
 			applyChangesButton.setAttribute("loading", 0);
 			document.getElementById("closeButton").setAttribute("active", 1);
 			that.refreshOptionValues();
+
+			// Обновить превью стилей страницы настроек после применения
+			try {
+				const CSS = that.fvdSpeedDial.CSS;
+
+				if (CSS && CSS.stylesheets && CSS.stylesheets[0]) {
+					CSS.refresh();
+				}
+			} catch (e) {
+				console.warn("CSS refresh after applyChanges failed:", e);
+			}
 
 			if (applyChangesCallback) {
 				applyChangesCallback();
