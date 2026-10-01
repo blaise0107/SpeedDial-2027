@@ -273,10 +273,17 @@ Prefs.prototype = {
 	set: function (name, value) {
 		const { fvdSpeedDial } = this;
 
-		const oldValue = this.get(name);
+		const oldValue = _r(this.get(name));
+		const newValue = _r(value);
 
-		if (_r(oldValue) !== _r(value)) {
-			fvdSpeedDial.localStorage.setItem(this._name(name), value).then(() => {
+		// Сравнение через JSON, а не через `!==`: объекты/массивы (например,
+		// корзины удалённых dials/groups 'fvd.dials_trash', 'fvd.groups_trash')
+		// всегда не равны по ссылке, из-за чего guard срабатывал ложно и
+		// запись выполнялась даже без реальных изменений. При равных значениях
+		// set() ничего не записывал и не рассылал 'pref:changed' — в ряде
+		// случаев настройки «не сохранялись» для других окон/контекстов.
+		if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
+			fvdSpeedDial.localStorage.setItem(this._name(name), newValue).then(() => {
 				// вызов смены слушателей
 				Broadcaster.sendMessage({
 					action: 'pref:changed',
