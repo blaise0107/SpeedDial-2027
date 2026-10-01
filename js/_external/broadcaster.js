@@ -117,7 +117,15 @@ Broadcaster.prototype = {
 		}
 
 		// console.log('Broadcaster.sendMessage', args);
-		chrome.runtime.sendMessage.apply(chrome.runtime, args);
+		try {
+			chrome.runtime.sendMessage.apply(chrome.runtime, args);
+		} catch (ex) {
+			// MV3: sendMessage может синхронно бросить "Extension context invalidated"
+			// (например, при отсутствии service worker или в осиротевшем фрейме). Без
+			// защиты исключение разрывало всю цепочку обработчиков pref:changed —
+			// настройки сохранялись, но на открытой странице newtab не применялись.
+			console.warn('Broadcaster.sendMessage failed:', ex);
+		}
 	},
 };
 

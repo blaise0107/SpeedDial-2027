@@ -1105,7 +1105,7 @@ SpeedDialMisc.prototype = {
 		const enableMostVisited = settings.get('sd.enable_most_visited');
 		const enableRecentlyClosed = settings.get('sd.enable_recently_closed');
 
-		if (toRefresh.indexOf('speedDial' !== -1)) {
+		if (toRefresh.indexOf('speedDial') !== -1) {
 			// создавать группы
 			this.rebuildGroupsList();
 
@@ -1143,7 +1143,7 @@ SpeedDialMisc.prototype = {
 			columns && (columns.value = settings.get('sd.top_sites_columns'));
 		}
 
-		if (toRefresh.indexOf('mostVisited' !== -1)) {
+		if (toRefresh.indexOf('mostVisited') !== -1) {
 			const def = settings.get('sd.display_type') === 'mostvisited';
 			const showLast = settings.get('sd.max_most_visited_records');
 
@@ -1182,7 +1182,7 @@ SpeedDialMisc.prototype = {
 			}
 		}
 
-		if (toRefresh.indexOf('recentlyClosed' !== -1)) {
+		if (toRefresh.indexOf('recentlyClosed') !== -1) {
 			const def = settings.get('sd.display_type') === 'recentlyclosed';
 			const showLast = settings.get('sd.max_recently_closed_records');
 
