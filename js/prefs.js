@@ -283,13 +283,17 @@ Prefs.prototype = {
 		// set() ничего не записывал и не рассылал 'pref:changed' — в ряде
 		// случаев настройки «не сохранялись» для других окон/контекстов.
 		if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
-			fvdSpeedDial.localStorage.setItem(this._name(name), newValue).then(() => {
-				// вызов смены слушателей
-				Broadcaster.sendMessage({
-					action: 'pref:changed',
-					name: name,
-					value: value,
-				});
+			// Локальные слушатели вызываем сразу и безусловно: localStorage.setItem
+			// синхронно обновляет this.storage, а рассылка внутри .then() теряла
+			// 'pref:changed' при ошибке записи (промпис отклонялся без .catch()).
+			Broadcaster.sendMessage({
+				action: 'pref:changed',
+				name: name,
+				value: value,
+			});
+
+			fvdSpeedDial.localStorage.setItem(this._name(name), newValue).catch((ex) => {
+				console.warn('Prefs.set: failed to persist', name, ex);
 			});
 		}
 	},
