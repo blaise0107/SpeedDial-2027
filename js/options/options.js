@@ -602,6 +602,15 @@ OptionsModule.prototype = {
 			let optionElem = options[i];
 			const name = optionElem.getAttribute("sname");
 
+			// sname может отсутствовать (например, у скрытых/служебных элементов или
+			// у неактивного дубликата #columnsSelect/#rowsSelect — _rowsOrColumns()
+			// снимает sname с неактивного селекта). Prefs.set(null, ...) бросал
+			// TypeError внутри цикла, из-за чего прерывался весь applyChanges:
+			// часть настроек сохранялась, остальные — нет.
+			if (!name) {
+				continue;
+			}
+
 			if (settedOptions.indexOf(name) !== -1) {
 				continue;
 			}
