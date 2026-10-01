@@ -1,5 +1,6 @@
 import { _b, Utils } from '../utils.js';
 import { _ } from '../localizer.js';
+import Sync from '../sync/tab.js';
 import Broadcaster from '../_external/broadcaster.js';
 import Roller from './roller.js';
 
@@ -20,7 +21,9 @@ OptionsModule.prototype = {
 		"recentlyclosed": 3,
 		"bg": 4,
 		"fonts": 5,
-		"widgets": 6,
+		"sync": 6,
+		"poweroff": 7,
+		"widgets": 8,
 	},
 
 	_typesButtons:{
@@ -30,6 +33,8 @@ OptionsModule.prototype = {
 		"recentlyclosed": "recentlyClosed",
 		"bg": "sdBackground",
 		"fonts": "sdFontColors",
+		"sync": "sdSync",
+		"poweroff": "sdPowerOff",
 		"widgets": "sdWidgets",
 	},
 
@@ -106,13 +111,13 @@ OptionsModule.prototype = {
 		if (this.fvdSpeedDial.RuntimeStore.get("importing_in_process")) {
 			buttonImport.setAttribute("disabled", true);
 			buttonExport.setAttribute("disabled", true);
-			//buttonImportFile.setAttribute("отключено", true);
-			//buttonExportFile.setAttribute("отключено", true);
+			//buttonImportFile.setAttribute("disabled", true);
+			//buttonExportFile.setAttribute("disabled", true);
 		} else {
 			buttonImport.removeAttribute("disabled");
 			buttonExport.removeAttribute("disabled");
-			//buttonImportFile.removeAttribute("отключено");
-			//buttonExportFile.removeAttribute("отключено");
+			//buttonImportFile.removeAttribute("disabled");
+			//buttonExportFile.removeAttribute("disabled");
 		}
 	},
 
@@ -152,7 +157,7 @@ OptionsModule.prototype = {
 		this._roller = Roller.create(document.getElementById("rollerContent"), ROLLER_ELEM_WIDTH);
 		this._listenOptions();
 		this.refreshOptionValues();
-		// обновить параметры при активации вкладки
+		// refresh options when tab activated
 		chrome.tabs.onActivated.addListener(function (tabId) {
 			chrome.tabs.getCurrent(function (tab) {
 				if (tab.id === tabId) {
@@ -184,10 +189,10 @@ OptionsModule.prototype = {
 			}
 		});
 
-		// вкладки инициализации
+		// init tabs
 		this.Tabs.init();
 
-		// индивидуальный размер циферблатов
+		// custom dials size
 
 		const changeCDSize = () => {
 			const cdRange = document.getElementById("cdSizeRange_" + document.getElementById("themeSelect").value);
@@ -280,16 +285,19 @@ OptionsModule.prototype = {
 			} else if (hash === "#display-in-new-tab") {
 				this.Tabs.tabs[0].setActiveTab(1);
 				document.getElementById("displayInNewTabLabel").className += " highlight";
+			} else if (hash === "#sync") {
+				setType = "sync";
+			} else if (hash === "#poweroff") {
+				setType = "poweroff";
 			} else if (hash === "#widgets") {
 				setType = "widgets";
 			}
-			// Страницы «Синхронизация» и «PowerOff» выпилены — старые ссылки (#sync, #poweroff) игнорируются
 
 		} else {
 			const lastType = this.fvdSpeedDial.Prefs.get("sd.last_opened_settings");
 
-			if (lastType === "sync" || lastType === "poweroff") {
-				setType = "global";
+			if (lastType === "sync") {
+				this.syncOptionsOpen(true);
 			} else {
 				setType = lastType;
 			}
@@ -345,6 +353,26 @@ OptionsModule.prototype = {
 			that.bgDeactivateColor();
 		}, false);
 
+		this.fvdSpeedDial.PremiumForShare.canDisplay({
+			ignoreDisplayed: true,
+		}, function (can) {
+			if (!can) {
+				return;
+			}
+
+			const btnContainer = document.getElementById("premiumForShareButton");
+
+			btnContainer.style.display = "block";
+			setTimeout(function () {
+				btnContainer.style.opacity = 1;
+			}, 100);
+			btnContainer.querySelector("button").addEventListener("click", function () {
+				chrome.tabs.create({
+					url: chrome.runtime.getURL("newtab.html") + "#premiumforshare",
+					active: true,
+				});
+			}, false);
+		});
 
 		this._changeOption(document.querySelector("[sname=\"sd.display_dial_background\"]"), {
 			showApply: false,
@@ -526,7 +554,7 @@ OptionsModule.prototype = {
 	},
 
 	rebuildGroupsList: function (callback) {
-		// получить список групп
+		// get groups list
 		this.fvdSpeedDial.StorageSD.groupsList(groups => {
 			const container = document.getElementById("speeddial_defaultGroup");
 
@@ -554,11 +582,6 @@ OptionsModule.prototype = {
 	},
 
 	setType: function (type) {
-		// защита от устаревших типов («sync», «poweroff» и т.п.), страницы которых выпилены
-		if (!(type in this._settingsTypesIndexes)) {
-			type = "global";
-		}
-
 		const page = document.getElementById(type + "Settings");
 		const bottomButtons = document.querySelector(".bottomButtons");
 
@@ -566,12 +589,12 @@ OptionsModule.prototype = {
 
 		if (page) {
 			if (page.getAttribute("data-no-buttons") === "1") {
-				// скрыть все кнопки
+				// hide all buttons
 				bottomButtons.setAttribute("hidden", 1);
 			}
 		}
 
-		//document.getElementById("closeButton").setAttribute("активный", 0);
+		//document.getElementById( "closeButton" ).setAttribute( "active", 0 );
 		this.fvdSpeedDial.Prefs.set("sd.last_opened_settings", type);
 		const index = this._settingsTypesIndexes[ type ];
 
@@ -583,9 +606,7 @@ OptionsModule.prototype = {
 		}
 		const button = document.getElementsByClassName(this._typesButtons[type])[0];
 
-		if (button) {
-			button.setAttribute("active", 1);
-		}
+		button.setAttribute("active", 1);
 	},
 
 	applyChanges: function (applyChangesCallback) {
@@ -599,52 +620,30 @@ OptionsModule.prototype = {
 		const options = document.querySelectorAll("[sname]");
 
 		for (let i = 0; i !== options.length; i++) {
-			let optionElem = options[i];
-			const name = optionElem.getAttribute("sname");
-
-			// sname может отсутствовать (например, у скрытых/служебных элементов или
-			// у неактивного дубликата #columnsSelect/#rowsSelect — _rowsOrColumns()
-			// снимает sname с неактивного селекта). Prefs.set(null, ...) бросал
-			// TypeError внутри цикла, из-за чего прерывался весь applyChanges:
-			// часть настроек сохранялась, остальные — нет.
-			if (!name) {
-				continue;
-			}
+			const name = options[i].getAttribute("sname");
 
 			if (settedOptions.indexOf(name) !== -1) {
 				continue;
 			}
 
-			// У #columnsSelect/#rowsSelect одно и то же sname="sd.top_sites_columns",
-			// неактивный скрыт атрибутом hidden. querySelectorAll возвращает оба в
-			// порядке DOM, из-за чего применялось значение скрытого селекта, а
-			// видимый (с изменённым пользователем значением) пропускался через continue.
-			if (optionElem.hidden) {
-				const active = document.querySelector(`[sname="${name}"]:not([hidden])`);
-
-				if (active && active !== optionElem) {
-					optionElem = active;
-				}
-			}
-
 			settedOptions.push(name);
 
 			if (name === 'sd.custom_dial_size'
-          && this._getOptionValue(optionElem) > Prefs.get('sd.custom_dial_size')
+          && this._getOptionValue(options[i]) > Prefs.get('sd.custom_dial_size')
           || name === 'sd.custom_dial_size_fancy'
-          && this._getOptionValue(optionElem) > Prefs.get('sd.custom_dial_size_fancy')
+          && this._getOptionValue(options[i]) > Prefs.get('sd.custom_dial_size_fancy')
 			) {
 				Prefs.set("sd.top_sites_columns", "auto");
 			}
 
 			if (name === 'sd.enable_search' && UserInfoSync.getIsPremiumUser()) {
-				UserInfoSync.setIsSearchEnable(this._getOptionValue(optionElem));
+				UserInfoSync.setIsSearchEnable(this._getOptionValue(options[i]));
 			}
 
-			Prefs.set(name, this._getOptionValue(optionElem));
+			Prefs.set(name, this._getOptionValue(options[i]));
 		}
 
-		// проверьте, нужно ли обновить фоновое изображение в базе данных
+		// check if need update background image in database
 		const imageUrl = document.getElementById("bg_imageURL").value;
 		const imageType = document.getElementById("bg_imageType").value;
 		const applyChangesButton = document.getElementById("applyChangesButton");
@@ -656,17 +655,6 @@ OptionsModule.prototype = {
 			applyChangesButton.setAttribute("loading", 0);
 			document.getElementById("closeButton").setAttribute("active", 1);
 			that.refreshOptionValues();
-
-			// Обновить превью стилей страницы настроек после применения
-			try {
-				const CSS = that.fvdSpeedDial.CSS;
-
-				if (CSS && CSS.stylesheets && CSS.stylesheets[0]) {
-					CSS.refresh();
-				}
-			} catch (e) {
-				console.warn("CSS refresh after applyChanges failed:", e);
-			}
 
 			if (applyChangesCallback) {
 				applyChangesCallback();
@@ -695,7 +683,7 @@ OptionsModule.prototype = {
 				},
 				function () {
 					// console.log(doneCallback);
-					// сделаноОбратный вызов();
+					// doneCallback();
 					StorageSD.setMisc("sd.background", dataUrl, doneCallback);
 				},
 			]);
@@ -874,8 +862,14 @@ OptionsModule.prototype = {
 	},
 
 	dontAllowIfLocked: function () {
-		// PowerOff выпилён — блокировка паролем больше не используется, действие всегда разрешено
-		return true;
+		console.log('dontAllowIfLocked', this.fvdSpeedDial.PowerOff.isHidden());
+
+		if (this.fvdSpeedDial.PowerOff.isHidden()) {
+			this.fvdSpeedDial.Dialogs.alert(_("dlg_alert_sd_locked_action_title"), _("dlg_alert_sd_locked_action_text"));
+			return false;
+		} else {
+			return true;
+		}
 	},
 
 	_refreshEnableTypes: function () {
@@ -911,7 +905,7 @@ OptionsModule.prototype = {
 		const enabledTypes = Utils.arrayDiff(types, disabledTypes);
 
 		if (enabledTypes.length <= 1) {
-			// отключить включено
+			// disable enabled
 			for (let i = 0; i !== elems.length; i++) {
 				if (elems[i].checked) {
 					elems[i].setAttribute("disabled", true);
@@ -931,7 +925,7 @@ OptionsModule.prototype = {
 		}
 
 		if (disabledTypes.indexOf(currentValue) !== -1) {
-			// установить новое значение
+			// set new value
 			const newValue = enabledTypes[0];
 
 			for (let i = 0; i !== radioElems.length; i++) {
@@ -941,7 +935,7 @@ OptionsModule.prototype = {
 			}
 		}
 
-		// отключить отключенные элементы по умолчанию
+		// disable disabled default elements
 		for (let i = 0; i !== disabledTypes.length; i++) {
 			for (let j = 0; j !== radioElems.length; j++) {
 				if (radioElems[j].value === disabledTypes[i]) {
@@ -1003,8 +997,8 @@ OptionsModule.prototype = {
 
 		brightness = (red * 299) + (green * 587) + (blue * 114);
 		brightness = brightness / 255000;
-		// значения варьируются от 0 до 1
-		// все, что больше 0,5, должно быть достаточно ярким для темного текста
+		// values range from 0 to 1
+		// anything greater than 0.5 should be bright enough for dark text
 
 		if (brightness >= 0.5) {
 			return "000000";
@@ -1044,13 +1038,8 @@ OptionsModule.prototype = {
 					return;
 				} else if (option.type === "radio") {
 					const name = option.name;
-					// защита от null: если радиокнопка с таким значением отсутствует в разметке,
-					// пропускаем установку (раньше это вызывало "Cannot set properties of null")
-					const radio = document.querySelector("[name="+name+"][value="+value+"]");
 
-					if (radio) {
-						radio.checked = true;
-					}
+					document.querySelector("[name="+name+"][value="+value+"]").checked = true;
 					return;
 				}
 			}

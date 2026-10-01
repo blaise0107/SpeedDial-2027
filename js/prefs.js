@@ -40,17 +40,17 @@ Prefs.prototype = {
 		},
 	},
 
-	// значения по умолчанию
+	// default values
 	_defaults: {
 		'surfcanyon.enabled': true,
 
-		// приложения
+		// apps
 		'apps.opened': true,
 
-		// набрать моды
+		// dial mods
 		'quick-preview.enabled': true,
 
-		// виджеты
+		// widgets
 		'widgets.enabled': true,
 		'widgets.locked': true,
 		'widgets.opened': true,
@@ -59,7 +59,7 @@ Prefs.prototype = {
 		'widgets.autoscroll': false,
 		'widgets.autoscroll.speed': 1,
 
-		// Выключить питание
+		// Power off
 		'poweroff.enabled': false,
 		'poweroff.hidden': false,
 		'poweroff.password': '',
@@ -104,7 +104,7 @@ Prefs.prototype = {
 
 		'sd.display_superfish': false,
 
-		/* стили */
+		/* styling */
 
 		'sd.display_mirror': true,
 
@@ -155,18 +155,18 @@ Prefs.prototype = {
 		'sd.text.group_active_font.color': 'FFFFFF',
 		'sd.text.group_font.bolder': false,
 		'sd.text.group_font.size': '12',
-		/* связано со SpeedDial */
+		/* sd related */
 		'sd.show_urls_under_dials': true,
 		'sd.show_icons_and_titles_above_dials': true,
 		'sd.display_plus_cells': true,
 		'sd.display_popular_group': true,
-		/* связано с недавно закрытыми */
+		/* recentlyclosed related */
 		'sd.recentlyclosed_columns': 'auto',
-		/* Разное */
+		/* Misc */
 		'sd.scrolling': 'vertical',
 		'sd.show_in_context_menu': true,
 		'sd.disable_custom_search': false,
-		/* На новой вкладке */
+		/* In new tab */
 		'sd.preview_creation_delay_default': 1200,
 
 		'sd.main_menu_displayed': true,
@@ -259,7 +259,7 @@ Prefs.prototype = {
 			return defaultValue;
 		}
 
-		// console.info('Prefs.get', 'результат', имя, значение);
+		// console.info('Prefs.get', 'result', name, value);
 
 		return value;
 	},
@@ -273,27 +273,16 @@ Prefs.prototype = {
 	set: function (name, value) {
 		const { fvdSpeedDial } = this;
 
-		const oldValue = _r(this.get(name));
-		const newValue = _r(value);
+		const oldValue = this.get(name);
 
-		// Сравнение через JSON, а не через `!==`: объекты/массивы (например,
-		// корзины удалённых dials/groups 'fvd.dials_trash', 'fvd.groups_trash')
-		// всегда не равны по ссылке, из-за чего guard срабатывал ложно и
-		// запись выполнялась даже без реальных изменений. При равных значениях
-		// set() ничего не записывал и не рассылал 'pref:changed' — в ряде
-		// случаев настройки «не сохранялись» для других окон/контекстов.
-		if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
-			// Локальные слушатели вызываем сразу и безусловно: localStorage.setItem
-			// синхронно обновляет this.storage, а рассылка внутри .then() теряла
-			// 'pref:changed' при ошибке записи (промпис отклонялся без .catch()).
-			Broadcaster.sendMessage({
-				action: 'pref:changed',
-				name: name,
-				value: value,
-			});
-
-			fvdSpeedDial.localStorage.setItem(this._name(name), newValue).catch((ex) => {
-				console.warn('Prefs.set: failed to persist', name, ex);
+		if (_r(oldValue) !== _r(value)) {
+			fvdSpeedDial.localStorage.setItem(this._name(name), value).then(() => {
+				// call change listeners
+				Broadcaster.sendMessage({
+					action: 'pref:changed',
+					name: name,
+					value: value,
+				});
 			});
 		}
 	},
