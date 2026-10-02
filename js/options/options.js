@@ -600,33 +600,47 @@ OptionsModule.prototype = {
 		const settedOptions = [];
 		const options = document.querySelectorAll("[sname]");
 
+		// каждую опцию сохраняем отдельно: ошибка на одной битой настройке
+		// не должна отменять сохранение остальных
 		for (let i = 0; i !== options.length; i++) {
-			const name = options[i].getAttribute("sname");
+			try {
+				const name = options[i].getAttribute("sname");
 
-			if (settedOptions.indexOf(name) !== -1) {
-				continue;
+				if (settedOptions.indexOf(name) !== -1) {
+					continue;
+				}
+
+				settedOptions.push(name);
+
+				if (name === 'sd.custom_dial_size'
+            && this._getOptionValue(options[i]) > Prefs.get('sd.custom_dial_size')
+            || name === 'sd.custom_dial_size_fancy'
+            && this._getOptionValue(options[i]) > Prefs.get('sd.custom_dial_size_fancy')
+				) {
+					Prefs.set("sd.top_sites_columns", "auto");
+				}
+
+				if (name === 'sd.enable_search' && UserInfoSync.getIsPremiumUser()) {
+					UserInfoSync.setIsSearchEnable(this._getOptionValue(options[i]));
+				}
+
+				Prefs.set(name, this._getOptionValue(options[i]));
+			} catch (e) {
+				console.warn('applyChanges: failed to save option', e);
 			}
-
-			settedOptions.push(name);
-
-			if (name === 'sd.custom_dial_size'
-          && this._getOptionValue(options[i]) > Prefs.get('sd.custom_dial_size')
-          || name === 'sd.custom_dial_size_fancy'
-          && this._getOptionValue(options[i]) > Prefs.get('sd.custom_dial_size_fancy')
-			) {
-				Prefs.set("sd.top_sites_columns", "auto");
-			}
-
-			if (name === 'sd.enable_search' && UserInfoSync.getIsPremiumUser()) {
-				UserInfoSync.setIsSearchEnable(this._getOptionValue(options[i]));
-			}
-
-			Prefs.set(name, this._getOptionValue(options[i]));
 		}
 
 		// check if need update background image in database
-		const imageUrl = document.getElementById("bg_imageURL").value;
-		const imageType = document.getElementById("bg_imageType").value;
+		// фоновые настройки не должны блокировать сохранение всего остального:
+		// при любой ошибке считаем их пустыми и продолжаем
+		let imageUrl = "";
+		let imageType = "";
+		try {
+			imageUrl = document.getElementById("bg_imageURL").value;
+			imageType = document.getElementById("bg_imageType").value;
+		} catch (ex) {
+			console.warn('applyChanges: failed to read background fields', ex);
+		}
 		const applyChangesButton = document.getElementById("applyChangesButton");
 
 		applyChangesButton.setAttribute("loading", 1);
