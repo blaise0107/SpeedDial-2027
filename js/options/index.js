@@ -322,10 +322,22 @@ class SettingModule {
             Options.fontsRestoreDefaults();
         }, false);
         (_13 = document.getElementById("applyChangesButton")) === null || _13 === void 0 ? void 0 : _13.addEventListener("click", function (event) {
-            if (!Options.dontAllowIfLocked()) {
-                return;
+            // Блокировка по PowerOff убрана: сервис закрыт, а любая ошибка в
+            // dontAllowIfLocked раньше молча прерывала обработчик до сохранения.
+            // Любые исключения внутри обработчика логируем, но сохранение не отменяем.
+            try {
+                Options.applyChanges();
             }
-            Options.applyChanges();
+            catch (e) {
+                console.error('applyChanges failed', e);
+                try {
+                    const btn = document.getElementById("applyChangesButton");
+                    if (btn) {
+                        btn.setAttribute("loading", 0);
+                    }
+                }
+                catch (ex) { /* noop */ }
+            }
         }, false);
         (_14 = document.getElementById("buttonCloseButton")) === null || _14 === void 0 ? void 0 : _14.addEventListener("click", function (event) {
             Options.close();
