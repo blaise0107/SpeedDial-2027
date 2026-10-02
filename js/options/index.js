@@ -28,6 +28,7 @@ import RuntimeStore from '../runtimestore.js';
 import BackgroundModule from '../newtab/background.js';
 import DialogsModule from '../dialogs.js';
 import OptionsModule from "./options.js";
+import PowerOffModule from '../poweroff.js';
 import AppsModule from "../newtab/apps.js";
 import StorageAppsModule from '../storage/apps.js';
 import ThumbMakerModule from '../thumbmaker/tab.js';
@@ -55,6 +56,7 @@ class SettingModule {
             fvdSpeedDial.SpeedDialMisc = new SpeedDialMiscModule(fvdSpeedDial);
             fvdSpeedDial.ContextMenus = new ContextMenus(fvdSpeedDial);
             fvdSpeedDial.Options = new OptionsModule(fvdSpeedDial);
+            fvdSpeedDial.PowerOff = new PowerOffModule(fvdSpeedDial);
             fvdSpeedDial.CSS = new CSSModule(fvdSpeedDial);
             fvdSpeedDial.Background = new BackgroundModule(fvdSpeedDial);
             fvdSpeedDial.Dialogs = new DialogsModule(fvdSpeedDial);

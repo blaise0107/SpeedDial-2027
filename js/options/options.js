@@ -353,26 +353,7 @@ OptionsModule.prototype = {
 			that.bgDeactivateColor();
 		}, false);
 
-		this.fvdSpeedDial.PremiumForShare.canDisplay({
-			ignoreDisplayed: true,
-		}, function (can) {
-			if (!can) {
-				return;
-			}
-
-			const btnContainer = document.getElementById("premiumForShareButton");
-
-			btnContainer.style.display = "block";
-			setTimeout(function () {
-				btnContainer.style.opacity = 1;
-			}, 100);
-			btnContainer.querySelector("button").addEventListener("click", function () {
-				chrome.tabs.create({
-					url: chrome.runtime.getURL("newtab.html") + "#premiumforshare",
-					active: true,
-				});
-			}, false);
-		});
+		// PremiumForShare выпилен — блок скрыт, чтобы не обрывать инициализацию страницы настроек
 
 		this._changeOption(document.querySelector("[sname=\"sd.display_dial_background\"]"), {
 			showApply: false,
