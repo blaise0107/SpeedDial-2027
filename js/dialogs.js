@@ -894,10 +894,68 @@ DialogsModule.prototype = {
 		const that = this;
 
 		if (params.type === 'export') {
+			const EXPORT_VERSION = 2;
 			const btns = {};
 			btns[_('dlg_button_copy_to_clipboard')] = function () {
 				Utils.copyToClipboard(document.getElementById('importExportTextArea').value);
 				dlg.showActionMessage(_('sah_copied'));
+			};
+			btns['Save to file'] = function () {
+				try {
+					const text = document.getElementById('importExportTextArea').value;
+					const blob = new Blob([text], { type: 'application/json' });
+					const url = URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					const d = new Date();
+					const pad = (n) => String(n).padStart(2, '0');
+					a.href = url;
+					a.download =
+						'fvd-speeddial-backup-' +
+						d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) +
+						'_' + pad(d.getHours()) + '-' + pad(d.getMinutes()) + '.json';
+					document.body.appendChild(a);
+					a.click();
+					setTimeout(() => {
+						URL.revokeObjectURL(url);
+						a.remove();
+					}, 500);
+				} catch (e) {
+					console.warn(e);
+				}
+			};
+			// Preview extraction directly from Dexie: the `thumb` column is not part of
+			// the index list, so the regular dump (dbSelect) does not return it.
+			const collectPreviews = function (callback) {
+				try {
+					const DB = StorageSD.DB;
+					if (!DB) {
+						callback({});
+						return;
+					}
+					Promise.all([DB.table('dials').toArray(), DB.table('mostvisited_extended').toArray()])
+						.then(([dialsRows, mvRows]) => {
+							const previews = {};
+							for (const r of dialsRows) {
+								if (r && r.global_id && r.thumb) {
+									previews[r.global_id] = r.thumb;
+								}
+							}
+							const mv = {};
+							for (const r of mvRows) {
+								if (r && r.id != null && r.thumb) {
+									mv[r.id] = r.thumb;
+								}
+							}
+							callback({ previews, mostvisited: mv });
+						})
+						.catch((e) => {
+							console.warn('collectPreviews failed', e);
+							callback({});
+						});
+				} catch (e) {
+					console.warn('collectPreviews failed', e);
+					callback({});
+				}
 			};
 			btns[_('dlg_button_close')] = function () {
 				dlg.close();
@@ -923,6 +981,14 @@ DialogsModule.prototype = {
 							});
 						},
 						function (callback, dataObject) {
+							collectPreviews(function (pv) {
+								dataObject.version = EXPORT_VERSION;
+								dataObject.previews = pv.previews || {};
+								dataObject.mostvisited = pv.mostvisited || {};
+								callback();
+							});
+						},
+						function (callback, dataObject) {
 							document.getElementById('importExportTextArea').value = JSON.stringify(dataObject);
 						},
 					]);
@@ -931,6 +997,34 @@ DialogsModule.prototype = {
 		} else if (params.type === 'import') {
 			const btns = {};
 			let importInProcess = false;
+			btns['Load from file'] = function () {
+				try {
+					const inp = document.createElement('input');
+					inp.type = 'file';
+					inp.accept = '.json,application/json,.txt,text/plain';
+					inp.addEventListener('change', function () {
+						try {
+							const f = inp.files && inp.files[0];
+							if (!f) {
+								return;
+							}
+							const reader = new FileReader();
+							reader.onload = function () {
+								const ta = document.getElementById('importExportTextArea');
+								if (ta) {
+									ta.value = String(reader.result || '').trim();
+								}
+							};
+							reader.readAsText(f);
+						} catch (e) {
+							console.warn(e);
+						}
+					});
+					inp.click();
+				} catch (e) {
+					console.warn(e);
+				}
+			};
 			btns[_('dlg_button_import')] = function () {
 				that.confirm(_('dlg_confirm_import_title'), _('dlg_confirm_import_text'), function (r) {
 					if (r) {
@@ -945,13 +1039,14 @@ DialogsModule.prototype = {
 						let importData = null;
 						try {
 							importData = JSON.parse(text);
-							importData.db.dials;
-							importData.db.groups;
-							importData.db.deny;
-
 							if (!importData.prefs) {
 								throw '';
 							}
+							// db is optional now (settings-only backups are allowed)
+							importData.db = importData.db || {};
+							importData.db.dials = importData.db.dials || [];
+							importData.db.groups = importData.db.groups || [];
+							importData.db.deny = importData.db.deny || [];
 						} catch (ex) {
 							console.warn(ex);
 							try {
@@ -973,6 +1068,18 @@ DialogsModule.prototype = {
 						}
 						const importContainer = document.getElementById('dialogImportExportContainer');
 						importContainer.setAttribute('type', 'importing');
+						// Merge mode: if the dump has no dials/groups, import only settings (prefs)
+						if (!importData.db.dials.length && !importData.db.groups.length) {
+							for (const k in importData.prefs) {
+								Prefs.set(k, importData.prefs[k]);
+							}
+							Options.refreshOptionValues(function () {
+								Options.applyChanges(function () {
+									dlg.close();
+								});
+							});
+							return;
+						}
 						// активировать цепочку импорта
 						const statusTextContainer = document.getElementById('importingProcessState');
 						const groupsRelations = {}; // relations between groups ids in dump and imported groups IDS
