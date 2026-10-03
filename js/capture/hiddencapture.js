@@ -134,9 +134,11 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 		let CAPTURE_HEIGHT = DEFAULT_CAPTURE_SIZE.height;
 
 		function returnFailedImage() {
-			if (typeof w !== 'undefined' && w && w.id) {
-				try { chrome.windows.remove(w.id, function () { consumeLastError('windows.remove failed image'); }); } catch (ex) {}
-			}
+			try {
+				if (typeof w !== 'undefined' && w && w.id) {
+					chrome.windows.remove(w.id, function () { consumeLastError('windows.remove failed image'); });
+				}
+			} catch (ex) {}
 			setTimeout(function () {
 				callback({
 					dataUrl: FAILED_IMAGE.src,
