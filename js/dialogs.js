@@ -1196,14 +1196,14 @@ DialogsModule.prototype = {
 								const previewsMap = importData.previews || {};
 								const rowsToInsert = [];
 								const rowPreviewKeys = [];
+								// позиции дайлов из дампа могут отсутствовать — вычисляем по порядку внутри группы
+								const groupPosCounters = {};
 								for (const dial of importData.db.dials) {
 									try {
 										if (dial.id) delete dial.id;
 										if (
 											!dial.url
-											|| !dial.thumb_source_type
 											|| !dial.group_id
-											|| !dial.position
 											|| !groupsRelations[dial.group_id]
 										) {
 											continue;
@@ -1211,6 +1211,14 @@ DialogsModule.prototype = {
 										dial.group_id = groupsRelations[dial.group_id];
 										if (dial.screen_maked === 1) {
 											dial.screen_maked = 0; // screen not transfered and need to remake
+										}
+										if (!dial.thumb_source_type) {
+											dial.thumb_source_type = 'screen';
+										}
+										if (!dial.position) {
+											const gk = String(dial.group_id);
+											groupPosCounters[gk] = (groupPosCounters[gk] || 0) + 1;
+											dial.position = groupPosCounters[gk];
 										}
 										const rec = Object.assign({}, dial);
 										delete rec.thumb; // thumb восстановим отдельно из блока previews
