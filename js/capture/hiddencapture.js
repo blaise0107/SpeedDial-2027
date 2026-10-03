@@ -311,8 +311,8 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 			function checkTimeout(interval) {
 				ctimeout = setTimeout(function () {
 					chrome.tabs.get(tab.id, function (tabInfo) {
+						consumeLastError('tabs.get timeout check');
 						if (!tabInfo) {
-						if (!tabInfo) {	consumeLastError('tabs.get timeout check');
 							// вкладка закрыта
 							clearTimeout(timeout);
 							return callback(null);
@@ -325,8 +325,8 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 						if (!params.saveImage && tabInfo.title) {
 							// захватывать только заголовок
 							chrome.windows.remove(w.id, function () {
-							consumeLastError('windows.remove no tabs');
-						});
+								consumeLastError('windows.remove no tabs');
+							});
 							return callback({
 								title: tabInfo.title,
 							});
