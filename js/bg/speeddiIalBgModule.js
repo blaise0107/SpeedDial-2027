@@ -1,6 +1,10 @@
 const SpeedDialBgModule = function (fvdSpeedDial) {
 	this.fvdSpeedDial = fvdSpeedDial;
-	fvdSpeedDial.ContextMenu = this;
+	// ВНИМАНИЕ: здесь было `fvdSpeedDial.ContextMenu = this;` — этот модуль
+	// перезаписывал экземпляр контекстного меню, созданный в worker.js. После этого
+	// fvdSpeedDial.ContextMenu.init()/sheduleRebuild() падали (у SpeedDialBgModule нет
+	// таких методов), слушатель chrome.contextMenus.onClicked не навешивался, и
+	// контекстное меню «пропадало» на всех вкладках.
 };
 
 SpeedDialBgModule.prototype = {

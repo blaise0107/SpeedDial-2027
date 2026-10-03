@@ -61,25 +61,35 @@ ContextMenu.prototype = {
 	_rebuildMenu: function () {
 		const { fvdSpeedDial } = this;
 
-		if (this._mainId) {
-			// chrome.contextMenus.remove(this._mainId);
-			this._mainId = null;
-		}
+		// При перезапуске service worker this._mainId === null, но пункты с такими
+		// id могли остаться в реестре меню Chrome — removeAll() выше их гарантированно
+		// чистит. Сбрасываем флаг, чтобы повторный rebuild не считал меню «собранным».
+		this._mainId = null;
 
 		if (!_b(fvdSpeedDial.Prefs.get('sd.show_in_context_menu'))) {
 			return;
 		}
 
-		this._mainId = chrome.contextMenus.create({
+		// Родительский пункт создаём до дочерних групп. Если в одном тике после
+		// removeAll() создать родителя и детей с parentId, Chrome из-за асинхронной
+		// очереди create может «потерять» всё меню (пункты не показываются ни на
+		// одной вкладке). Дополнительно страхуемся через lastError: если родитель по
+		// какой-то причине не создан, группы добавляем без parentId — они останутся
+		// видимыми в контекстном меню.
+		const parentParams = {
 			id: MENU_ID,
 			type: 'normal',
-			title: _('cm_main_title'),
+			title: _('cm_main_title') || 'SpeedDial',
 			contexts: ['page', 'link'],
-		});
+		};
 
-		const that = this;
+		this._mainId = MENU_ID;
 
-		// добавить список групп
+		// Группы создаём внутри колбэка создания родительского пункта — так мы
+		// гарантируем, что к моменту create() с parentId родитель уже существует
+		// в реестре меню Chrome (иначе все дочерние пункты «теряются», и на первый взгляд
+		// будто контекстного меню нет вовсе).
+		const createGroups = function () {
 		fvdSpeedDial.StorageSD.groupsList(function (groups) {
 			for (let i = 0; i !== groups.length; i++) {
 				(function (i) {
@@ -89,18 +99,38 @@ ContextMenu.prototype = {
 						groupTitle = _('cm_add_to') + groupTitle;
 					}
 
+					const params = {
+						id: GROUP_ID_PREFIX + groups[i].id,
+						type: 'normal',
+						title: groupTitle,
+						contexts: ['page', 'link'],
+					};
+
+					params.parentId = MENU_ID;
+
 					try {
-						chrome.contextMenus.create({
-							id: GROUP_ID_PREFIX + groups[i].id,
-							type: 'normal',
-							title: groupTitle,
-							contexts: ['page', 'link'],
-							parentId: that._mainId,
-						});
-					} catch (ex) {}
+						chrome.contextMenus.create(params);
+					} catch (ex) {
+						console.warn('contextMenu create failed:', ex);
+					}
 				})(i);
 			}
 		});
+		};
+
+		try {
+			chrome.contextMenus.create(parentParams, function () {
+				if (chrome.runtime.lastError) {
+					// Родитель не создан (например, дубликат id из-за гонки перестроек) —
+					// всё равно добавляем группы: лучше пункты верхнего уровня, чем
+					// пропавшее меню.
+					console.warn('contextMenu parent create failed:', chrome.runtime.lastError.message);
+				}
+				createGroups();
+			});
+		} catch (ex) {
+			createGroups();
+		}
 	},
 
 	addListener: function () {
@@ -124,6 +154,7 @@ ContextMenu.prototype = {
 
 	checkDialExists: function (data, callback) {
 		const that = this;
+		const { fvdSpeedDial } = this;
 
 		fvdSpeedDial.StorageSD.dialExists(
 			{
@@ -141,6 +172,7 @@ ContextMenu.prototype = {
 
 	addLinkToSpeedDial: function (clickData, groupId, tab) {
 		const that = this;
+		const { fvdSpeedDial } = this;
 
 		this.checkDialExists(
 			{
@@ -178,6 +210,7 @@ ContextMenu.prototype = {
 
 	addTabToSpeedDial: function (tab, groupId) {
 		const that = this;
+		const { fvdSpeedDial } = this;
 
 		this.checkDialExists(
 			{
