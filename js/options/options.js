@@ -1034,14 +1034,27 @@ OptionsModule.prototype = {
 					option.checked = _b(value);
 					return;
 				} else if (option.type === "radio") {
-					const name = option.name;
-
-     const radio = document.querySelector("[name="+name+"][value="+value+"]");
-     	if (radio) {
-     		radio.checked = true;
-     	} else {
-     		console.warn('_setOptionVal: no radio input for name="'+name+'" value="'+value+'"');
-     	}
+					// Значение радиогруппы хранится в сохранённой опции (true/false), а кнопки имеют значения enabled/disabled.
+					// Ставим checked только на ту кнопку группы (по name), значение которой совпадает с опцией;
+					// иначе браузер снимает checked со всех кнопок одноимённой группы и настройка "не отображается".
+					let valStr = String(value);
+					if (valStr === "true") valStr = "enabled";
+					if (valStr === "false") valStr = "disabled";
+					const radios = document.getElementsByName(option.name);
+					let found = false;
+					for (let ri = 0; ri < radios.length; ri++) {
+						const r = radios[ri];
+						const match = String(r.value) === valStr || String(r.value) === String(value);
+						if (match && !found) {
+							r.checked = true;
+							found = true;
+						} else {
+							r.checked = false;
+						}
+					}
+					if (!found) {
+						console.warn('_setOptionVal: no radio input for name="' + option.name + '" value="' + value + '"');
+					}
 					return;
 				}
 			}

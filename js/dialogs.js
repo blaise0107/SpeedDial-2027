@@ -957,6 +957,30 @@ DialogsModule.prototype = {
 					callback({});
 				}
 			};
+			// Быстрый дамп таблиц напрямую из Dexie: StorageSD.dump() не экспортирует id/position/thumb
+			// у дайлов, из-за чего импорт не мог связать дайлы с группами (получались пустые группы).
+			const dumpTablesFast = function (callback) {
+				try {
+					const DB = StorageSD.DB;
+					if (!DB) {
+						StorageSD.dump(callback);
+						return;
+					}
+					Promise.all([
+						DB.table('dials').toArray(),
+						DB.table('groups').toArray(),
+						DB.table('deny').toArray(),
+					]).then(function (res) {
+						callback({ dials: res[0], groups: res[1], deny: res[2] });
+					}).catch(function (e) {
+						console.warn('dumpTablesFast failed, fallback to StorageSD.dump', e);
+						StorageSD.dump(callback);
+					});
+				} catch (e) {
+					console.warn('dumpTablesFast failed, fallback to StorageSD.dump', e);
+					StorageSD.dump(callback);
+				}
+			};
 			btns[_('dlg_button_close')] = function () {
 				dlg.close();
 			};
@@ -969,7 +993,7 @@ DialogsModule.prototype = {
 					document.getElementById('dialogImportExportContainer').setAttribute('type', 'export');
 					Utils.Async.chain([
 						function (callback, dataObject) {
-							StorageSD.dump(function (data) {
+							dumpTablesFast(function (data) {
 								dataObject.db = data;
 								callback();
 							});
