@@ -1104,6 +1104,22 @@ DialogsModule.prototype = {
 							});
 							return;
 						}
+						// нормализуем типы: в дампе id/position/group_id могут быть строками,
+						// а индексы Dexie числовые — из-за несовпадения типов дайлы не связывались с группами
+						const toInt = function (v) {
+							if (v == null || v === '') return null;
+							const n = parseInt(v);
+							return isNaN(n) ? null : n;
+						};
+						for (const g of importData.db.groups) {
+							g.id = toInt(g.id);
+							g.position = toInt(g.position);
+						}
+						for (const d of importData.db.dials) {
+							d.group_id = toInt(d.group_id);
+							d.position = toInt(d.position);
+						}
+
 						// активировать цепочку импорта
 						const statusTextContainer = document.getElementById('importingProcessState');
 						const groupsRelations = {}; // relations between groups ids in dump and imported groups IDS
@@ -1174,22 +1190,48 @@ DialogsModule.prototype = {
 									callback();
 									return;
 								}
-								DB.transaction('rw', DB.table('groups'), async function () {
+							(async function () {
+								try {
 									const existing = await DB.table('groups').toArray();
+									const existingIds = {};
 									const existingNames = {};
 									let maxPos = 0;
 									for (const g of existing) {
+										existingIds[toInt(g.id)] = true;
 										existingNames[String(g.name).toLowerCase()] = true;
 										if (g.position > maxPos) maxPos = g.position;
+									}
+									// дайлы могут ссылаться на id групп, которых нет в дампе — соберём их в резервную группу
+									const dumpGroupIds = {};
+									for (const g of importData.db.groups) if (g.id != null) dumpGroupIds[g.id] = true;
+									const orphanGroupIds = [];
+									for (const d of importData.db.dials) {
+										if (d.group_id != null && !dumpGroupIds[d.group_id] && orphanGroupIds.indexOf(d.group_id) === -1) {
+											orphanGroupIds.push(d.group_id);
+										}
+									}
+									if (orphanGroupIds.length) {
+										const orphKey = await DB.table('groups').add({ name: 'Imported', position: ++maxPos, sync: 1 });
+										countGroupsImported++;
+										for (const og of orphanGroupIds) groupsRelations[og] = orphKey;
 									}
 									const toInsert = [];
 									const srcIdx = [];
 									for (const group of importData.db.groups) {
 										if (!group.name) continue;
-										if (existingNames[String(group.name).toLowerCase()]) continue;
+										if (group.id != null && !existingIds[group.id]) {
+											// id свободен — вставляем группу с исходным id: связи дайлов сохранятся напрямую
+											const rec = Object.assign({}, group);
+											rec.sync = 1;
+											if (!rec.position) rec.position = ++maxPos;
+											await DB.table('groups').add(rec);
+											countGroupsImported++;
+											continue;
+										}
+										if (existingNames[String(group.name).toLowerCase()]) continue; // такая группа уже есть
 										const rec = {
 											name: group.name,
-											position: parseInt(group.position) || ++maxPos,
+											position: group.position || ++maxPos,
 											sync: 1,
 										};
 										if (group.global_id) rec.global_id = group.global_id;
@@ -1197,20 +1239,20 @@ DialogsModule.prototype = {
 										srcIdx.push(group.id);
 									}
 									if (toInsert.length) {
-										const keys = await DB.table('groups').bulkAdd(toInsert);
+										const keys = await DB.transaction('rw', DB.table('groups'), () => DB.table('groups').bulkAdd(toInsert));
 										for (let i = 0; i < toInsert.length; i++) {
 											countGroupsImported++;
-											groupsRelations[srcIdx[i]] = keys[i];
+											if (srcIdx[i] != null) groupsRelations[srcIdx[i]] = keys[i];
 										}
 									}
-								})
-									.catch(function (e) {
-										console.warn('import groups failed', e);
-									})
-									.then(callback);
+								} catch (e) {
+									console.warn('import groups failed', e);
+								}
+								callback();
+							})();
 							},
 							// шаг 5. Импортируйте дайлы (bulkAdd + превью из дампа, без сетевых загрузок)
-							function (callback) {
+							async function (callback) {
 								statusTextContainer.textContent = _('dlg_importing_step5');
 								const DB = StorageSD.DB;
 								if (!DB) {
@@ -1222,17 +1264,22 @@ DialogsModule.prototype = {
 								const rowPreviewKeys = [];
 								// позиции дайлов из дампа могут отсутствовать — вычисляем по порядку внутри группы
 								const groupPosCounters = {};
+								let skippedNoUrl = 0;
+								const currentGroupIds = (await DB.table('groups').toArray()).map((g) => toInt(g.id));
 								for (const dial of importData.db.dials) {
 									try {
 										if (dial.id) delete dial.id;
-										if (
-											!dial.url
-											|| !dial.group_id
-											|| !groupsRelations[dial.group_id]
-										) {
+										if (!dial.url) {
+											skippedNoUrl++;
 											continue;
 										}
-										dial.group_id = groupsRelations[dial.group_id];
+										if (groupsRelations[dial.group_id] != null) {
+											dial.group_id = groupsRelations[dial.group_id];
+										} else if (currentGroupIds.indexOf(dial.group_id) === -1) {
+											// группы с таким id нет ни в дампе, ни в базе — дайлы таких групп пропускаем
+											console.warn('import: no group for dial', dial.url, dial.group_id);
+											continue;
+										}
 										if (dial.screen_maked === 1) {
 											dial.screen_maked = 0; // screen not transfered and need to remake
 										}
@@ -1258,6 +1305,7 @@ DialogsModule.prototype = {
 										console.warn(ex);
 									}
 								}
+								console.log('import dials: total in dump =', importData.db.dials.length, ', rows to insert =', rowsToInsert.length, ', skipped without url =', skippedNoUrl);
 								DB.transaction('rw', DB.table('dials'), async function () {
 									if (!rowsToInsert.length) return;
 									const keys = await DB.table('dials').bulkAdd(rowsToInsert);
