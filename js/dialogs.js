@@ -1251,150 +1251,150 @@ DialogsModule.prototype = {
 								callback();
 							})();
 							},
-\t\t\t\t\t\t\t// шаг 5. Импортируйте дайлы (нормализация + дедуп + пакетная вставка bulkPut чанками)
-\t\t\t\t\t\t\tasync function (callback) {
-\t\t\t\t\t\t\t\tstatusTextContainer.textContent = _('dlg_importing_step5');
-\t\t\t\t\t\t\t\tconst DB = StorageSD.DB;
-\t\t\t\t\t\t\t\tif (!DB) {
-\t\t\t\t\t\t\t\t\tcallback();
-\t\t\t\t\t\t\t\t\treturn;
-\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\tconst previewsMap = importData.previews || {};
-\t\t\t\t\t\t\t\tconst groupPosCounters = {};
-\t\t\t\t\t\t\t\tconst seenGlobalIds = {};
-\t\t\t\t\t\t\t\tconst seenUrls = {};
-\t\t\t\t\t\t\t\tlet skippedNoUrl = 0;
-\t\t\t\t\t\t\t\tlet skippedDup = 0;
-\t\t\t\t\t\t\t\tconst _genGuid = function () {
-\t\t\t\t\t\t\t\t\tconst chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
-\t\t\t\t\t\t\t\t\tlet rs = '';
-\t\t\t\t\t\t\t\t\tfor (let i = 0; i < 32; i++) rs += chars.charAt(Math.floor(Math.random() * chars.length));
-\t\t\t\t\t\t\t\t\treturn rs;
-\t\t\t\t\t\t\t\t};
-\t\t\t\t\t\t\t\t// нормализуем все записи синхронно (без await в цикле)
-\t\t\t\t\t\t\t\tconst recs = [];
-\t\t\t\t\t\t\t\tfor (const rawDial of importData.db.dials) {
-\t\t\t\t\t\t\t\t\ttry {
-\t\t\t\t\t\t\t\t\t\tconst dial = Object.assign({}, rawDial);
-\t\t\t\t\t\t\t\t\t\tdelete dial.id; // id++ назначаем при вставке
-\t\t\t\t\t\t\t\t\t\tdelete dial.auto_id;
-\t\t\t\t\t\t\t\t\t\tdelete dial.rowid;
-\t\t\t\t\t\t\t\t\t\tif (!dial.url) {
-\t\t\t\t\t\t\t\t\t\t\tskippedNoUrl++;
-\t\t\t\t\t\t\t\t\t\t\tcontinue;
-\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t\tif (dial.screen_maked === 1) {
-\t\t\t\t\t\t\t\t\t\t\tdial.screen_maked = 0; // скрин не переносится — нужно переснять
-\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t\tif (!dial.thumb_source_type) {
-\t\t\t\t\t\t\t\t\t\t\tdial.thumb_source_type = 'screen';
-\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t\tdial.group_id = toInt(dial.group_id);
-\t\t\t\t\t\t\t\t\t\tdial.position = toInt(dial.position);
-\t\t\t\t\t\t\t\t\t\tdial.clicks = toInt(dial.clicks) || 0;
-\t\t\t\t\t\t\t\t\t\tdial.deny = toInt(dial.deny) || 0;
-\t\t\t\t\t\t\t\t\t\tdial.screen_maked = toInt(dial.screen_maked) || 0;
-\t\t\t\t\t\t\t\t\t\tif (!dial.global_id) {
-\t\t\t\t\t\t\t\t\t\t\tdial.global_id = _genGuid();
-\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t\t// дедупликация внутри дампа по global_id и url+group
-\t\t\t\t\t\t\t\t\t\tif (seenGlobalIds[dial.global_id]) {
-\t\t\t\t\t\t\t\t\t\t\tskippedDup++;
-\t\t\t\t\t\t\t\t\t\t\tcontinue;
-\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t\tconst uk = dial.url + '|' + String(dial.group_id);
-\t\t\t\t\t\t\t\t\t\tif (seenUrls[uk]) {
-\t\t\t\t\t\t\t\t\t\t\tskippedDup++;
-\t\t\t\t\t\t\t\t\t\t\tcontinue;
-\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t\tseenGlobalIds[dial.global_id] = true;
-\t\t\t\t\t\t\t\t\t\tseenUrls[uk] = true;
-\t\t\t\t\t\t\t\t\t\trecs.push(dial);
-\t\t\t\t\t\t\t\t\t} catch (ex) {
-\t\t\t\t\t\t\t\t\t\tconsole.warn('import dial normalize failed', ex, rawDial);
-\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\tconsole.log('import dials: total in dump =', importData.db.dials.length, ', normalized =', recs.length, ', skipped without url =', skippedNoUrl, ', duplicates skipped =', skippedDup);
-\t\t\t\t\t\t\t\t(async () => {
-\t\t\t\t\t\t\t\t\tlet fallbackGroupId = null;
-\t\t\t\t\t\t\t\t\tconst currentGroupIds = (await DB.table('groups').toArray()).map((g) => toInt(g.id));
-\t\t\t\t\t\t\t\t\tconst validGroupIds = {};
-\t\t\t\t\t\t\t\t\tfor (const gid of currentGroupIds) validGroupIds[gid] = true;
-\t\t\t\t\t\t\t\t\tconst rowsToInsert = [];
-\t\t\t\t\t\t\t\t\tconst rowPreviewKeys = [];
-\t\t\t\t\t\t\t\t\tfor (const dial of recs) {
-\t\t\t\t\t\t\t\t\t\ttry {
-\t\t\t\t\t\t\t\t\t\t\tconst mappedGid = groupsRelations[dial.group_id] != null ? toInt(groupsRelations[dial.group_id]) : null;
-\t\t\t\t\t\t\t\t\t\t\tif (mappedGid != null && validGroupIds[mappedGid]) {
-\t\t\t\t\t\t\t\t\t\t\t\tdial.group_id = mappedGid;
-\t\t\t\t\t\t\t\t\t\t\t} else if (dial.group_id != null && validGroupIds[dial.group_id]) {
-\t\t\t\t\t\t\t\t\t\t\t\t// оставляем исходный id группы
-\t\t\t\t\t\t\t\t\t\t\t} else {
-\t\t\t\t\t\t\t\t\t\t\t\t// группы нет ни в маппинге, ни в БД — кладём в резервную группу 'Imported'
-\t\t\t\t\t\t\t\t\t\t\t\tif (fallbackGroupId == null) {
-\t\t\t\t\t\t\t\t\t\t\t\t\ttry {
-\t\t\t\t\t\t\t\t\t\t\t\t\t\tfallbackGroupId = await DB.table('groups').add({ name: 'Imported', position: 999999, sync: 1, global_id: _genGuid() });
-\t\t\t\t\t\t\t\t\t\t\t\t\t\tcountGroupsImported++;
-\t\t\t\t\t\t\t\t\t\t\t\t\t} catch (e) {
-\t\t\t\t\t\t\t\t\t\t\t\t\t\tconsole.warn('import: cannot create fallback group', e);
-\t\t\t\t\t\t\t\t\t\t\t\t\t\tfallbackGroupId = false;
-\t\t\t\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t\t\t\tif (fallbackGroupId === false || fallbackGroupId == null) {
-\t\t\t\t\t\t\t\t\t\t\t\t\tconsole.warn('import: no group for dial', dial.url, dial.group_id);
-\t\t\t\t\t\t\t\t\t\t\t\t\tcontinue;
-\t\t\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t\t\t\tdial.group_id = fallbackGroupId;
-\t\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t\t\tif (!dial.position) {
-\t\t\t\t\t\t\t\t\t\t\t\tconst gk = String(dial.group_id);
-\t\t\t\t\t\t\t\t\t\t\t\tgroupPosCounters[gk] = (groupPosCounters[gk] || 0) + 1;
-\t\t\t\t\t\t\t\t\t\t\t\tdial.position = groupPosCounters[gk];
-\t\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t\t\trowPreviewKeys.push(dial.global_id);
-\t\t\t\t\t\t\t\t\t\t\trowsToInsert.push(dial);
-\t\t\t\t\t\t\t\t\t\t} catch (ex) {
-\t\t\t\t\t\t\t\t\t\t\tconsole.warn('import dial prepare failed', ex);
-\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\tconsole.log('import dials: rows to insert =', rowsToInsert.length);
-\t\t\t\t\t\t\t\t\t// максимальный существующий id — один раз, а не на каждый чанк
-\t\t\t\t\t\t\t\t\tlet nextId = 1;
-\t\t\t\t\t\t\t\t\ttry {
-\t\t\t\t\t\t\t\t\t\tconst allKeys = await DB.table('dials').toCollection().primaryKeys();
-\t\t\t\t\t\t\t\t\t\tfor (const k of allKeys) {
-\t\t\t\t\t\t\t\t\t\t\tconst nk = Number(k);
-\t\t\t\t\t\t\t\t\t\t\tif (!isNaN(nk) && nk >= nextId) nextId = nk + 1;
-\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t} catch (e) {
-\t\t\t\t\t\t\t\t\t\tconsole.warn('import dials: cannot read primary keys', e);
-\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\tconst CHUNK = 100;
-\t\t\t\t\t\t\t\t\tfor (let start = 0; start < rowsToInsert.length; start += CHUNK) {
-\t\t\t\t\t\t\t\t\t\tconst chunk = rowsToInsert.slice(start, start + CHUNK);
-\t\t\t\t\t\t\t\t\t\tconst previewChunk = rowPreviewKeys.slice(start, start + CHUNK);
-\t\t\t\t\t\t\t\t\t\ttry {
-\t\t\t\t\t\t\t\t\t\t\tawait DB.transaction('rw', DB.table('dials'), async () => {
-\t\t\t\t\t\t\t\t\t\t\t\tfor (const r of chunk) {
-\t\t\t\t\t\t\t\t\t\t\t\t\tr.id = nextId++;
-\t\t\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t\t\t\tawait DB.table('dials').bulkPut(chunk);
-\t\t\t\t\t\t\t\t\t\t\t\tconst patched = [];
-\t\t\t\t\t\t\t\t\t\t\t\tfor (let i = 0; i < chunk.length; i++) {
-\t\t\t\t\t\t\t\t\t\t\t\t\tconst pv = previewsMap[previewChunk[i]];
-\t\t\t\t\t\t\t\t\t\t\t\t\tif (pv) patched.push(Object.assign({}, chunk[i], { thumb: pv }));
-\t\t\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t\t\t\tif (patched.length) await DB.table('dials').bulkPut(patched);
-\t\t\t\t\t\t\t\t\t\t\t});
-\t\t\t\t\t\t\t\t\t\t\tcountDialsImported += chunk.length;
-\t\t\t\t\t\t\t\t\t\t} catch (e) {
-\t\t\t\t\t\t\t\t\t\t\tconsole.error('import dials chunk failed at offset', start, (e && e.name) || '', (e && e.message) || e, e);
-\t\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\t}
-\t\t\t\t\t\t\t\t\tconsole.log('import dials done: inserted =', countDialsImported);
-\t\t\t\t\t\t\t\t\tcallback();
-\t\t\t\t\t\t\t\t})();
-\t\t\t\t\t\t\t},
+							// шаг 5. Импортируйте дайлы (нормализация + дедуп + пакетная вставка bulkPut чанками)
+							async function (callback) {
+								statusTextContainer.textContent = _('dlg_importing_step5');
+								const DB = StorageSD.DB;
+								if (!DB) {
+									callback();
+									return;
+								}
+								const previewsMap = importData.previews || {};
+								const groupPosCounters = {};
+								const seenGlobalIds = {};
+								const seenUrls = {};
+								let skippedNoUrl = 0;
+								let skippedDup = 0;
+								const _genGuid = function () {
+									const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
+									let rs = '';
+									for (let i = 0; i < 32; i++) rs += chars.charAt(Math.floor(Math.random() * chars.length));
+									return rs;
+								};
+								// нормализуем все записи синхронно (без await в цикле)
+								const recs = [];
+								for (const rawDial of importData.db.dials) {
+									try {
+										const dial = Object.assign({}, rawDial);
+										delete dial.id; // id++ назначаем при вставке
+										delete dial.auto_id;
+										delete dial.rowid;
+										if (!dial.url) {
+											skippedNoUrl++;
+											continue;
+										}
+										if (dial.screen_maked === 1) {
+											dial.screen_maked = 0; // скрин не переносится — нужно переснять
+										}
+										if (!dial.thumb_source_type) {
+											dial.thumb_source_type = 'screen';
+										}
+										dial.group_id = toInt(dial.group_id);
+										dial.position = toInt(dial.position);
+										dial.clicks = toInt(dial.clicks) || 0;
+										dial.deny = toInt(dial.deny) || 0;
+										dial.screen_maked = toInt(dial.screen_maked) || 0;
+										if (!dial.global_id) {
+											dial.global_id = _genGuid();
+										}
+										// дедупликация внутри дампа по global_id и url+group
+										if (seenGlobalIds[dial.global_id]) {
+											skippedDup++;
+											continue;
+										}
+										const uk = dial.url + '|' + String(dial.group_id);
+										if (seenUrls[uk]) {
+											skippedDup++;
+											continue;
+										}
+										seenGlobalIds[dial.global_id] = true;
+										seenUrls[uk] = true;
+										recs.push(dial);
+									} catch (ex) {
+										console.warn('import dial normalize failed', ex, rawDial);
+									}
+								}
+								console.log('import dials: total in dump =', importData.db.dials.length, ', normalized =', recs.length, ', skipped without url =', skippedNoUrl, ', duplicates skipped =', skippedDup);
+								(async () => {
+									let fallbackGroupId = null;
+									const currentGroupIds = (await DB.table('groups').toArray()).map((g) => toInt(g.id));
+									const validGroupIds = {};
+									for (const gid of currentGroupIds) validGroupIds[gid] = true;
+									const rowsToInsert = [];
+									const rowPreviewKeys = [];
+									for (const dial of recs) {
+										try {
+											const mappedGid = groupsRelations[dial.group_id] != null ? toInt(groupsRelations[dial.group_id]) : null;
+											if (mappedGid != null && validGroupIds[mappedGid]) {
+												dial.group_id = mappedGid;
+											} else if (dial.group_id != null && validGroupIds[dial.group_id]) {
+												// оставляем исходный id группы
+											} else {
+												// группы нет ни в маппинге, ни в БД — кладём в резервную группу 'Imported'
+												if (fallbackGroupId == null) {
+													try {
+														fallbackGroupId = await DB.table('groups').add({ name: 'Imported', position: 999999, sync: 1, global_id: _genGuid() });
+														countGroupsImported++;
+													} catch (e) {
+														console.warn('import: cannot create fallback group', e);
+														fallbackGroupId = false;
+													}
+												}
+												if (fallbackGroupId === false || fallbackGroupId == null) {
+													console.warn('import: no group for dial', dial.url, dial.group_id);
+													continue;
+												}
+												dial.group_id = fallbackGroupId;
+											}
+											if (!dial.position) {
+												const gk = String(dial.group_id);
+												groupPosCounters[gk] = (groupPosCounters[gk] || 0) + 1;
+												dial.position = groupPosCounters[gk];
+											}
+											rowPreviewKeys.push(dial.global_id);
+											rowsToInsert.push(dial);
+										} catch (ex) {
+											console.warn('import dial prepare failed', ex);
+										}
+									}
+									console.log('import dials: rows to insert =', rowsToInsert.length);
+									// максимальный существующий id — один раз, а не на каждый чанк
+									let nextId = 1;
+									try {
+										const allKeys = await DB.table('dials').toCollection().primaryKeys();
+										for (const k of allKeys) {
+											const nk = Number(k);
+											if (!isNaN(nk) && nk >= nextId) nextId = nk + 1;
+										}
+									} catch (e) {
+										console.warn('import dials: cannot read primary keys', e);
+									}
+									const CHUNK = 100;
+									for (let start = 0; start < rowsToInsert.length; start += CHUNK) {
+										const chunk = rowsToInsert.slice(start, start + CHUNK);
+										const previewChunk = rowPreviewKeys.slice(start, start + CHUNK);
+										try {
+											await DB.transaction('rw', DB.table('dials'), async () => {
+												for (const r of chunk) {
+													r.id = nextId++;
+												}
+												await DB.table('dials').bulkPut(chunk);
+												const patched = [];
+												for (let i = 0; i < chunk.length; i++) {
+													const pv = previewsMap[previewChunk[i]];
+													if (pv) patched.push(Object.assign({}, chunk[i], { thumb: pv }));
+												}
+												if (patched.length) await DB.table('dials').bulkPut(patched);
+											});
+											countDialsImported += chunk.length;
+										} catch (e) {
+											console.error('import dials chunk failed at offset', start, (e && e.name) || '', (e && e.message) || e, e);
+										}
+									}
+									console.log('import dials done: inserted =', countDialsImported);
+									callback();
+								})();
+							},
 							// финишный шаг
 							function () {
 								statusTextContainer.textContent = _('dlg_importing_finished')
