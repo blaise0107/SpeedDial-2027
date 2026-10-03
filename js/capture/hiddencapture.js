@@ -89,7 +89,9 @@ function RemoveWindowListener(captureWindowId) {
 
 		chrome.windows.getAll(function (windows) {
 			if (windows.length === 1 && windows[0].id === captureWindowId) {
-				chrome.windows.remove(captureWindowId);
+				chrome.windows.remove(captureWindowId, function () {
+					consumeLastError('stop remove');
+				});
 			}
 		});
 	}
@@ -104,6 +106,26 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 	const isMac = navigator.platform.toLowerCase().indexOf('mac') === 0;
 	const isWin = navigator.platform.toLowerCase().indexOf('win') === 0;
 
+	// В Chrome MV3 любая неотвеченная runtime.lastError печатает в консоль «Unchecked
+	// runtime.lastError: ...». Ошибки скрытой съёмки («No window with id», «Frame with ID 0
+	// was removed», «Invalid value for bounds», «showing error page») ожидаемы: окно снимается
+	// сразу после выхода из свернутого состояния и удаляется, поэтому они подавляются здесь —
+	// ровно там, где возникают. Реальные сбои при этом обрабатываются кодом (returnFailedImage,
+	// таймауты), поведение не меняется.
+	function consumeLastError(tag) {
+		if (chrome.runtime.lastError) {
+			debugLog('hidden capture:', tag, chrome.runtime.lastError.message);
+		}
+	}
+
+	function debugLog() {
+		try {
+			if (fvdSpeedDial && fvdSpeedDial.Debug && typeof fvdSpeedDial.Debug.log === 'function') {
+				fvdSpeedDial.Debug.log.apply(null, arguments);
+			}
+		} catch (ex) {}
+	}
+
 	this.capture = function (params, callback) {
 		// размеры окна захвата подбираются под реальный экран (см. getCaptureSize);
 		// CAPTURE_WIDTH/CAPTURE_HEIGHT — локальные переменные, которые подставляются
@@ -112,6 +134,9 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 		let CAPTURE_HEIGHT = DEFAULT_CAPTURE_SIZE.height;
 
 		function returnFailedImage() {
+			if (typeof w !== 'undefined' && w && w.id) {
+				try { chrome.windows.remove(w.id, function () { consumeLastError('windows.remove failed image'); }); } catch (ex) {}
+			}
 			setTimeout(function () {
 				callback({
 					dataUrl: FAILED_IMAGE.src,
@@ -186,7 +211,9 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 		function onWindowCreate(w) {
 			if (!w.tabs || !w.tabs.length) {
 				// закрыть окно
-				chrome.windows.remove(w.id);
+				chrome.windows.remove(w.id, function () {
+					consumeLastError('windows.remove empty window');
+				});
 				return;
 			}
 
@@ -197,7 +224,9 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 				} catch (ex) {
 					console.warn(ex);
 				}
-				chrome.windows.remove(w.id);
+				chrome.windows.remove(w.id, function () {
+					consumeLastError('windows.remove on timeout');
+				});
 				callback(null);
 			}, CAPTURE_TIMEOUT);
 
@@ -232,6 +261,8 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 											height: CAPTURE_HEIGHT,
 										},
 										function () {
+											consumeLastError('windows.update resize before capture');
+											
 											next();
 										}
 									);
@@ -261,6 +292,8 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 			// вкладка отключения звука
 			chrome.tabs.update(tab.id, {
 				muted: true,
+			}, function () {
+				consumeLastError('tabs.mute');
 			});
 
 			chrome.scripting.executeScript(
@@ -277,6 +310,7 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 				ctimeout = setTimeout(function () {
 					chrome.tabs.get(tab.id, function (tabInfo) {
 						if (!tabInfo) {
+						if (!tabInfo) {	consumeLastError('tabs.get timeout check');
 							// вкладка закрыта
 							clearTimeout(timeout);
 							return callback(null);
@@ -288,7 +322,9 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 
 						if (!params.saveImage && tabInfo.title) {
 							// захватывать только заголовок
-							chrome.windows.remove(w.id);
+							chrome.windows.remove(w.id, function () {
+							consumeLastError('windows.remove no tabs');
+						});
 							return callback({
 								title: tabInfo.title,
 							});
@@ -323,8 +359,10 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 				};
 
 				chrome.windows.update(w.id, updateData, function (win) {
+					consumeLastError('windows.update normalize');
 					chrome.windows.get(w.id, function (wInfo) {
-						if (wInfo.state !== 'normal') {
+						consumeLastError('windows.get state check');
+						if (!wInfo || wInfo.state !== 'normal') {
 							normailzeWithCheck(callback, attemptNum + 1);
 						} else {
 							callback();
@@ -352,7 +390,8 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 
 					function (chainCallback) {
 						chrome.windows.get(w.id, function (wInfo) {
-							if (wInfo.state !== 'normal') {
+							consumeLastError('windows.get state check');
+							if (!wInfo || wInfo.state !== 'normal') {
 								normailzeWithCheck(chainCallback);
 							} else {
 								chainCallback();
@@ -370,8 +409,11 @@ const HiddenCaptureModule = function (fvdSpeedDial) {
 							function () {
 								setTimeout(function () {
 									chrome.tabs.captureVisibleTab(w.id, function (dataUrl) {
+										consumeLastError('captureVisibleTab');
 										clearTimeout(timeout);
-										chrome.windows.remove(w.id);
+										chrome.windows.remove(w.id, function () {
+											consumeLastError('windows.remove after capture');
+										});
 
 										if (!dataUrl) {
 											console.error('Fail to capture tab ', params.url, chrome.runtime.lastError);
