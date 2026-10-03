@@ -1,4 +1,5 @@
 import Dialog from './newtab/dialogs/simple-dialog.js';
+import FileSystemSD from './storage/filesystem.js';
 import { _b, getCleanUrl, Utils } from './utils.js';
 import { _ } from './localizer.js';
 import importTranslate from './importtranslators.js';
@@ -933,17 +934,33 @@ DialogsModule.prototype = {
 						return;
 					}
 					Promise.all([DB.table('dials').toArray(), DB.table('mostvisited_extended').toArray()])
-						.then(([dialsRows, mvRows]) => {
+						.then(async ([dialsRows, mvRows]) => {
+							// filesystem:-ссылки на превью читаем через FileSystemSD и кладём в дамп как data:URI
+							const readThumb = function (t) {
+								return new Promise((resolve) => {
+									if (!t || typeof t !== 'string') return resolve(null);
+									if (t.indexOf('data:') === 0) return resolve(t);
+									if (t.includes('/sd_previews') || t.indexOf('filesystem:') === 0) {
+										FileSystemSD.readAsDataURLbyURL(t, function (err, url) {
+											resolve(!err && url && String(url).indexOf('data:') === 0 ? url : null);
+										});
+										return;
+									}
+									resolve(null);
+								});
+							};
 							const previews = {};
 							for (const r of dialsRows) {
 								if (r && r.global_id && r.thumb) {
-									previews[r.global_id] = r.thumb;
+									const v = await readThumb(r.thumb);
+									if (v) previews[r.global_id] = v;
 								}
 							}
 							const mv = {};
 							for (const r of mvRows) {
 								if (r && r.id != null && r.thumb) {
-									mv[r.id] = r.thumb;
+									const v = await readThumb(r.thumb);
+									if (v) mv[r.id] = v;
 								}
 							}
 							callback({ previews, mostvisited: mv });

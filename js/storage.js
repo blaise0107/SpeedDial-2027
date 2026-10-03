@@ -3754,14 +3754,34 @@ class StorageSD {
 				) {
 					dial.thumbSource = dial.thumb;
 
+					const restoreToFS = function (dataUrl) {
+						// превью в формате data:URI — восстановить файл в локальной ФС,
+						// чтобы ссылка filesystem:.../sd_previews/... снова работала
+						try {
+							const path = String(dial.thumb).replace(/^.+persistent\//, '').split('?')[0];
+							const blob = Utils.dataURIToBlob(dataUrl);
+							FileSystemSD.write(path, blob, { redundancy: true }, function () {});
+						} catch (e) {
+							console.warn('preview restore failed', e);
+						}
+					};
 					if (typeof webkitRequestFileSystem === 'object') {
 						FileSystemSD.readAsDataURLbyURL(dial.thumb, function (par, blobURL) {
-							dial = blobURL;
+							if (blobURL && typeof blobURL === 'string' && blobURL.indexOf('data:') === 0) {
+								dial.thumb = blobURL;
+							}
 							next();
 						});
 					} else {
 						FileSystemSD.safeReadAsDataURLbyURL(dial.thumb, function (state, blobURL) {
-							dial.thumb = blobURL;
+							if (!state && blobURL) {
+								dial.thumb = blobURL;
+								restoreToFS(blobURL);
+							} else {
+								// файла нет ни в ФС, ни в резервном хранилище — сбрасываем флаг,
+								// чтобы скриншот был пере-снятый при следующем открытии
+								dial.screen_maked = 0;
+							}
 							next();
 						});
 					}
