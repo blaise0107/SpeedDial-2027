@@ -1142,119 +1142,112 @@ DialogsModule.prototype = {
 									}
 								);
 							},
-							// шаг 4. Импортируйте группы
+							// шаг 4. Импортируйте группы (пакетная вставка одним bulkAdd — быстро)
 							function (callback) {
 								statusTextContainer.textContent = _('dlg_importing_step4');
-								Utils.Async.arrayProcess(
-									importData.db.groups,
-									function (group, callback2) {
-										try {
-											StorageSD.groupExists(
-												{
-													name: group.name,
-												},
-												function (exists) {
-													if (exists) {
-														callback2();
-													} else {
-														if (group.name && group.position) {
-															StorageSD.groupAdd(
-																{
-																	name: group.name,
-																	position: group.position,
-																	sync: 1,
-																	global_id: group.global_id,
-																},
-																function (result) {
-																	if (result.result) {
-																		countGroupsImported++;
-																		groupsRelations[group.id] = result.id;
-																	}
-
-																	callback2();
-																}
-															);
-														} else {
-															callback2();
-														}
-													}
-												}
-											);
-										} catch (ex) {
-											console.warn(ex);
-											callback2();
-										}
-									},
-									function () {
-										callback();
+								const DB = StorageSD.DB;
+								if (!DB || !importData.db.groups.length) {
+									callback();
+									return;
+								}
+								DB.transaction('rw', DB.tables.groups, async function () {
+									const existing = await DB.tables.groups.toArray();
+									const existingNames = {};
+									let maxPos = 0;
+									for (const g of existing) {
+										existingNames[String(g.name).toLowerCase()] = true;
+										if (g.position > maxPos) maxPos = g.position;
 									}
-								);
+									const toInsert = [];
+									const srcIdx = [];
+									for (const group of importData.db.groups) {
+										if (!group.name) continue;
+										if (existingNames[String(group.name).toLowerCase()]) continue;
+										const rec = {
+											name: group.name,
+											position: parseInt(group.position) || ++maxPos,
+											sync: 1,
+										};
+										if (group.global_id) rec.global_id = group.global_id;
+										toInsert.push(rec);
+										srcIdx.push(group.id);
+									}
+									if (toInsert.length) {
+										const keys = await DB.tables.groups.bulkAdd(toInsert);
+										for (let i = 0; i < toInsert.length; i++) {
+											countGroupsImported++;
+											groupsRelations[srcIdx[i]] = keys[i];
+										}
+									}
+								})
+									.catch(function (e) {
+										console.warn('import groups failed', e);
+									})
+									.then(callback);
 							},
-							// шаг 5. Импортируйте циферблаты
+							// шаг 5. Импортируйте дайлы (bulkAdd + превью из дампа, без сетевых загрузок)
 							function (callback) {
 								statusTextContainer.textContent = _('dlg_importing_step5');
-								Utils.Async.arrayProcess(
-									importData.db.dials,
-									function (dial, callback2) {
+								const DB = StorageSD.DB;
+								if (!DB) {
+									callback();
+									return;
+								}
+								const previewsMap = importData.previews || {};
+								const rowsToInsert = [];
+								const rowPreviewKeys = [];
+								for (const dial of importData.db.dials) {
+									try {
 										if (dial.id) delete dial.id;
-
 										if (
-											dial.url
-											&& dial.thumb_source_type
-											&& dial.group_id
-											&& dial.position
-											&& groupsRelations[dial.group_id]
+											!dial.url
+											|| !dial.thumb_source_type
+											|| !dial.group_id
+											|| !dial.position
+											|| !groupsRelations[dial.group_id]
 										) {
-											try {
-												const dialData = {};
-												dial.group_id = groupsRelations[dial.group_id];
-
-												if (dial.screen_maked === 1) {
-													dial.screen_maked = 0; // screen not transfered and need to remake
-												}
-
-												StorageSD.addDial(dial, function (result) {
-													if (result.result) {
-														countDialsImported++;
-
-														if (dial.thumb_source_type === 'url' && dial.thumb_url) {
-															ThumbMaker.getImageDataPath(
-																{
-																	imgUrl: dial.thumb_url,
-																	screenWidth: SpeedDial.getMaxCellWidth(),
-																},
-																function (dataUrl) {
-																	StorageSD.updateDial(
-																		result.id,
-																		{
-																			thumb: dataUrl,
-																		},
-																		function () {
-																			callback2();
-																		}
-																	);
-																}
-															);
-														} else {
-															callback2();
-														}
-													} else {
-														callback2();
-													}
-												});
-											} catch (ex) {
-												console.warn(ex);
-												callback2();
-											}
-										} else {
-											callback2();
+											continue;
 										}
-									},
-									function () {
-										callback();
+										dial.group_id = groupsRelations[dial.group_id];
+										if (dial.screen_maked === 1) {
+											dial.screen_maked = 0; // screen not transfered and need to remake
+										}
+										const rec = Object.assign({}, dial);
+										delete rec.thumb; // thumb восстановим отдельно из блока previews
+										rec.clicks = rec.clicks || 0;
+										rec.deny = rec.deny || 0;
+										rec.screen_maked = rec.screen_maked || 0;
+										if (!rec.global_id) {
+											rec.global_id = StorageSD._generateGUID();
+										}
+										rowPreviewKeys.push(rec.global_id);
+										rowsToInsert.push(rec);
+									} catch (ex) {
+										console.warn(ex);
 									}
-								);
+								}
+								DB.transaction('rw', DB.tables.dials, async function () {
+									if (!rowsToInsert.length) return;
+									const keys = await DB.tables.dials.bulkAdd(rowsToInsert);
+									countDialsImported = rowsToInsert.length;
+									// восстановить превью из дампа (base64), если они там есть
+									const patched = [];
+									for (let i = 0; i < rowsToInsert.length; i++) {
+										const pv = previewsMap[rowPreviewKeys[i]];
+										if (pv) {
+											patched.push(Object.assign({ id: keys[i], thumb: pv }, rowsToInsert[i]));
+										}
+									}
+									if (patched.length) {
+										await DB.tables.dials.bulkPut(patched);
+									}
+								})
+									.catch(function (e) {
+										console.warn('import dials bulk failed', e);
+									})
+									.then(callback);
 							},
+
 							// финишный шаг
 							function () {
 								statusTextContainer.textContent = _('dlg_importing_finished')
