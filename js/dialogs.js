@@ -941,8 +941,16 @@ DialogsModule.prototype = {
 									if (!t || typeof t !== 'string') return resolve(null);
 									if (t.indexOf('data:') === 0) return resolve(t);
 									if (t.includes('/sd_previews') || t.indexOf('filesystem:') === 0) {
-										FileSystemSD.readAsDataURLbyURL(t, function (err, url) {
-											resolve(!err && url && String(url).indexOf('data:') === 0 ? url : null);
+										// MV3: filesystem:// API недоступен — сначала читаем из резервного хранилища (IndexedDB FSRedundancy)
+										FileSystemSD.safeReadAsDataURLbyURL(t, function (err, url) {
+											if (!err && url && String(url).indexOf('data:') === 0) {
+												resolve(url);
+												return;
+											}
+											// фолбэк: если FileSystem API доступен — читаем файл напрямую
+											FileSystemSD.readAsDataURLbyURL(t, function (err2, url2) {
+												resolve(!err2 && url2 && String(url2).indexOf('data:') === 0 ? url2 : null);
+											});
 										});
 										return;
 									}
@@ -1402,6 +1410,17 @@ DialogsModule.prototype = {
 													if (pv) patched.push(Object.assign({}, chunk[i], { thumb: pv }));
 												}
 												if (patched.length) await DB.table('dials').bulkPut(patched);
+												// сохраняем превью в локальную ФС с дублированием в FSRedundancy,
+												// чтобы скриншоты не приходилось переснимать после импорта
+												for (const r of patched) {
+													try {
+														const blob = Utils.dataURIToBlob(r.thumb);
+														const path = '/sd_previews/' + r.global_id + '.png';
+														FileSystemSD.write(path, blob, { redundancy: true }, function () {});
+													} catch (e) {
+														console.warn('import preview write failed', e);
+													}
+												}
 											});
 											countDialsImported += chunk.length;
 										} catch (e) {

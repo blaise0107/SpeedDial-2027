@@ -3765,26 +3765,27 @@ class StorageSD {
 							console.warn('preview restore failed', e);
 						}
 					};
-					if (typeof webkitRequestFileSystem === 'object') {
-						FileSystemSD.readAsDataURLbyURL(dial.thumb, function (par, blobURL) {
-							if (blobURL && typeof blobURL === 'string' && blobURL.indexOf('data:') === 0) {
-								dial.thumb = blobURL;
-							}
+					// In MV3 the filesystem:// API is unavailable (webkitRequestFileSystem is undefined),
+					// always read previews from the redundancy storage (IndexedDB FSRedundancy)
+					FileSystemSD.safeReadAsDataURLbyURL(dial.thumb, function (state, blobURL) {
+						if (!state && blobURL) {
+							dial.thumb = blobURL;
+							restoreToFS(blobURL);
 							next();
-						});
-					} else {
-						FileSystemSD.safeReadAsDataURLbyURL(dial.thumb, function (state, blobURL) {
-							if (!state && blobURL) {
-								dial.thumb = blobURL;
-								restoreToFS(blobURL);
-							} else {
-								// файла нет ни в ФС, ни в резервном хранилище — сбрасываем флаг,
-								// чтобы скриншот был пере-снятый при следующем открытии
+						} else {
+							// файла нет ни в ФС, ни в резервном хранилище — сбрасываем флаг и сохраняем его,
+							// чтобы скриншот был переснят при следующем открытии
+							if (dial.screen_maked) {
 								dial.screen_maked = 0;
+								try {
+									self.updateDial(dial.id, { screen_maked: 0 }, function () {});
+								} catch (e) {
+									console.warn('persist screen_maked reset failed', e);
+								}
 							}
 							next();
-						});
-					}
+						}
+					});
 				} else {
 					next();
 				}

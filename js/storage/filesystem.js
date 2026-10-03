@@ -255,8 +255,8 @@ export const FileSystemSD = function () {
 	};
 
 	this.safeReadAsDataURLbyURL = function (url, callback) {
-		if (typeof webkitRequestFileSystem === 'object') {
-			return readAsDataURLbyURL(url, callback);
+		if (typeof webkitRequestFileSystem === 'function') {
+			return self.readAsDataURLbyURL(url, callback);
 		}
 
 		const path = url.split('/persistent').pop();
