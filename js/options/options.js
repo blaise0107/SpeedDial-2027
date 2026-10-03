@@ -138,7 +138,9 @@ OptionsModule.prototype = {
 		const isPremiumUser = that.fvdSpeedDial.UserInfoSync.getIsPremiumUser();
 		const searchOptionCheckbox = document.querySelector('[sname="sd.enable_search"]');
 
-		if (isPremiumUser) {
+  if (!searchOptionCheckbox) {
+          console.warn('Options.init: checkbox [sname="sd.enable_search"] not found in options.html');
+  } else if (isPremiumUser) {
 			const isSearchEnabled = that.fvdSpeedDial.UserInfoSync.getIsSearchEnable();
 			that.fvdSpeedDial.Prefs.set('sd.enable_search', isSearchEnabled);
 			searchOptionCheckbox.parentElement.style.display = '';
@@ -1034,7 +1036,12 @@ OptionsModule.prototype = {
 				} else if (option.type === "radio") {
 					const name = option.name;
 
-					document.querySelector("[name="+name+"][value="+value+"]").checked = true;
+     const radio = document.querySelector("[name="+name+"][value="+value+"]");
+     	if (radio) {
+     		radio.checked = true;
+     	} else {
+     		console.warn('_setOptionVal: no radio input for name="'+name+'" value="'+value+'"');
+     	}
 					return;
 				}
 			}

@@ -1150,8 +1150,8 @@ DialogsModule.prototype = {
 									callback();
 									return;
 								}
-								DB.transaction('rw', DB.tables.groups, async function () {
-									const existing = await DB.tables.groups.toArray();
+								DB.transaction('rw', DB.table('groups'), async function () {
+									const existing = await DB.table('groups').toArray();
 									const existingNames = {};
 									let maxPos = 0;
 									for (const g of existing) {
@@ -1173,7 +1173,7 @@ DialogsModule.prototype = {
 										srcIdx.push(group.id);
 									}
 									if (toInsert.length) {
-										const keys = await DB.tables.groups.bulkAdd(toInsert);
+										const keys = await DB.table('groups').bulkAdd(toInsert);
 										for (let i = 0; i < toInsert.length; i++) {
 											countGroupsImported++;
 											groupsRelations[srcIdx[i]] = keys[i];
@@ -1226,9 +1226,9 @@ DialogsModule.prototype = {
 										console.warn(ex);
 									}
 								}
-								DB.transaction('rw', DB.tables.dials, async function () {
+								DB.transaction('rw', DB.table('dials'), async function () {
 									if (!rowsToInsert.length) return;
-									const keys = await DB.tables.dials.bulkAdd(rowsToInsert);
+									const keys = await DB.table('dials').bulkAdd(rowsToInsert);
 									countDialsImported = rowsToInsert.length;
 									// восстановить превью из дампа (base64), если они там есть
 									const patched = [];
@@ -1239,7 +1239,7 @@ DialogsModule.prototype = {
 										}
 									}
 									if (patched.length) {
-										await DB.tables.dials.bulkPut(patched);
+										await DB.table('dials').bulkPut(patched);
 									}
 								})
 									.catch(function (e) {
