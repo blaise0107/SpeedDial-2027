@@ -1265,6 +1265,7 @@ DialogsModule.prototype = {
 								// позиции дайлов из дампа могут отсутствовать — вычисляем по порядку внутри группы
 								const groupPosCounters = {};
 								let skippedNoUrl = 0;
+							let fallbackGroupId = null;
 								const currentGroupIds = (await DB.table('groups').toArray()).map((g) => toInt(g.id));
 								for (const dial of importData.db.dials) {
 									try {
@@ -1273,13 +1274,30 @@ DialogsModule.prototype = {
 											skippedNoUrl++;
 											continue;
 										}
-										if (groupsRelations[dial.group_id] != null) {
-											dial.group_id = groupsRelations[dial.group_id];
-										} else if (currentGroupIds.indexOf(dial.group_id) === -1) {
-											// группы с таким id нет ни в дампе, ни в базе — дайлы таких групп пропускаем
+									const mappedGid = groupsRelations[dial.group_id] != null ? toInt(groupsRelations[dial.group_id]) : null;
+									const curGid = dial.group_id != null ? toInt(dial.group_id) : null;
+									if (mappedGid != null && currentGroupIds.indexOf(mappedGid) !== -1) {
+										dial.group_id = mappedGid;
+									} else if (curGid != null && currentGroupIds.indexOf(curGid) !== -1) {
+										dial.group_id = curGid;
+									} else {
+										// group is in neither dump map nor db -> put into a fallback 'Imported' group
+										if (fallbackGroupId == null) {
+											try {
+												fallbackGroupId = await DB.transaction('rw', DB.table('groups'), () =>
+													DB.table('groups').add({ name: 'Imported', position: 999999, sync: 0, global_id: StorageSD._generateGUID() })
+												);
+											} catch (e) {
+												console.warn('import: cannot create fallback group', e);
+												fallbackGroupId = false;
+											}
+										}
+										if (fallbackGroupId === false || fallbackGroupId == null) {
 											console.warn('import: no group for dial', dial.url, dial.group_id);
 											continue;
 										}
+										dial.group_id = fallbackGroupId;
+									}
 										if (dial.screen_maked === 1) {
 											dial.screen_maked = 0; // screen not transfered and need to remake
 										}
@@ -1306,26 +1324,33 @@ DialogsModule.prototype = {
 									}
 								}
 								console.log('import dials: total in dump =', importData.db.dials.length, ', rows to insert =', rowsToInsert.length, ', skipped without url =', skippedNoUrl);
-								DB.transaction('rw', DB.table('dials'), async function () {
-									if (!rowsToInsert.length) return;
-									const keys = await DB.table('dials').bulkAdd(rowsToInsert);
-									countDialsImported = rowsToInsert.length;
-									// восстановить превью из дампа (base64), если они там есть
-									const patched = [];
-									for (let i = 0; i < rowsToInsert.length; i++) {
-										const pv = previewsMap[rowPreviewKeys[i]];
-										if (pv) {
-											patched.push(Object.assign({ id: keys[i], thumb: pv }, rowsToInsert[i]));
+								(async () => {
+									const CHUNK = 100;
+									for (let start = 0; start < rowsToInsert.length; start += CHUNK) {
+										const chunk = rowsToInsert.slice(start, start + CHUNK);
+										const previewChunk = rowPreviewKeys.slice(start, start + CHUNK);
+										try {
+											await DB.transaction('rw', DB.table('dials'), async () => {
+												// explicit ids + bulkPut: no ConstraintError on re-import / key conflicts
+												const ids = await DB.table('dials').toCollection().primaryKeys();
+												let nextId = ids.length ? Math.max.apply(null, ids.map(Number)) + 1 : 1;
+												for (const r of chunk) { r.id = nextId++; }
+												await DB.table('dials').bulkPut(chunk);
+												const patched = [];
+												for (let i = 0; i < chunk.length; i++) {
+													const pv = previewsMap[previewChunk[i]];
+													if (pv) patched.push(Object.assign({}, chunk[i], { thumb: pv }));
+												}
+												if (patched.length) await DB.table('dials').bulkPut(patched);
+											});
+											countDialsImported += chunk.length;
+										} catch (e) {
+											console.error('import dials chunk failed at offset', start, (e && e.message) || e, e);
 										}
 									}
-									if (patched.length) {
-										await DB.table('dials').bulkPut(patched);
-									}
-								})
-									.catch(function (e) {
-										console.warn('import dials bulk failed', e);
-									})
-									.then(callback);
+									console.log('import dials done: inserted =', countDialsImported);
+									callback();
+								})();
 							},
 
 							// финишный шаг
